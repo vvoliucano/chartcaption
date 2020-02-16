@@ -107,6 +107,11 @@ def main(args):
                             transform, args.batch_size,
                             shuffle=True, num_workers=args.num_workers)
 
+
+    # val_loader = torch.utils.data.DataLoader(
+    #     CaptionDataset(data_folder, data_name, 'VAL', transform=transforms.Compose([normalize])),
+    #     batch_size=batch_size, shuffle=True, num_workers=workers, pin_memory=True)
+
     # for i, contain in enumerate(val_loader):
     #     print(i)
     #     print(contain)
@@ -229,7 +234,7 @@ def validate(val_loader, encoder, decoder, criterion):
     hypotheses = list()  # hypotheses (predictions)
 
     # Batches
-    for i, (imgs, caps, caplens, allcaps) in enumerate(val_loader):
+    for i, (imgs, caps, caplens) in enumerate(val_loader):
 
         # Move to device, if available
         imgs = imgs.to(device)
@@ -275,7 +280,7 @@ def validate(val_loader, encoder, decoder, criterion):
         # references = [[ref1a, ref1b, ref1c], [ref2a, ref2b], ...], hypotheses = [hyp1, hyp2, ...]
 
         # References
-        # allcaps = allcaps[sort_ind]  # because images were sorted in the decoder
+        #  = allcaps[sort_ind]  # because images were sorted in the decoder
         for j in range(allcaps.shape[0]):
             img_caps = allcaps[j].tolist()
             img_captions = list(

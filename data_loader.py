@@ -65,4 +65,9 @@ def get_loader(root, json, vocab, transform, batch_size, shuffle, num_workers):
                                               shuffle=shuffle,
                                               num_workers=num_workers,
                                               collate_fn=collate_fn)
+
+    # val_loader = torch.utils.data.DataLoader(
+    #     CaptionDataset(data_folder, data_name, 'VAL', transform=transforms.Compose([normalize])),
+    #     batch_size=batch_size, shuffle=True, num_workers=workers, pin_memory=True)
+
     return data_loader
