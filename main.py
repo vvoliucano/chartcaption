@@ -107,6 +107,10 @@ def main(args):
                             transform, args.batch_size,
                             shuffle=True, num_workers=args.num_workers)
 
+    for i, contain in enumerate(val_loader):
+        print(i)
+        print(contain)
+
     for epoch in range(args.start_epoch, args.epochs):
         if args.epochs_since_improvement == 20:
             break
