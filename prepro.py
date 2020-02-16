@@ -40,7 +40,7 @@ def build_vocab(json, threshold):
         counter.update(tokens)
 
         if i % 1000 == 0:
-            prin(caption)
+            print(caption)
             print("[%d/%d] Tokenized the captions." %(i, len(ids)))
 
     # If the word frequency is less than 'threshold', then the word is discarded.
