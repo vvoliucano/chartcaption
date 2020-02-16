@@ -11,6 +11,7 @@ from model import EncoderCNN, AttnDecoderRNN
 from data_loader import get_loader
 from nltk.translate.bleu_score import corpus_bleu
 from utils import *
+from prepro import Vocabulary
 
 # Device configuration
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -48,6 +49,7 @@ parser.add_argument('--fine_tune_encoder', type=bool, default='False' , help='fi
 args = parser.parse_args()
 print(args)
 
+# python main.py --
 
 def main(args):
     global best_bleu4, epochs_since_improvement, checkpoint, start_epoch, fine_tune_encoder, data_name, word_map
