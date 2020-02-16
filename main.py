@@ -15,6 +15,7 @@ from prepro import Vocabulary
 
 # Device configuration
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+print(device)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_name', type=str, default='coco_5_cap_per_img_5_min_word_freq')
@@ -197,6 +198,9 @@ def train(train_loader, encoder, decoder, criterion, encoder_optimizer, decoder_
                                                                           batch_time=batch_time,
                                                                           data_time=data_time, loss=losses,
                                                                           top5=top5accs))
+        if i % args.save_step == 0:
+            save_checkpoint(args.data_name, epoch, args.epochs_since_improvement, encoder, decoder, encoder_optimizer, decoder_optimizer,
+                        recent_bleu4, is_best)
 
 def validate(val_loader, encoder, decoder, criterion):
     """
