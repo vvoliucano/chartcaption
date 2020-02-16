@@ -45,6 +45,7 @@ parser.add_argument('--grad_clip', type=float, default=5.)
 parser.add_argument('--alpha_c', type=float, default=1.)
 parser.add_argument('--best_bleu4', type=float, default=0.)
 parser.add_argument('--fine_tune_encoder', type=bool, default='False' , help='fine-tune encoder')
+parser.add_argument('--load_pretrained', type=bool, default='False' , help='fine-tune encoder')
 
 args = parser.parse_args()
 print(args)
@@ -58,7 +59,7 @@ def main(args):
     with open(args.vocab_path, 'rb') as f:
         vocab = pickle.load(f)
 
-    if args.checkpoint is None:
+    if args.load_pretrained or args.checkpoint is None:
         decoder = AttnDecoderRNN(attention_dim=args.attention_dim,
                                  embed_dim=args.embed_dim,
                                  decoder_dim=args.decoder_dim,
