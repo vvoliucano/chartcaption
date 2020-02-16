@@ -28,6 +28,7 @@ parser.add_argument('--caption_path', type=str, default='../data/annotations/cap
 parser.add_argument('--caption_path_val', type=str, default='../data/annotations/captions_val2014.json', help='path for val annotation json file')
 parser.add_argument('--log_step', type=int , default=100, help='step size for prining log info')
 parser.add_argument('--save_step', type=int , default=1000, help='step size for saving trained models')
+parser.add_argument('--checkpoint_path', type=str, default='checkpoint/', help='path for train annotation json file')
 
 # Model parameters
 parser.add_argument('--embed_dim', type=int , default=512, help='dimension of word embedding vectors')
@@ -135,7 +136,7 @@ def main(args):
         else:
             args.epochs_since_improvement = 0
 
-        save_checkpoint(args.data_name, epoch, args.epochs_since_improvement, encoder, decoder, encoder_optimizer, decoder_optimizer,
+        save_checkpoint(args.checkpoint_path, args.data_name, epoch, args.epochs_since_improvement, encoder, decoder, encoder_optimizer, decoder_optimizer,
                         recent_bleu4, is_best)
 
 def train(train_loader, encoder, decoder, criterion, encoder_optimizer, decoder_optimizer, epoch):
@@ -199,7 +200,7 @@ def train(train_loader, encoder, decoder, criterion, encoder_optimizer, decoder_
                                                                           data_time=data_time, loss=losses,
                                                                           top5=top5accs))
         if i % args.save_step == 0:
-            save_checkpoint(args.data_name, epoch, args.epochs_since_improvement, encoder, decoder, encoder_optimizer, decoder_optimizer, "?","?")
+            save_checkpoint(args.checkpoint_path, args.data_name, epoch, args.epochs_since_improvement, encoder, decoder, encoder_optimizer, decoder_optimizer, "?","?")
 
 def validate(val_loader, encoder, decoder, criterion):
     """
