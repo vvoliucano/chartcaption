@@ -89,7 +89,7 @@ def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_i
                                    (val_image_paths, val_image_captions, 'VAL'),
                                    (test_image_paths, test_image_captions, 'TEST')]:
         print(os.path.join(output_folder, split + '_IMAGES_' + base_filename + '.hdf5'))
-
+        print((len(impaths), 3, 256, 256))
         with h5py.File(os.path.join(output_folder, split + '_IMAGES_' + base_filename + '.hdf5'), 'a') as h:
             # Make a note of the number of captions we are sampling per image
             h.attrs['captions_per_image'] = captions_per_image
