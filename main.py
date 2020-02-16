@@ -199,8 +199,7 @@ def train(train_loader, encoder, decoder, criterion, encoder_optimizer, decoder_
                                                                           data_time=data_time, loss=losses,
                                                                           top5=top5accs))
         if i % args.save_step == 0:
-            save_checkpoint(args.data_name, epoch, args.epochs_since_improvement, encoder, decoder, encoder_optimizer, decoder_optimizer,
-                        recent_bleu4, is_best)
+            save_checkpoint(args.data_name, epoch, args.epochs_since_improvement, encoder, decoder, encoder_optimizer, decoder_optimizer, "?",is_best)
 
 def validate(val_loader, encoder, decoder, criterion):
     """
