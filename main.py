@@ -20,7 +20,7 @@ parser.add_argument('--data_name', type=str, default='coco_5_cap_per_img_5_min_w
 parser.add_argument('--model_path', type=str, default='models/' , help='path for saving trained models')
 parser.add_argument('--crop_size', type=int, default=224 , help='size for randomly cropping images')
 parser.add_argument('--vocab_path', type=str, default='../data/vocab.pkl', help='path for vocabulary wrapper')
-parser.add_argument('--image_dir', type=str, default='../data/resized2014', help='directory for resized images')
+parser.add_argument('--image_dir', type=str, default='../data/train2014_resized', help='directory for resized images')
 parser.add_argument('--image_dir_val', type=str, default='../data/val2014_resized', help='directory for validation resized images')
 parser.add_argument('--caption_path', type=str, default='../data/annotations/captions_train2014.json', help='path for train annotation json file')
 parser.add_argument('--caption_path_val', type=str, default='../data/annotations/captions_val2014.json', help='path for val annotation json file')
