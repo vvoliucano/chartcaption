@@ -14,10 +14,12 @@ from utils import create_input_files
 
 if __name__ == '__main__':
     # Create input files (along with word map)
+
     create_input_files(dataset='flickr8k',
-                       karpathy_json_path='/home/can.liu/caption/data/try/template.json',
-                       image_folder='/home/can.liu/caption/data/try/try_image/',
+                       karpathy_json_path='/home/can.liu/caption/data/svg_try/template.json',
+                       image_folder='/home/can.liu/caption/data/svg_try/try_image/',
                        captions_per_image=5,
                        min_word_freq=0,
-                       output_folder='/home/can.liu/caption/data/try/try_output',
-                       max_len=50)
+                       output_folder='/home/can.liu/caption/data/svg_try/try_output',
+                       max_len=50,
+                       image_type = "svg")
