@@ -2,3 +2,4 @@
 .DS_Store
 /checkpoint
 *pth.tar
+/__pycache__
