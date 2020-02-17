@@ -1,2 +1,4 @@
 /tokenizers
 .DS_Store
+/checkpoint
+*pth.tar
