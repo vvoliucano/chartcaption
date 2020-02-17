@@ -35,6 +35,7 @@ class Encoder(nn.Module):
         out = self.resnet(images)  # (batch_size, 2048, image_size/32, image_size/32)
         out = self.adaptive_pool(out)  # (batch_size, 2048, encoded_image_size, encoded_image_size)
         out = out.permute(0, 2, 3, 1)  # (batch_size, encoded_image_size, encoded_image_size, 2048)
+        print("encoder out shape", out.shape)
         return out
 
     def fine_tune(self, fine_tune=True):
