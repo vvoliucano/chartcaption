@@ -168,11 +168,11 @@ def visualize_att(image_path, seq, alphas, rev_word_map, smooth=True):
     for t in range(len(words)):
         if t > 50:
             break
-        prin("hhhhh")
+        print("hhhhh")
         plt.subplot(np.ceil(len(words) / 5.), 5, t + 1)
 
         plt.text(0, 1, '%s' % (words[t]), color='black', backgroundcolor='white', fontsize=12)
-        plt.imshow(image)
+        # plt.imshow(image)
         current_alpha = alphas[t, :]
         if smooth:
             alpha = skimage.transform.pyramid_expand(current_alpha.numpy(), upscale=24, sigma=8)
@@ -184,7 +184,7 @@ def visualize_att(image_path, seq, alphas, rev_word_map, smooth=True):
             plt.imshow(alpha, alpha=0.8)
         plt.set_cmap(cm.Greys_r)
         plt.axis('off')
-    plt.show()
+    plt.savefig("tmp.jpg")
 
 
 if __name__ == '__main__':
