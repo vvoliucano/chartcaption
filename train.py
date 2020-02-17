@@ -9,10 +9,22 @@ from models import Encoder, DecoderWithAttention
 from datasets import *
 from utils import *
 from nltk.translate.bleu_score import corpus_bleu
+import argparse
+
+parser = argparse.ArgumentParser(description='Show, Attend, and Tell - Tutorial - Generate Caption for SVG')
+
+parser.add_argument('--data_folder', type=str, default = "/home/can.liu/caption/data/karpathy_output/", help='folder with data files saved by create_input_files.py')
+parser.add_argument('--data_name', type=str, default = 'coco_5_cap_per_img_5_min_word_freq', help='base name shared by data files')
+parser.add_argument('--beam_size', '-b', default=5, type=int, help='beam size for beam search')
+parser.add_argument('--dont_smooth', dest='smooth', action='store_false', help='do not smooth alpha overlay')
+
+args = parser.parse_args()
+
+# python train.py --data_folder /Users/tsunmac/vis/projects/autocaption/data/karpathy_output
 
 # Data parameters
-data_folder = '/home/can.liu/caption/data/karpathy_output/'  # folder with data files saved by create_input_files.py
-data_name = 'coco_5_cap_per_img_5_min_word_freq'  # base name shared by data files
+data_folder = args.data_folder # '/home/can.liu/caption/data/karpathy_output/'  # folder with data files saved by create_input_files.py
+data_name = args.data_name #'coco_5_cap_per_img_5_min_word_freq'  # base name shared by data files
 
 # Model parameters
 emb_dim = 512  # dimension of word embeddings
@@ -52,6 +64,9 @@ def main():
 
     # Initialize / load checkpoint
     if checkpoint is None:
+        print("attention dim", attention_dim)
+        print("emb_dim", emb_dim)
+        print("decoder_dim", decoder_dim)
         decoder = DecoderWithAttention(attention_dim=attention_dim,
                                        embed_dim=emb_dim,
                                        decoder_dim=decoder_dim,

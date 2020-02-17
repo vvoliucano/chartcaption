@@ -8,10 +8,15 @@ from skimage.transform import resize as imresize
 from tqdm import tqdm
 from collections import Counter
 from random import seed, choice, sample
+# fr import svg_read
 
+def svg_read(filename):
+    # a = []
+    img = np.random.random_sample((20, 10))
+    return img
 
 def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_image, min_word_freq, output_folder,
-                       max_len=100):
+                       max_len=100, image_type = "pixel"):
     """
     Creates input files for training, validation, and test data.
 
@@ -23,6 +28,7 @@ def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_i
     :param output_folder: folder to save files
     :param max_len: don't sample captions longer than this length
     """
+    print("min_freq", min_word_freq)
 
     assert dataset in {'coco', 'flickr8k', 'flickr30k'}
 
@@ -50,6 +56,8 @@ def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_i
         if len(captions) == 0:
             continue
 
+        # print(word_freq)
+
         path = os.path.join(image_folder, img['filepath'], img['filename']) if dataset == 'coco' else os.path.join(
             image_folder, img['filename'])
 
@@ -74,6 +82,7 @@ def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_i
     word_map['<unk>'] = len(word_map) + 1
     word_map['<start>'] = len(word_map) + 1
     word_map['<end>'] = len(word_map) + 1
+    # word_map['<#1>'] = len(word_map) + 1
     word_map['<pad>'] = 0
 
     # Create a base/root name for all output files
@@ -95,7 +104,10 @@ def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_i
             h.attrs['captions_per_image'] = captions_per_image
 
             # Create dataset inside HDF5 file to store images
-            images = h.create_dataset('images', (len(impaths), 3, 256, 256), dtype='uint8')
+            if image_type == "pixel":
+                images = h.create_dataset('images', (len(impaths), 3, 256, 256), dtype='uint8')
+            else:
+                images = h.create_dataset('images', (len(impaths), 20, 10), dtype='float32')
 
             print("\nReading %s images and captions, storing to file...\n" % split)
 
@@ -114,17 +126,21 @@ def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_i
                 assert len(captions) == captions_per_image
 
                 # Read images
-                img = imread(impaths[i])
-                if len(img.shape) == 2:
-                    img = img[:, :, np.newaxis]
-                    img = np.concatenate([img, img, img], axis=2)
-                img = imresize(img, (256, 256))
-                img = img.transpose(2, 0, 1)
-                assert img.shape == (3, 256, 256)
-                assert np.max(img) <= 255
+                if image_type == "pixel":
+                    img = imread(impaths[i])
+                    if len(img.shape) == 2:
+                        img = img[:, :, np.newaxis]
+                        img = np.concatenate([img, img, img], axis=2)
+                    img = imresize(img, (256, 256))
+                    img = img.transpose(2, 0, 1)
+                    assert img.shape == (3, 256, 256)
+                    assert np.max(img) <= 255
+                else:
+                    img = svg_read(impaths[i])
 
                 # Save image to HDF5 file
                 images[i] = img
+                print(img)
 
                 for j, c in enumerate(captions):
                     # Encode captions
