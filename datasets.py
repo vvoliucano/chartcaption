@@ -37,13 +37,22 @@ class CaptionDataset(Dataset):
 
         # PyTorch transformation pipeline for the image (normalizing, etc.)
         self.transform = transform
+        if transform == "svg":
+            self.transform = None
+            self.image_type = "svg"
+        else:
+            self.image_type = "pixel"
 
         # Total number of datapoints
         self.dataset_size = len(self.captions)
 
     def __getitem__(self, i):
         # Remember, the Nth caption corresponds to the (N // captions_per_image)th image
-        img = torch.FloatTensor(self.imgs[i // self.cpi] / 255.)
+        if self.image_type == "svg":
+            img = torch.FloatTensor(self.imgs[i // self.cpi])
+        else:
+            img = torch.FloatTensor(self.imgs[i // self.cpi] / 255.)
+            
         if self.transform is not None:
             img = self.transform(img)
 

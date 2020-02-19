@@ -111,11 +111,17 @@ def main():
     # Custom dataloaders
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                      std=[0.229, 0.224, 0.225])
+
+    if args.image_type == "svg":
+        my_transform = "svg"
+    else:
+        my_transform = transforms.Compose([normalize])
+
     train_loader = torch.utils.data.DataLoader(
-        CaptionDataset(data_folder, data_name, 'TRAIN', transform=transforms.Compose([normalize])),
+        CaptionDataset(data_folder, data_name, 'TRAIN', transform = my_transform),
         batch_size=batch_size, shuffle=True, num_workers=workers, pin_memory=True)
     val_loader = torch.utils.data.DataLoader(
-        CaptionDataset(data_folder, data_name, 'VAL', transform=transforms.Compose([normalize])),
+        CaptionDataset(data_folder, data_name, 'VAL', transform = my_transform),
         batch_size=batch_size, shuffle=True, num_workers=workers, pin_memory=True)
 
     # Epochs
