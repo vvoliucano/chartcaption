@@ -17,6 +17,9 @@ parser.add_argument('--data_folder', type=str, default = "/home/can.liu/caption/
 parser.add_argument('--data_name', type=str, default = 'coco_5_cap_per_img_5_min_word_freq', help='base name shared by data files')
 parser.add_argument('--beam_size', '-b', default=5, type=int, help='beam size for beam search')
 parser.add_argument('--dont_smooth', dest='smooth', action='store_false', help='do not smooth alpha overlay')
+parser.add_argument('--image_type', type=str, default = 'pixel', help='image type as input')
+
+
 
 args = parser.parse_args()
 
@@ -74,8 +77,13 @@ def main():
                                        dropout=dropout)
         decoder_optimizer = torch.optim.Adam(params=filter(lambda p: p.requires_grad, decoder.parameters()),
                                              lr=decoder_lr)
-        encoder = Encoder()
-        encoder.fine_tune(fine_tune_encoder)
+
+        if image_type == "svg":
+            encoder = SvgEncoder()
+        else:
+            encoder = Encoder()
+            encoder.fine_tune(fine_tune_encoder)
+            
         encoder_optimizer = torch.optim.Adam(params=filter(lambda p: p.requires_grad, encoder.parameters()),
                                              lr=encoder_lr) if fine_tune_encoder else None
 
