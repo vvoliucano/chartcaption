@@ -219,12 +219,11 @@ class DecoderWithAttention(nn.Module):
 
         return predictions, encoded_captions, decode_lengths, alphas, sort_ind
 
-class SvgEncoder(nn.Module, bias = False):
+class SvgEncoder(nn.Module):
     """
     Encoder.
     """
-
-    def __init__(self, embed_size=14):
+    def __init__(self, embed_size=14, bias = False):
         super(SvgEncoder, self).__init__()
 
         # 这是一个简单的尝试
