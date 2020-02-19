@@ -58,6 +58,7 @@ def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=
     image = image.unsqueeze(0)  # (1, 3, 256, 256)
     encoder_out = encoder(image)  # (1, enc_image_size, enc_image_size, encoder_dim)
     enc_image_size = encoder_out.size(1)
+    print("encoder_out.shape", encoder_out.shape)
     encoder_dim = encoder_out.size(3)
 
     # Flatten encoding
