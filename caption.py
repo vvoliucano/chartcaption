@@ -59,7 +59,7 @@ def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=
     encoder_out = encoder(image)  # (1, enc_image_size, enc_image_size, encoder_dim)
     enc_image_size = encoder_out.size(1)
     print("encoder_out.shape", encoder_out.shape)
-    encoder_dim = encoder_out.size(3)
+    encoder_dim = encoder_out.size(-1)
 
     # Flatten encoding
     encoder_out = encoder_out.view(1, -1, encoder_dim)  # (1, num_pixels, encoder_dim)
@@ -231,6 +231,7 @@ if __name__ == '__main__':
     # Encode, decode with attention and beam search
     seq, alphas = caption_image_beam_search(encoder, decoder, args.img, word_map, args.beam_size, args.image_type)
     alphas = torch.FloatTensor(alphas)
+    print(seq)
 
     # Visualize caption and attention of best sequence
     visualize_att(args.img, seq, alphas, rev_word_map, args.smooth)
