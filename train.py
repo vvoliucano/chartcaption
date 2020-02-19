@@ -78,12 +78,12 @@ def main():
         decoder_optimizer = torch.optim.Adam(params=filter(lambda p: p.requires_grad, decoder.parameters()),
                                              lr=decoder_lr)
 
-        if image_type == "svg":
+        if args.image_type == "svg":
             encoder = SvgEncoder()
         else:
             encoder = Encoder()
             encoder.fine_tune(fine_tune_encoder)
-            
+
         encoder_optimizer = torch.optim.Adam(params=filter(lambda p: p.requires_grad, encoder.parameters()),
                                              lr=encoder_lr) if fine_tune_encoder else None
 
