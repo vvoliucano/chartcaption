@@ -219,7 +219,7 @@ class DecoderWithAttention(nn.Module):
 
         return predictions, encoded_captions, decode_lengths, alphas, sort_ind
 
-class SvgEncoder(nn.Module):
+class SvgEncoder(nn.Module, bias = False):
     """
     Encoder.
     """
@@ -237,7 +237,7 @@ class SvgEncoder(nn.Module):
                 nn.Conv1d(256, 2048, kernel_size=7, padding=0, bias=use_bias),
                 nn.Tanh()
                 ]
-                
+
         self.model = nn.Sequential(*modules)
 
 
