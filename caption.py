@@ -13,8 +13,27 @@ from PIL import Image
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+def get_pixel_image_from_file(image_path):
+    # Read image and process
+    img = imread(image_path)
+    if len(img.shape) == 2:
+        img = img[:, :, np.newaxis]
+        img = np.concatenate([img, img, img], axis=2)
+    img = imresize(img, (256, 256))
+    img = img.transpose(2, 0, 1)
+    img = img / 255.
+    img = torch.FloatTensor(img).to(device)
+    normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                     std=[0.229, 0.224, 0.225])
+    transform = transforms.Compose([normalize])
+    image = transform(img)  # (3, 256, 256)
+    return image
 
-def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=3):
+def get_svg_image_from_file(image_path):
+    img = np.random.random_sample((20, 10))
+    return img
+
+def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=3, image_type):
     """
     Reads an image and captions it with beam search.
 
@@ -29,19 +48,10 @@ def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=
     k = beam_size
     vocab_size = len(word_map)
 
-    # Read image and process
-    img = imread(image_path)
-    if len(img.shape) == 2:
-        img = img[:, :, np.newaxis]
-        img = np.concatenate([img, img, img], axis=2)
-    img = imresize(img, (256, 256))
-    img = img.transpose(2, 0, 1)
-    img = img / 255.
-    img = torch.FloatTensor(img).to(device)
-    normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                     std=[0.229, 0.224, 0.225])
-    transform = transforms.Compose([normalize])
-    image = transform(img)  # (3, 256, 256)
+    if image_type == "pixel":   
+        image = get_pixel_image_from_file(image_path)
+    else:
+        image = get_svg_image_from_file(image_path)
 
     # Encode
     image = image.unsqueeze(0)  # (1, 3, 256, 256)
@@ -195,6 +205,7 @@ if __name__ == '__main__':
     parser.add_argument('--word_map', '-wm', help='path to word map JSON')
     parser.add_argument('--beam_size', '-b', default=5, type=int, help='beam size for beam search')
     parser.add_argument('--dont_smooth', dest='smooth', action='store_false', help='do not smooth alpha overlay')
+    parser.add_argument('--image_type', type=str, default = 'pixel', help='image type as input')
 
 
 # python caption.py --img /home/can.liu/caption/data/coco_2014/val2014/COCO_val2014_000000204853.jpg --model /home/can.liu/caption/chartcaption/BEST_checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar --word_map /home/can.liu/caption/data/karpathy_output/WORDMAP_coco_5_cap_per_img_5_min_word_freq.json
@@ -216,7 +227,7 @@ if __name__ == '__main__':
     rev_word_map = {v: k for k, v in word_map.items()}  # ix2word
 
     # Encode, decode with attention and beam search
-    seq, alphas = caption_image_beam_search(encoder, decoder, args.img, word_map, args.beam_size)
+    seq, alphas = caption_image_beam_search(encoder, decoder, args.img, word_map, args.beam_size, args.image_type)
     alphas = torch.FloatTensor(alphas)
 
     # Visualize caption and attention of best sequence
