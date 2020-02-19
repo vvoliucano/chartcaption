@@ -230,7 +230,7 @@ class SvgEncoder(nn.Module):
 
         modules = [nn.ReflectionPad1d(3),
                 nn.Conv1d(20, 256, kernel_size=7, padding=0, bias=use_bias),
-                nn.BatchNorm1d(ngf),
+                nn.BatchNorm1d(256),
                 nn.ReLU(True),
                 nn.ReflectionPad1d(3),
                 nn.Conv1d(256, 2048, kernel_size=7, padding=0, bias=use_bias),
