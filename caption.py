@@ -33,7 +33,7 @@ def get_svg_image_from_file(image_path):
     img = np.random.random_sample((20, 10))
     return img
 
-def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=3, image_type):
+def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=3, image_type="pixel"):
     """
     Reads an image and captions it with beam search.
 
