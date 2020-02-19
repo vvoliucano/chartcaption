@@ -233,6 +233,7 @@ def visualize_att_svg(image_path, seq, alphas, rev_word_map, smooth=True):
         plt.text(0, 1, '%s' % (words[t]), color='black', backgroundcolor='white', fontsize=12)
         # plt.imshow(image)
         current_alpha = alphas[t, :]
+        current_alpha.view(current_alpha.shape[0], 1)
         print(current_alpha.shape)
         alpha = skimage.transform.pyramid_expand(current_alpha.numpy(), upscale=24, sigma=8)
         if t == 0:
