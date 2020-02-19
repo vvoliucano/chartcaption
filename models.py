@@ -223,7 +223,7 @@ class SvgEncoder(nn.Module):
     """
     Encoder.
     """
-    def __init__(self, embed_size=14, bias = False):
+    def __init__(self, embed_size=14, use_bias = False):
         super(SvgEncoder, self).__init__()
 
         # 这是一个简单的尝试
