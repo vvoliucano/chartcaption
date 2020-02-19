@@ -78,7 +78,10 @@ def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=
     top_k_scores = torch.zeros(k, 1).to(device)  # (k, 1)
 
     # Tensor to store top k sequences' alphas; now they're just 1s
-    seqs_alpha = torch.ones(k, 1, enc_image_size, enc_image_size).to(device)  # (k, 1, enc_image_size, enc_image_size)
+    if image_type == "pixel":
+        seqs_alpha = torch.ones(k, 1, enc_image_size, enc_image_size).to(device)  # (k, 1, enc_image_size, enc_image_size)
+    else:
+        seqs_alpha = torch.ones(k, 1, enc_image_size).to(device)  # (k, 1, enc_image_size, enc_image_size)
 
     # Lists to store completed sequences, their alphas and scores
     complete_seqs = list()
@@ -102,7 +105,7 @@ def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=
             alpha = alpha.view(-1, enc_image_size)
 
         print("alpha.shape", alpha.shape)
-        
+
         gate = decoder.sigmoid(decoder.f_beta(h))  # gating scalar, (s, encoder_dim)
         awe = gate * awe
 
@@ -127,6 +130,7 @@ def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=
 
         # Add new words to sequences, alphas
         seqs = torch.cat([seqs[prev_word_inds], next_word_inds.unsqueeze(1)], dim=1)  # (s, step+1)
+      
         seqs_alpha = torch.cat([seqs_alpha[prev_word_inds], alpha[prev_word_inds].unsqueeze(1)],
                                dim=1)  # (s, step+1, enc_image_size, enc_image_size)
 
