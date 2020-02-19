@@ -31,6 +31,7 @@ def get_pixel_image_from_file(image_path):
 
 def get_svg_image_from_file(image_path):
     img = np.random.random_sample((20, 10))
+    img = torch.FloatTensor(img).to(device)
     return img
 
 def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=3, image_type="pixel"):
