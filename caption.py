@@ -96,8 +96,13 @@ def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=
 
         awe, alpha = decoder.attention(encoder_out, h)  # (s, encoder_dim), (s, num_pixels)
 
-        alpha = alpha.view(-1, enc_image_size, enc_image_size)  # (s, enc_image_size, enc_image_size)
+        if image_type == "pixel":
+            alpha = alpha.view(-1, enc_image_size, enc_image_size)  # (s, enc_image_size, enc_image_size)
+        else:
+            alpha = alpha.view(-1, enc_image_size)
 
+        print("alpha.shape", alpha.shape)
+        
         gate = decoder.sigmoid(decoder.f_beta(h))  # gating scalar, (s, encoder_dim)
         awe = gate * awe
 
