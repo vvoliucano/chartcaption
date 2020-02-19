@@ -218,7 +218,7 @@ def visualize_att_svg(image_path, seq, alphas, rev_word_map, smooth=True):
     :param alphas: weights
     :param rev_word_map: reverse word mapping, i.e. ix2word
     :param smooth: smooth weights?
-    # """
+    """
     # image = Image.open(image_path)
     # image = image.resize([14 * 24, 14 * 24], Image.LANCZOS)
 
@@ -283,7 +283,7 @@ if __name__ == '__main__':
     print(words)
 
     # Visualize caption and attention of best sequence
-    if image_type == "pixel":
+    if args.image_type == "pixel":
         visualize_att(args.img, seq, alphas, rev_word_map, args.smooth)
     else:
         visualize_att_svg(args.img, seq, alphas, rev_word_map, args.smooth)
