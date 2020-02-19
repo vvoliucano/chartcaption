@@ -207,6 +207,44 @@ def visualize_att(image_path, seq, alphas, rev_word_map, smooth=True):
         plt.axis('off')
     plt.savefig("tmp.jpg")
 
+def visualize_att_svg(image_path, seq, alphas, rev_word_map, smooth=True):
+    """
+    Visualizes caption with weights at every word.
+
+    Adapted from paper authors' repo: https://github.com/kelvinxu/arctic-captions/blob/master/alpha_visualization.ipynb
+
+    :param image_path: path to image that has been captioned
+    :param seq: caption
+    :param alphas: weights
+    :param rev_word_map: reverse word mapping, i.e. ix2word
+    :param smooth: smooth weights?
+    # """
+    # image = Image.open(image_path)
+    # image = image.resize([14 * 24, 14 * 24], Image.LANCZOS)
+
+    words = [rev_word_map[ind] for ind in seq]
+
+    for t in range(len(words)):
+        if t > 50:
+            break
+        print("hhhhh")
+        plt.subplot(np.ceil(len(words) / 5.), 5, t + 1)
+
+        plt.text(0, 1, '%s' % (words[t]), color='black', backgroundcolor='white', fontsize=12)
+        # plt.imshow(image)
+        current_alpha = alphas[t, :]
+        print(current_alpha.shape)
+        alpha = skimage.transform.pyramid_expand(current_alpha.numpy(), upscale=24, sigma=8)
+        if t == 0:
+            plt.imshow(alpha, alpha=0)
+        else:
+            plt.imshow(alpha, alpha=0.8)
+        plt.set_cmap(cm.Greys_r)
+        plt.axis('off')
+    plt.savefig("tmp.jpg")
+
+
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Show, Attend, and Tell - Tutorial - Generate Caption')
@@ -245,4 +283,7 @@ if __name__ == '__main__':
     print(words)
 
     # Visualize caption and attention of best sequence
-    visualize_att(args.img, seq, alphas, rev_word_map, args.smooth)
+    if image_type == "pixel":
+        visualize_att(args.img, seq, alphas, rev_word_map, args.smooth)
+    else:
+        visualize_att_svg(args.img, seq, alphas, rev_word_map, args.smooth)
