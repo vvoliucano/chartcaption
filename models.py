@@ -259,8 +259,10 @@ class SvgEncoder(nn.Module):
         :param images: images, a tensor of dimensions (batch_size, 3, image_size, image_size)
         :return: encoded images
         """
-        out = self.model(images)  # (batch_size, 2048, image_size/32, image_size/32)
 
+        print("images.shape", images.shape)
+        out = self.model(images)  # (batch_size, 2048, image_size/32, image_size/32)
+        print("out shape", out.shape)
         # out = self.adaptive_pool(out)  # (batch_size, 2048, encoded_image_size, encoded_image_size)
         out = out.permute(0, 2, 1)  # (batch_size, encoded_image_size, encoded_image_size, 2048)
         print("encoder out shape", out.shape)

@@ -30,7 +30,7 @@ def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_i
     """
     print("min_freq", min_word_freq)
 
-    assert dataset in {'coco', 'flickr8k', 'flickr30k'}
+    assert dataset in {'coco', 'flickr8k', 'flickr30k', "chart"}
 
     # Read Karpathy JSON
     with open(karpathy_json_path, 'r') as j:
@@ -86,7 +86,7 @@ def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_i
     word_map['<pad>'] = 0
 
     # Create a base/root name for all output files
-    base_filename = dataset + '_' + str(captions_per_image) + '_cap_per_img_' + str(min_word_freq) + '_min_word_freq'
+    base_filename = dataset + '_' + str(captions_per_image) + '_cap_' + str(min_word_freq) + '_min_wf'
 
     # Save word map to a JSON
     with open(os.path.join(output_folder, 'WORDMAP_' + base_filename + '.json'), 'w') as j:
