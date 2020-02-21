@@ -828,7 +828,7 @@ def getDataPointList(data):
 def parse_svg_string(svg_string, min_element_num = 7, simple = False):
     if (simple):
         important_rects, data, soup = parse_unknown_svg_visual_elements(svg_string)
-        print(important_rects)
+        # print(important_rects)
     else:
         important_rects, data, soup = parse_unknown_svg(svg_string)
     if 'vis_type' in data and data['vis_type']=="load_scatter_line_plot":

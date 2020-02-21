@@ -4,7 +4,7 @@ import gen_svg
 import os
 import shutil
 
-sen_count = 1000
+sen_count = 100000
 svg_out_dir = "svg"
 
 # color_set = ["red", "orange", "yellow", "green", "blue", "cyan", "purple"]
