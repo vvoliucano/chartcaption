@@ -3,7 +3,7 @@ import bs4
 # import os
 import numpy
 import re
-from svgpathtools import parse_path, Line, disvg
+# from svgpathtools import parse_path, Line, disvg
 import copy
 # def get_attr_by_style(element):
     #
@@ -192,23 +192,23 @@ def get_important_rects(rects, dim, array):
     return important_rects, other_rects
 
 def parse_a_path(path):
-    pathObj = parse_path(path["d"])
-    for parent in path.parents:
-        if parent.name == "svg":
-            break
-        if parent.name == "g":
-            add_x, add_y = parse_transform(parent)
-    path_attr = {
-        "origin": path,
-        "pathObj": pathObj,
-        "sx": pathObj[0].start.real,
-        "sy": pathObj[0].start.imag,
-        "ex": pathObj[-1].end.real,
-        "ey": pathObj[-1].end.imag,
-        "rx": add_x,
-        "ry": add_y,
-        "color": get_attr(path, "stroke", "#000"),
-    }
+    # pathObj = parse_path(path["d"])
+    # for parent in path.parents:
+    #     if parent.name == "svg":
+    #         break
+    #     if parent.name == "g":
+    #         add_x, add_y = parse_transform(parent)
+    # path_attr = {
+    #     "origin": path,
+    #     "pathObj": pathObj,
+    #     "sx": pathObj[0].start.real,
+    #     "sy": pathObj[0].start.imag,
+    #     "ex": pathObj[-1].end.real,
+    #     "ey": pathObj[-1].end.imag,
+    #     "rx": add_x,
+    #     "ry": add_y,
+    #     "color": get_attr(path, "stroke", "#000"),
+    # }
     # print("DEBUG", path_attr)
     return path_attr
 
