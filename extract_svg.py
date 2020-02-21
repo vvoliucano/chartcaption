@@ -554,6 +554,7 @@ def uniform_important_elements(important_rects):
     total_width = right_most - left_most
     total_height = bottom_most - top_most
     max_value = max([rect["value"] for rect in important_rects])
+    print(max_value)
     uniform_elements = []
     for rect in important_rects:
         rect["left"] = (rect["left"] - left_most) / total_width
@@ -562,7 +563,8 @@ def uniform_important_elements(important_rects):
         rect["down"] = (rect["down"] - top_most) / total_height
         rect["width"] = rect["width"] / total_width
         rect["height"] = rect["height"] / total_height
-        rect["value"] = rect["value"] / max_value
+        if "value" in rect and max_value != 0:
+            rect["value"] = rect["value"] / max_value
         uniform_elements.append(rect)
     return uniform_elements
 
@@ -624,6 +626,17 @@ def get_text_information(X_axis, Y_axis, legend, texts_attr):
     text_collection['element'] = []
 
     return text_collection
+
+def parse_unknown_svg_visual_elements(svg_string, need_data_soup = False):
+    soup = bs4.BeautifulSoup(svg_string, "html5lib")
+    svg = soup.select("svg")
+    rects = soup.select("rect")
+    rects_attr = [parse_a_rect(rect) for rect in rects]
+    # print(rect_attr)
+    important_rects = uniform_important_elements(rects_attr)
+    data = {}
+
+    return important_rects, data, soup
 
 def parse_unknown_svg(svg_string, need_data_soup = False):
     soup = bs4.BeautifulSoup(svg_string, "html5lib")
@@ -759,6 +772,7 @@ def parse_unknown_svg(svg_string, need_data_soup = False):
 
     def get_order_value(item):
         return item["major"] * 100 + item["second"]
+
     important_rects = sorted(important_rects, key = get_order_value)
     # print("important_rects", important_rects)
     data = pack_data(important_rects, main_dimension_list, second_dimension_list)
@@ -811,8 +825,12 @@ def getDataPointList(data):
     list = type + position + color + opacity + quantity + cate0_array + cate1_array + ordi0_array
     return list
 
-def parse_svg_string(svg_string, min_element_num = 7):
-    important_rects, data, soup = parse_unknown_svg(svg_string)
+def parse_svg_string(svg_string, min_element_num = 7, simple = False):
+    if (simple):
+        important_rects, data, soup = parse_unknown_svg_visual_elements(svg_string)
+        print(important_rects)
+    else:
+        important_rects, data, soup = parse_unknown_svg(svg_string)
     if 'vis_type' in data and data['vis_type']=="load_scatter_line_plot":
         elements = [getDataPointList(dp) for dp in important_rects]
         id_array = [i for i in range(len(important_rects))]
@@ -831,7 +849,12 @@ def parse_svg_string(svg_string, min_element_num = 7):
         # print("I want to see the important rects")
         # print("element number", len(elements[0]))
         # print(important_rects)
-        id_array = [rect['id'] for rect in important_rects]
+        # for i, rect in enumerate(important_rects):
+        #     rect["id"] = i
+        if (simple):
+            id_array = [i for i in range(len(important_rects))]
+        else:
+            id_array = [rect['id'] for rect in important_rects]
         # print(id_array)
         if sum(id_array) == - len(id_array):
             id_array = [i for i in range(len(id_array))]

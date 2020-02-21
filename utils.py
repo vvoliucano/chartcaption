@@ -20,7 +20,7 @@ def svg_read(filename):
     f = open(filename)
     svg_string = f.read()
     # print(svg_string)
-    a_numpy, id_array = parse_svg_string(svg_string, min_element_num=svg_number)
+    a_numpy, id_array = parse_svg_string(svg_string, min_element_num=svg_number, simple = True)
     img = np.transpose(a_numpy)
     img = img - 0.5
     # print("img size", img.shape)
