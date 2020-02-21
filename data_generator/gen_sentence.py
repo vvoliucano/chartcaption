@@ -7,7 +7,8 @@ import shutil
 sen_count = 1000
 svg_out_dir = "svg"
 
-color_set = ["red", "orange", "yellow", "green", "blue", "cyan", "purple"]
+# color_set = ["red", "orange", "yellow", "green", "blue", "cyan", "purple"]
+color_set = ["#FF0000", "#FFA500", "#FFFF00", "#008000", "#0000FF", "#00FFFF", "#800080"]
 max_bar_count = 10
 max_bar_height = 400
 canvas_width = 500
