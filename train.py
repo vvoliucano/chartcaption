@@ -9,8 +9,8 @@ from models import Encoder, DecoderWithAttention, SvgEncoder
 from datasets import *
 from utils import *
 from nltk.translate.bleu_score import corpus_bleu
-import argparse
 import os
+import argparse
 
 parser = argparse.ArgumentParser(description='Show, Attend, and Tell - Tutorial - Generate Caption for SVG')
 
