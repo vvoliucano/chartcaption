@@ -10,6 +10,7 @@ from datasets import *
 from utils import *
 from nltk.translate.bleu_score import corpus_bleu
 import argparse
+import os
 
 parser = argparse.ArgumentParser(description='Show, Attend, and Tell - Tutorial - Generate Caption for SVG')
 
@@ -18,10 +19,14 @@ parser.add_argument('--data_name', type=str, default = 'coco_5_cap_per_img_5_min
 parser.add_argument('--beam_size', '-b', default=5, type=int, help='beam size for beam search')
 parser.add_argument('--dont_smooth', dest='smooth', action='store_false', help='do not smooth alpha overlay')
 parser.add_argument('--image_type', type=str, default = 'pixel', help='image type as input')
+parser.add_argument('--svg_channel', type=int, default = 75)
+parser.add_argument('--svg_element_number', type = int, default = 40)
 
 
 
 args = parser.parse_args()
+
+os.system(f"mkdir -p checkpoint/{args.data_name}")
 
 # python train.py --data_folder /Users/tsunmac/vis/projects/autocaption/data/karpathy_output
 
@@ -67,9 +72,9 @@ def main():
 
     # Initialize / load checkpoint
     if checkpoint is None:
-        print("attention dim", attention_dim)
-        print("emb_dim", emb_dim)
-        print("decoder_dim", decoder_dim)
+        # print("attention dim", attention_dim)
+        # print("emb_dim", emb_dim)
+        # print("decoder_dim", decoder_dim)
         decoder = DecoderWithAttention(attention_dim=attention_dim,
                                        embed_dim=emb_dim,
                                        decoder_dim=decoder_dim,
@@ -79,7 +84,7 @@ def main():
                                              lr=decoder_lr)
 
         if args.image_type == "svg":
-            encoder = SvgEncoder()
+            encoder = SvgEncoder(svg_channel = args.svg_channel, svg_element_number = args.svg_element_number)
         else:
             encoder = Encoder()
             encoder.fine_tune(fine_tune_encoder)
@@ -102,6 +107,8 @@ def main():
                                                  lr=encoder_lr)
 
     # Move to GPU, if available
+
+    print("device: ", device)
     decoder = decoder.to(device)
     encoder = encoder.to(device)
 
@@ -128,8 +135,8 @@ def main():
     for epoch in range(start_epoch, epochs):
 
         # Decay learning rate if there is no improvement for 8 consecutive epochs, and terminate training after 20
-        if epochs_since_improvement == 20:
-            break
+        # if epochs_since_improvement == 20:
+        #     break
         if epochs_since_improvement > 0 and epochs_since_improvement % 8 == 0:
             adjust_learning_rate(decoder_optimizer, 0.8)
             if fine_tune_encoder:
@@ -205,8 +212,12 @@ def train(train_loader, encoder, decoder, criterion, encoder_optimizer, decoder_
 
         # Remove timesteps that we didn't decode at, or are pads
         # pack_padded_sequence is an easy trick to do this
-        scores, _ = pack_padded_sequence(scores, decode_lengths, batch_first=True)
-        targets, _ = pack_padded_sequence(targets, decode_lengths, batch_first=True)
+        scores = pack_padded_sequence(scores, decode_lengths, batch_first=True).data
+        targets = pack_padded_sequence(targets, decode_lengths, batch_first=True).data
+        # scores = pack_padded_sequence(scores, decode_lengths, batch_
+
+        # print("scores", scores)
+        # print("targets", targets)
 
         # Calculate loss
         loss = criterion(scores, targets)
@@ -296,8 +307,8 @@ def validate(val_loader, encoder, decoder, criterion):
             # Remove timesteps that we didn't decode at, or are pads
             # pack_padded_sequence is an easy trick to do this
             scores_copy = scores.clone()
-            scores, _ = pack_padded_sequence(scores, decode_lengths, batch_first=True)
-            targets, _ = pack_padded_sequence(targets, decode_lengths, batch_first=True)
+            scores = pack_padded_sequence(scores, decode_lengths, batch_first=True).data
+            targets = pack_padded_sequence(targets, decode_lengths, batch_first=True).data
 
             # Calculate loss
             loss = criterion(scores, targets)

@@ -35,7 +35,7 @@ class Encoder(nn.Module):
         out = self.resnet(images)  # (batch_size, 2048, image_size/32, image_size/32)
         out = self.adaptive_pool(out)  # (batch_size, 2048, encoded_image_size, encoded_image_size)
         out = out.permute(0, 2, 3, 1)  # (batch_size, encoded_image_size, encoded_image_size, 2048)
-        print("encoder out shape", out.shape)
+        # print("encoder out shape", out.shape)
         return out
 
     def fine_tune(self, fine_tune=True):
@@ -93,7 +93,6 @@ class DecoderWithAttention(nn.Module):
     """
     Decoder.
     """
-
     def __init__(self, attention_dim, embed_dim, decoder_dim, vocab_size, encoder_dim=2048, dropout=0.5):
         """
         :param attention_dim: size of attention network
@@ -176,7 +175,7 @@ class DecoderWithAttention(nn.Module):
         vocab_size = self.vocab_size
 
         # Flatten image
-        print("encoder_dim", encoder_dim)
+        # print("encoder_dim", encoder_dim)
         encoder_out = encoder_out.view(batch_size, -1, encoder_dim)  # (batch_size, num_pixels, encoder_dim)
         num_pixels = encoder_out.size(1)
 
@@ -196,8 +195,8 @@ class DecoderWithAttention(nn.Module):
         decode_lengths = (caption_lengths - 1).tolist()
 
         # Create tensors to hold word predicion scores and alphas
-        print("max(decode_lengths)", max(decode_lengths))
-        print("vocab_size", vocab_size)
+        # print("max(decode_lengths)", max(decode_lengths))
+        # print("vocab_size", vocab_size)
         predictions = torch.zeros(batch_size, max(decode_lengths), vocab_size).to(device)
         alphas = torch.zeros(batch_size, max(decode_lengths), num_pixels).to(device)
 
@@ -223,13 +222,13 @@ class SvgEncoder(nn.Module):
     """
     Encoder.
     """
-    def __init__(self, embed_size=14, use_bias = False):
+    def __init__(self, svg_channel=20, svg_element_number = 10, use_bias=False):
         super(SvgEncoder, self).__init__()
 
         # 这是一个简单的尝试
 
         modules = [nn.ReflectionPad1d(3),
-                nn.Conv1d(20, 256, kernel_size=7, padding=0, bias=use_bias),
+                nn.Conv1d(svg_channel, 256, kernel_size=7, padding=0, bias=use_bias),
                 nn.BatchNorm1d(256),
                 nn.ReLU(True),
                 nn.ReflectionPad1d(3),
@@ -259,11 +258,13 @@ class SvgEncoder(nn.Module):
         :param images: images, a tensor of dimensions (batch_size, 3, image_size, image_size)
         :return: encoded images
         """
-        out = self.model(images)  # (batch_size, 2048, image_size/32, image_size/32)
 
+        # print("images.shape", images.shape)
+        out = self.model(images)  # (batch_size, 2048, image_size/32, image_size/32)
+        # print("out shape", out.shape)
         # out = self.adaptive_pool(out)  # (batch_size, 2048, encoded_image_size, encoded_image_size)
         out = out.permute(0, 2, 1)  # (batch_size, encoded_image_size, encoded_image_size, 2048)
-        print("encoder out shape", out.shape)
+        # print("encoder out shape", out.shape)
         return out
 
     def fine_tune(self, fine_tune=True):
