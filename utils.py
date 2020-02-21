@@ -8,12 +8,29 @@ from skimage.transform import resize as imresize
 from tqdm import tqdm
 from collections import Counter
 from random import seed, choice, sample
+from extract_svg import parse_svg_string
 # fr import svg_read
+
+svg_channel = 75
+svg_number = 40
 
 def svg_read(filename):
     # a = []
-    img = np.random.random_sample((20, 10))
+    # img = np.random.random_sample((20, 10))
+    f = open(filename)
+    svg_string = f.read()
+    # print(svg_string)
+    a_numpy, id_array = parse_svg_string(svg_string, min_element_num=svg_number)
+    img = np.transpose(a_numpy)
+    img = img - 0.5
+    # print("img size", img.shape)
+    # for i in img:
+    #     print(i[0])
+    # for i in img[0]:
+    #     print(i)
     return img
+
+
 
 def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_image, min_word_freq, output_folder,
                        max_len=100, image_type = "pixel"):
@@ -98,7 +115,7 @@ def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_i
                                    (val_image_paths, val_image_captions, 'VAL'),
                                    (test_image_paths, test_image_captions, 'TEST')]:
         print(os.path.join(output_folder, split + '_IMAGES_' + base_filename + '.hdf5'))
-        print((len(impaths), 3, 256, 256))
+        print("image number", len(impaths))
         with h5py.File(os.path.join(output_folder, split + '_IMAGES_' + base_filename + '.hdf5'), 'a') as h:
             # Make a note of the number of captions we are sampling per image
             h.attrs['captions_per_image'] = captions_per_image
@@ -107,7 +124,7 @@ def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_i
             if image_type == "pixel":
                 images = h.create_dataset('images', (len(impaths), 3, 256, 256), dtype='uint8')
             else:
-                images = h.create_dataset('images', (len(impaths), 20, 10), dtype='float32')
+                images = h.create_dataset('images', (len(impaths), svg_channel, svg_number), dtype='float32')
 
             print("\nReading %s images and captions, storing to file...\n" % split)
 
@@ -245,11 +262,16 @@ def save_checkpoint(data_name, epoch, epochs_since_improvement, encoder, decoder
              'decoder': decoder,
              'encoder_optimizer': encoder_optimizer,
              'decoder_optimizer': decoder_optimizer}
-    filename = 'checkpoint_' + data_name + '.pth.tar'
+
+
+        
+    filename = f'checkpoint/{data_name}/epoch_{epoch}.pth.tar'
+
     torch.save(state, filename)
     # If this checkpoint is the best so far, store a copy so it doesn't get overwritten by a worse checkpoint
     if is_best:
-        torch.save(state, 'BEST_' + filename)
+        filename = f'checkpoint/{data_name}/Best.pth.tar'
+        torch.save(state, filename)
 
 
 class AverageMeter(object):

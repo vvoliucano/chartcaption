@@ -25,3 +25,20 @@ python train.py --data_folder ../data/svg_try/try_output --data_name flickr8k_5_
 
 python train.py --data_folder ../data/svg_try/try_output --data_name chart_5_cap_0_min_wf --image_type svg
 
+python caption.py --img ../data/coco_2014/val2014/COCO_val2014_000000340047.jpg  --model checkpoint/chart_5_cap_0_min_wf/Best.pth.tar --word_map ../data/svg_try/try_output/WORDMAP_chart_5_cap_0_min_wf.json  --image_type svg
+
+
+# 创建新的数据创建器
+
+python create_input_files.py --dataset chart --karpathy_json_path ../data/real_svg/template.json --image_folder ../data/real_svg/svg --output_folder ../data/real_svg/output --image_type svg
+
+
+# 试试真正的svg的训练
+
+python train.py --data_folder ../data/real_svg/output --data_name chart_5_cap_5_min_wf --image_type svg
+
+# 试试真正的svg的测试
+
+python caption.py --img ../data/real_svg/svg/1.svg  --model checkpoint/chart_5_cap_5_min_wf/epoch_119.pth.tar --word_map ../data/real_svg/output/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg
+
+

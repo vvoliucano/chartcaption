@@ -10,6 +10,7 @@ import argparse
 from skimage.io import imread
 from skimage.transform import resize as imresize
 from PIL import Image
+from utils import svg_read
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -30,7 +31,8 @@ def get_pixel_image_from_file(image_path):
     return image
 
 def get_svg_image_from_file(image_path):
-    img = np.random.random_sample((20, 10))
+    # img = np.random.random_sample((20, 10))
+    img = svg_read(image_path)
     img = torch.FloatTensor(img).to(device)
     return img
 
