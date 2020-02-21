@@ -14,7 +14,7 @@ args = parser.parse_args()
 
 sen_count = args.number
 
-# sen_count = 100000
+# sen_count = 100000datase
 svg_out_dir = "svg"
 
 # color_set = ["red", "orange", "yellow", "green", "blue", "cyan", "purple"]

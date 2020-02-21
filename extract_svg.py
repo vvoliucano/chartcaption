@@ -554,7 +554,7 @@ def uniform_important_elements(important_rects):
     total_width = right_most - left_most
     total_height = bottom_most - top_most
     max_value = max([rect["value"] for rect in important_rects])
-    print(max_value)
+    # print(max_value)
     uniform_elements = []
     for rect in important_rects:
         rect["left"] = (rect["left"] - left_most) / total_width
@@ -990,7 +990,7 @@ def open_json_file(input_file, output_name = "../data/svg_try/2.svg"):
         data = json.load(i_f)
         o_f = open(output_name, "w")
         o_f.write(data["svg_string"])
-        print(data["svg_string"])
+        # print(data["svg_string"])
 
 def modify_format():
     path_dir = "/Users/tsunmac/vis/projects/autocaption/AutoCaption/user_data/20180918_full_ocq_rule"

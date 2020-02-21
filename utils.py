@@ -157,7 +157,7 @@ def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_i
 
                 # Save image to HDF5 file
                 images[i] = img
-                print(img)
+                # print(img)
 
                 for j, c in enumerate(captions):
                     # Encode captions

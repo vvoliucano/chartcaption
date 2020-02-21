@@ -49,7 +49,7 @@ python caption.py --img ../data/real_svg/svg/1.svg  --model checkpoint/chart_5_c
 
 python create_input_files.py --dataset chart --karpathy_json_path data_generator/dataset.json --image_folder ./data_generator/svg --output_folder data/svg_output --image_type svg
 
-python create_input_files.py --dataset chart --karpathy_json_path data_generator/dataset.json --image_folder ./data_generator/svg --output_folder data/svg_output --image_type svg 
+python create_input_files.py --dataset chart --karpathy_json_path data_generator/svg/dataset.json --image_folder ./data_generator/svg --output_folder data/svg_output --image_type svg 
 
 python train.py --data_folder data/svg_output --data_name chart_5_cap_5_min_wf --image_type svg
 
