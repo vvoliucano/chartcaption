@@ -14,6 +14,8 @@ args = parser.parse_args()
 
 sen_count = args.number
 
+print("输出数目：", sen_count)
+
 # sen_count = 100000datase
 svg_out_dir = "svg"
 
