@@ -11,6 +11,7 @@ from skimage.io import imread
 from skimage.transform import resize as imresize
 from PIL import Image
 from utils import svg_read
+import bs4
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -32,9 +33,20 @@ def get_pixel_image_from_file(image_path):
 
 def get_svg_image_from_file(image_path):
     # img = np.random.random_sample((20, 10))
-    img = svg_read(image_path)
+    img, soup = svg_read(image_path, need_soup = True)
+    # elements = soup.findAll(attrs = {"caption_sha", "5"})
+    # elements = soup.findAll(attrs = {"caption_id":  "2"})
+    elements = soup.findAll(attrs = {"caption_sha":  "5"})
+    # print("elements", elements)
+    element_number = len(elements)
+    # element_number = len()
+    # print("element_number", element_number)
+    # print(soup.findAll(attrs = {"caption_id":  "2"}))
+    # print(soup)
+    with open("1.html", "w") as file:
+        file.write(str(soup))
     img = torch.FloatTensor(img).to(device)
-    return img
+    return img, soup, element_number
 
 def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=3, image_type="pixel"):
     """
@@ -54,7 +66,7 @@ def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=
     if image_type == "pixel":   
         image = get_pixel_image_from_file(image_path)
     else:
-        image = get_svg_image_from_file(image_path)
+        image, soup, element_number = get_svg_image_from_file(image_path)
 
     # Encode
     image = image.unsqueeze(0)  # (1, 3, 256, 256)
@@ -106,7 +118,7 @@ def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=
         else:
             alpha = alpha.view(-1, enc_image_size)
 
-        print("alpha.shape", alpha.shape)
+        # print("alpha.shape", alpha.shape)
 
         gate = decoder.sigmoid(decoder.f_beta(h))  # gating scalar, (s, encoder_dim)
         awe = gate * awe
@@ -164,11 +176,23 @@ def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=
             break
         step += 1
 
+    print("complete_seqs_scores", complete_seqs_scores)
+    sorted_seqs_scores = sorted(complete_seqs_scores, reverse = True)
+    # print("sorted_seqs_scores", sorted_seqs_scores)
+    seqs = [complete_seqs[complete_seqs_scores.index(seq_score)] for seq_score in sorted_seqs_scores]
+    
     i = complete_seqs_scores.index(max(complete_seqs_scores))
+    print("complete_seqs", complete_seqs)
+    print("complete_seqs_scores", complete_seqs_scores)
+    print("sorted seqs", seqs)
     seq = complete_seqs[i]
     alphas = complete_seqs_alpha[i]
+    if image_type == "pixel":   
+        return seq, alphas
+    else:
+        return seqs, alphas, soup, element_number
 
-    return seq, alphas
+    
 
 
 def visualize_att(image_path, seq, alphas, rev_word_map, smooth=True):
@@ -209,7 +233,7 @@ def visualize_att(image_path, seq, alphas, rev_word_map, smooth=True):
         plt.axis('off')
     plt.savefig("tmp.jpg")
 
-def visualize_att_svg(image_path, seq, alphas, rev_word_map, smooth=True):
+def visualize_att_svg(soup, element_number, image_path, seq, alphas, rev_word_map, output_file = "tmp.jpg", smooth=True):
     """
     Visualizes caption with weights at every word.
 
@@ -225,26 +249,71 @@ def visualize_att_svg(image_path, seq, alphas, rev_word_map, smooth=True):
     # image = image.resize([14 * 24, 14 * 24], Image.LANCZOS)
 
     words = [rev_word_map[ind] for ind in seq]
-
+    soup_list = []
     for t in range(len(words)):
         if t > 50:
             break
-        print("hhhhh")
-        plt.subplot(np.ceil(len(words) / 5.), 5, t + 1)
+        # print("hhhhh")
 
-        plt.text(0, 1, '%s' % (words[t]), color='black', backgroundcolor='white', fontsize=12)
-        # plt.imshow(image)
         current_alpha = alphas[t, :]
         current_alpha = current_alpha.view(current_alpha.shape[0], 1)
-        print(current_alpha.shape)
-        alpha = skimage.transform.pyramid_expand(current_alpha.numpy(), upscale=24, sigma=8)
-        if t == 0:
-            plt.imshow(alpha, alpha=0)
-        else:
-            plt.imshow(alpha, alpha=0.8)
-        plt.set_cmap(cm.Greys_r)
-        plt.axis('off')
-    plt.savefig("tmp.jpg")
+        current_alpha_numpy = current_alpha.numpy().reshape(current_alpha.shape[0])
+        # print(np.max(current_alpha_numpy), np.min(current_alpha_numpy))
+        current_alpha_max = np.max(current_alpha_numpy[0:element_number])
+        
+        for i in range(element_number):
+            current_element = soup.findAll(attrs = {"caption_id":  str(i)})[0]
+            current_element["opacity"] = current_alpha_numpy[i] / current_alpha_max
+        soup_string = str(soup.select("svg")[0])
+        # print(soup_string)
+        # print(f"第{t}个soup", soup_string)
+        new_soup = bs4.BeautifulSoup(soup_string, "html5lib")
+        soup_list.append(new_soup)
+
+
+
+
+        # with open(f"data/{t}_{words[t]}.html", "w") as file:
+        #     file.write(str(soup))
+
+        # for i in range(element_number):
+            
+
+        # print(current_alpha.shape)
+      
+
+
+    # print(soup_list)
+    # print(soup)
+
+    adjust_width = 150
+
+    empty_string = '<!--?xml version="1.0" encoding="utf-8" ?--><html><head></head><body></body></html>'
+    soup_total = bs4.BeautifulSoup(empty_string, "html5lib")
+    body = soup_total.select("body")[0]
+    for i, new_soup in enumerate(soup_list):
+        # current_div = body.new_tag("div")
+        # print(new_soup.select['svg'])
+        # print("new_soup", new_soup)
+        width = float(new_soup.select("svg")[0]["width"])
+        height = float(new_soup.select('svg')[0]["height"])
+        # print(width, height)
+        current_svg = new_soup.select("svg")[0]
+        if not current_svg.has_attr("viewBox"):
+            current_svg["viewBox"] = f'0 0 {width} {height}'
+        current_svg['width'] = adjust_width
+        current_svg["height"] = adjust_width / width * height
+        rect_str = f'<rect width="{width}" height="{height}" stroke-width="2px" fill-opacity="0"></rect>'
+        text_str = f'<text x="250" y="150" font-family="Verdana" text-anchor="middle" font-size="55">{words[i]}</text>'
+        new_soup.select("svg")[0].append(bs4.BeautifulSoup(text_str, 'html.parser'))
+        body.append(new_soup)
+    # print(soup_list)
+        
+    
+    # plt.savefig(output_file)
+
+    with open(f"{output_file}.html", "w") as file:
+        file.write(str(soup_total))
 
 
 
@@ -264,6 +333,9 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
+    output_file = "data/" + args.img.split("/")[-1][0:-4] + ".jpg"
+    print(output_file)
+
     # Load model
     checkpoint = torch.load(args.model, map_location=str(device))
     decoder = checkpoint['decoder']
@@ -279,14 +351,19 @@ if __name__ == '__main__':
     rev_word_map = {v: k for k, v in word_map.items()}  # ix2word
 
     # Encode, decode with attention and beam search
-    seq, alphas = caption_image_beam_search(encoder, decoder, args.img, word_map, args.beam_size, args.image_type)
+    if args.image_type == "pixel":
+        seq, alphas = caption_image_beam_search(encoder, decoder, args.img, word_map, args.beam_size, args.image_type)
+    else:
+        seqs, alphas, soup, element_number = caption_image_beam_search(encoder, decoder, args.img, word_map, args.beam_size, args.image_type)
+
     alphas = torch.FloatTensor(alphas)
-    print(seq)
-    words = [rev_word_map[ind] for ind in seq]
-    print(words)
+    # print(seq)
+    # words = [rev_word_map[ind] for ind in seq]
+    # print(words)
 
     # Visualize caption and attention of best sequence
     if args.image_type == "pixel":
         visualize_att(args.img, seq, alphas, rev_word_map, args.smooth)
     else:
-        visualize_att_svg(args.img, seq, alphas, rev_word_map, args.smooth)
+        for i, seq in enumerate(seqs):
+            visualize_att_svg(soup, element_number, args.img, seq, alphas, rev_word_map, output_file + str(i), args.smooth)

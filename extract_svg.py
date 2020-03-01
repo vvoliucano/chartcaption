@@ -631,8 +631,11 @@ def parse_unknown_svg_visual_elements(svg_string, need_data_soup = False):
     soup = bs4.BeautifulSoup(svg_string, "html5lib")
     svg = soup.select("svg")
     rects = soup.select("rect")
+
     rects_attr = [parse_a_rect(rect) for rect in rects]
-    # print(rect_attr)
+    for i, rect in enumerate(rects_attr):
+        rect["origin"]["caption_id"] = str(i)
+        rect["origin"]["caption_sha"] = "5"
     important_rects = uniform_important_elements(rects_attr)
     data = {}
 
@@ -859,7 +862,7 @@ def parse_svg_string(svg_string, min_element_num = 7, simple = False):
         if sum(id_array) == - len(id_array):
             id_array = [i for i in range(len(id_array))]
         # print(f"The id array is {id_array}")
-    return numpy.asarray(elements), id_array
+    return numpy.asarray(elements), id_array, soup
 
 def get_rect_list(rect):
     cate_choice_number = 15

@@ -53,6 +53,11 @@ python create_input_files.py --dataset chart --karpathy_json_path data_generator
 
 python train.py --data_folder data/svg_output --data_name chart_5_cap_5_min_wf --image_type svg
 
+python caption.py --img ./data_generator/svg/117.svg  --model checkpoint/chart_5_cap_5_min_wf/Best.pth.tar --word_map data/svg_output/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg
+
+python caption.py --img ./data_generator/svg/93.svg  --model checkpoint/chart_5_cap_5_min_wf/Best.pth.tar --word_map data/svg_output/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg
+
+
 # python caption.py --img ../data/real_svg/svg/1.svg  --model checkpoint/chart_5_cap_5_min_wf/epoch_119.pth.tar --word_map ../data/real_svg/output/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg
 
 
