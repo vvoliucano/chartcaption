@@ -32,11 +32,9 @@ python caption.py --img ../data/coco_2014/val2014/COCO_val2014_000000340047.jpg 
 
 python create_input_files.py --dataset chart --karpathy_json_path ../data/real_svg/template.json --image_folder ../data/real_svg/svg --output_folder ../data/real_svg/output --image_type svg --min_word_freq 0
 
-
 # 试试真正的svg的训练
 
 python train.py --data_folder ../data/real_svg/output --data_name chart_5_cap_5_min_wf --image_type svg
-
 
 python train.py --data_folder ../data/real_svg/output --data_name chart_5_cap_0_min_wf --image_type svg
 
@@ -44,14 +42,13 @@ python train.py --data_folder ../data/real_svg/output --data_name chart_5_cap_0_
 
 python caption.py --img ../data/real_svg/svg/1.svg  --model checkpoint/chart_5_cap_5_min_wf/epoch_119.pth.tar --word_map ../data/real_svg/output/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg
 
-
 # 吴聪生成的第一版的数据集
 
-python create_input_files.py --dataset chart --karpathy_json_path data_generator/dataset.json --image_folder ./data_generator/svg --output_folder data/svg_output --image_type svg
+# python create_input_files.py --dataset chart --karpathy_json_path data_generator/dataset.json --image_folder ./data_generator/svg --output_folder data/svg_output --image_type svg
 
-python create_input_files.py --dataset chart --karpathy_json_path data_generator/svg/dataset.json --image_folder ./data_generator/svg --output_folder data/svg_output --image_type svg 
+python create_input_files.py --dataset chart --karpathy_json_path data_generator/svg/dataset.json --image_folder ./data_generator/svg --output_folder data/svg_output_20200305 --image_type svg 
 
-python train.py --data_folder data/svg_output --data_name chart_5_cap_5_min_wf --image_type svg
+python train.py --data_folder data/svg_output_20200305 --data_name chart_5_cap_5_min_wf --image_type svg
 
 python caption.py --img ./data_generator/svg/117.svg  --model checkpoint/chart_5_cap_5_min_wf/Best.pth.tar --word_map data/svg_output/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg
 
@@ -59,5 +56,15 @@ python caption.py --img ./data_generator/svg/93.svg  --model checkpoint/chart_5_
 
 
 # python caption.py --img ../data/real_svg/svg/1.svg  --model checkpoint/chart_5_cap_5_min_wf/epoch_119.pth.tar --word_map ../data/real_svg/output/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg
+
+
+20200305
+
+python create_input_files.py --dataset chart --karpathy_json_path data_generator/svg/dataset.json --image_folder ./data_generator/svg --output_folder data/svg_output_20200305 --image_type svg 
+
+python train.py --data_folder data/svg_output_20200305 --data_name chart_5_cap_5_min_wf --image_type svg
+
+python caption.py --img ./data_generator/svg/117.svg  --model checkpoint/chart_5_cap_5_min_wf/Best.pth.tar --word_map data/svg_output_20200305/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg
+
 
 
