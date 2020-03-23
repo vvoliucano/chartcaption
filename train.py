@@ -9,8 +9,8 @@ from models import Encoder, DecoderWithAttention, SvgEncoder
 from datasets import *
 from utils import *
 from nltk.translate.bleu_score import corpus_bleu
-import argparse
 import os
+import argparse
 
 parser = argparse.ArgumentParser(description='Show, Attend, and Tell - Tutorial - Generate Caption for SVG')
 
@@ -21,6 +21,8 @@ parser.add_argument('--dont_smooth', dest='smooth', action='store_false', help='
 parser.add_argument('--image_type', type=str, default = 'pixel', help='image type as input')
 parser.add_argument('--svg_channel', type=int, default = 75)
 parser.add_argument('--svg_element_number', type = int, default = 40)
+parser.add_argument('--pretrained_model', type=str, default = "none")
+parser.add_argument('--max_epoch', type = int, default = 120)
 
 
 
@@ -44,7 +46,8 @@ cudnn.benchmark = True  # set to true only if inputs to model are fixed size; ot
 
 # Training parameters
 start_epoch = 0
-epochs = 120  # number of epochs to train for (if early stopping is not triggered)
+epochs = args.max_epoch  # number of epochs to train for (if early stopping is not triggered)
+print('max epochs', epochs)
 epochs_since_improvement = 0  # keeps track of number of epochs since there's been an improvement in validation BLEU
 batch_size = 32
 workers = 1  # for data-loading; right now, only 1 works with h5py
@@ -55,7 +58,12 @@ alpha_c = 1.  # regularization parameter for 'doubly stochastic attention', as i
 best_bleu4 = 0.  # BLEU-4 score right now
 print_freq = 100  # print training/validation stats every __ batches
 fine_tune_encoder = False  # fine-tune encoder?
-checkpoint = None  # path to checkpoint, None if none
+checkpoint = args.pretrained_model  # path to checkpoint, None if none
+if checkpoint == "none":
+    checkpoint = None
+else:
+    checkpoint = "checkpoint/" + data_name + "/" + checkpoint
+    print("Load checkpoint", checkpoint)
 
 
 def main():

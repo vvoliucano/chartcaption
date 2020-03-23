@@ -4,7 +4,19 @@ import gen_svg
 import os
 import shutil
 
-sen_count = 1000
+
+import argparse
+
+parser = argparse.ArgumentParser(description='Show, Attend, and Tell - Tutorial - Generate Caption for SVG')
+parser.add_argument('--number', '-n', type=int, default = 1000, help='number')
+
+args = parser.parse_args()
+
+sen_count = args.number
+
+print("输出数目：", sen_count)
+
+# sen_count = 100000datase
 svg_out_dir = "svg"
 
 # color_set = ["red", "orange", "yellow", "green", "blue", "cyan", "purple"]

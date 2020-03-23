@@ -3,7 +3,7 @@ import bs4
 # import os
 import numpy
 import re
-from svgpathtools import parse_path, Line, disvg
+# from svgpathtools import parse_path, Line, disvg
 import copy
 # def get_attr_by_style(element):
     #
@@ -192,23 +192,23 @@ def get_important_rects(rects, dim, array):
     return important_rects, other_rects
 
 def parse_a_path(path):
-    pathObj = parse_path(path["d"])
-    for parent in path.parents:
-        if parent.name == "svg":
-            break
-        if parent.name == "g":
-            add_x, add_y = parse_transform(parent)
-    path_attr = {
-        "origin": path,
-        "pathObj": pathObj,
-        "sx": pathObj[0].start.real,
-        "sy": pathObj[0].start.imag,
-        "ex": pathObj[-1].end.real,
-        "ey": pathObj[-1].end.imag,
-        "rx": add_x,
-        "ry": add_y,
-        "color": get_attr(path, "stroke", "#000"),
-    }
+    # pathObj = parse_path(path["d"])
+    # for parent in path.parents:
+    #     if parent.name == "svg":
+    #         break
+    #     if parent.name == "g":
+    #         add_x, add_y = parse_transform(parent)
+    # path_attr = {
+    #     "origin": path,
+    #     "pathObj": pathObj,
+    #     "sx": pathObj[0].start.real,
+    #     "sy": pathObj[0].start.imag,
+    #     "ex": pathObj[-1].end.real,
+    #     "ey": pathObj[-1].end.imag,
+    #     "rx": add_x,
+    #     "ry": add_y,
+    #     "color": get_attr(path, "stroke", "#000"),
+    # }
     # print("DEBUG", path_attr)
     return path_attr
 
@@ -554,7 +554,7 @@ def uniform_important_elements(important_rects):
     total_width = right_most - left_most
     total_height = bottom_most - top_most
     max_value = max([rect["value"] for rect in important_rects])
-    print(max_value)
+    # print(max_value)
     uniform_elements = []
     for rect in important_rects:
         rect["left"] = (rect["left"] - left_most) / total_width
@@ -631,8 +631,11 @@ def parse_unknown_svg_visual_elements(svg_string, need_data_soup = False):
     soup = bs4.BeautifulSoup(svg_string, "html5lib")
     svg = soup.select("svg")
     rects = soup.select("rect")
+
     rects_attr = [parse_a_rect(rect) for rect in rects]
-    # print(rect_attr)
+    for i, rect in enumerate(rects_attr):
+        rect["origin"]["caption_id"] = str(i)
+        rect["origin"]["caption_sha"] = "5"
     important_rects = uniform_important_elements(rects_attr)
     data = {}
 
@@ -828,7 +831,7 @@ def getDataPointList(data):
 def parse_svg_string(svg_string, min_element_num = 7, simple = False):
     if (simple):
         important_rects, data, soup = parse_unknown_svg_visual_elements(svg_string)
-        print(important_rects)
+        # print(important_rects)
     else:
         important_rects, data, soup = parse_unknown_svg(svg_string)
     if 'vis_type' in data and data['vis_type']=="load_scatter_line_plot":
@@ -859,7 +862,7 @@ def parse_svg_string(svg_string, min_element_num = 7, simple = False):
         if sum(id_array) == - len(id_array):
             id_array = [i for i in range(len(id_array))]
         # print(f"The id array is {id_array}")
-    return numpy.asarray(elements), id_array
+    return numpy.asarray(elements), id_array, soup
 
 def get_rect_list(rect):
     cate_choice_number = 15
@@ -990,7 +993,7 @@ def open_json_file(input_file, output_name = "../data/svg_try/2.svg"):
         data = json.load(i_f)
         o_f = open(output_name, "w")
         o_f.write(data["svg_string"])
-        print(data["svg_string"])
+        # print(data["svg_string"])
 
 def modify_format():
     path_dir = "/Users/tsunmac/vis/projects/autocaption/AutoCaption/user_data/20180918_full_ocq_rule"

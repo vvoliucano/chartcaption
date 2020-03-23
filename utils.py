@@ -14,13 +14,13 @@ from extract_svg import parse_svg_string
 svg_channel = 75
 svg_number = 40
 
-def svg_read(filename):
+def svg_read(filename, need_soup = False):
     # a = []
     # img = np.random.random_sample((20, 10))
     f = open(filename)
     svg_string = f.read()
     # print(svg_string)
-    a_numpy, id_array = parse_svg_string(svg_string, min_element_num=svg_number, simple = True)
+    a_numpy, id_array, soup = parse_svg_string(svg_string, min_element_num=svg_number, simple = True)
     img = np.transpose(a_numpy)
     img = img - 0.5
     # print("img size", img.shape)
@@ -28,6 +28,8 @@ def svg_read(filename):
     #     print(i[0])
     # for i in img[0]:
     #     print(i)
+    if need_soup:
+        return img, soup
     return img
 
 
@@ -157,7 +159,7 @@ def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_i
 
                 # Save image to HDF5 file
                 images[i] = img
-                print(img)
+                # print(img)
 
                 for j, c in enumerate(captions):
                     # Encode captions
