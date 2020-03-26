@@ -71,3 +71,21 @@ python train.py --data_folder data/svg_output_20200305 --data_name chart_5_cap_5
 # 下一个版本的数据；
 
 # 具有多个
+
+# 20200325
+
+#生成数据集
+python3 gen_sent2.py -n 10 -p svg2
+
+# 数据集格式转化
+python create_input_files.py --dataset chart --karpathy_json_path data_generator/svg2/dataset.json --image_folder ./data_generator/svg2 --output_folder data/svg_output_20200326 --image_type svg 
+
+# 训练模型
+python train.py --data_folder data/svg_output_20200326 --data_name chart_5_cap_5_min_wf --image_type svg
+
+# 使用模型
+python caption.py --img ./data_generator/svg/2.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-03-26-10-00/epoch_97.pth.tar --word_map data/svg_output_20200326/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg
+
+
+
+

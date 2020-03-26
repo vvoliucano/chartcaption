@@ -28,8 +28,12 @@ parser.add_argument('--max_epoch', type = int, default = 120)
 
 args = parser.parse_args()
 
-os.system(f"mkdir -p checkpoint/{args.data_name}")
+# os.system(f"mkdir -p checkpoint/{args.data_name}")
 
+checkpoint_path = "checkpoint/" + args.data_name + time.strftime("-%Y-%m-%d-%H-%M", time.localtime())
+os.mkdir(checkpoint_path)
+
+args.checkpoint_path = checkpoint_path
 # python train.py --data_folder /Users/tsunmac/vis/projects/autocaption/data/karpathy_output
 
 # Data parameters
@@ -167,6 +171,7 @@ def main():
 
         # Check if there was an improvement
         is_best = recent_bleu4 > best_bleu4
+        # print("This checkpoint is best: ", is_best)
         best_bleu4 = max(recent_bleu4, best_bleu4)
         if not is_best:
             epochs_since_improvement += 1
@@ -176,7 +181,7 @@ def main():
 
         # Save checkpoint
         save_checkpoint(data_name, epoch, epochs_since_improvement, encoder, decoder, encoder_optimizer,
-                        decoder_optimizer, recent_bleu4, is_best)
+                        decoder_optimizer, recent_bleu4, is_best, checkpoint_path = checkpoint_path)
 
 
 def train(train_loader, encoder, decoder, criterion, encoder_optimizer, decoder_optimizer, epoch):

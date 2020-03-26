@@ -4,8 +4,24 @@ import os
 import shutil
 import gen_svg2
 
-sen_count = 10
-svg_out_dir = "svg2"
+
+import argparse
+
+parser = argparse.ArgumentParser(description='Show, Attend, and Tell - Tutorial - Generate Caption for SVG')
+parser.add_argument('--number', '-n', type=int, default = 1000, help='number')
+parser.add_argument('--path', '-p', type=str, default = "svg2", help='path')
+
+args = parser.parse_args()
+
+sen_count = args.number
+svg_out_dir = args.path
+
+print("输出数目：", sen_count)
+
+
+
+# sen_count = 10
+# svg_out_dir = "svg2"
 
 grouped_settings = {
     "min_attr": 2,
@@ -294,5 +310,5 @@ if __name__ == '__main__':
     pairs.extend(pairs2)
     # print(pairs)
     res = trans_template(pairs)
-    with open(os.path.join(svg_out_dir, "dataset2.json"), "w", encoding="utf-8") as f:
+    with open(os.path.join(svg_out_dir, "dataset.json"), "w", encoding="utf-8") as f:
         json.dump(res, f, indent=2)

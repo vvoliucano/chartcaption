@@ -180,7 +180,8 @@ def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=
     sorted_seqs_scores = sorted(complete_seqs_scores, reverse = True)
     # print("sorted_seqs_scores", sorted_seqs_scores)
     seqs = [complete_seqs[complete_seqs_scores.index(seq_score)] for seq_score in sorted_seqs_scores]
-    
+    alphas_of_seqs = [complete_seqs_alpha[complete_seqs_scores.index(seq_score)] for seq_score in sorted_seqs_scores]
+
     i = complete_seqs_scores.index(max(complete_seqs_scores))
     print("complete_seqs", complete_seqs)
     print("complete_seqs_scores", complete_seqs_scores)
@@ -190,7 +191,7 @@ def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=
     if image_type == "pixel":   
         return seq, alphas
     else:
-        return seqs, alphas, soup, element_number
+        return seqs, alphas_of_seqs, soup, element_number
 
     
 
@@ -247,8 +248,9 @@ def visualize_att_svg(soup, element_number, image_path, seq, alphas, rev_word_ma
     """
     # image = Image.open(image_path)
     # image = image.resize([14 * 24, 14 * 24], Image.LANCZOS)
-
+    print("seq", seq)
     words = [rev_word_map[ind] for ind in seq]
+    print("words", words)
     soup_list = []
     for t in range(len(words)):
         if t > 50:
@@ -353,17 +355,12 @@ if __name__ == '__main__':
     # Encode, decode with attention and beam search
     if args.image_type == "pixel":
         seq, alphas = caption_image_beam_search(encoder, decoder, args.img, word_map, args.beam_size, args.image_type)
+        alphas = torch.FloatTensor(alphas)
+        visualize_att(args.img, seq, alphas, rev_word_map, args.smooth)
+
     else:
         seqs, alphas, soup, element_number = caption_image_beam_search(encoder, decoder, args.img, word_map, args.beam_size, args.image_type)
-
-    alphas = torch.FloatTensor(alphas)
-    # print(seq)
-    # words = [rev_word_map[ind] for ind in seq]
-    # print(words)
-
-    # Visualize caption and attention of best sequence
-    if args.image_type == "pixel":
-        visualize_att(args.img, seq, alphas, rev_word_map, args.smooth)
-    else:
+        alphas = [torch.FloatTensor(alpha) for alpha in alphas]
+        # alphas = torch.FloatTensor(alphas)
         for i, seq in enumerate(seqs):
-            visualize_att_svg(soup, element_number, args.img, seq, alphas, rev_word_map, output_file + str(i), args.smooth)
+            visualize_att_svg(soup, element_number, args.img, seq, alphas[i], rev_word_map, output_file + str(i), args.smooth)

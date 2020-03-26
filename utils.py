@@ -14,6 +14,12 @@ from extract_svg import parse_svg_string
 svg_channel = 75
 svg_number = 40
 
+
+def make_sure_dir(dirname):
+    if os.path.exists(dirname):
+        shutil.rmtree(dirname)
+    os.mkdir(dirname)
+
 def svg_read(filename, need_soup = False):
     # a = []
     # img = np.random.random_sample((20, 10))
@@ -48,6 +54,8 @@ def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_i
     :param max_len: don't sample captions longer than this length
     """
     print("min_freq", min_word_freq)
+
+    make_sure_dir(output_folder)
 
     assert dataset in {'coco', 'flickr8k', 'flickr30k', "chart"}
 
@@ -243,7 +251,7 @@ def clip_gradient(optimizer, grad_clip):
 
 
 def save_checkpoint(data_name, epoch, epochs_since_improvement, encoder, decoder, encoder_optimizer, decoder_optimizer,
-                    bleu4, is_best):
+                    bleu4, is_best, checkpoint_path = "checkpoint/"):
     """
     Saves model checkpoint.
 
@@ -257,6 +265,8 @@ def save_checkpoint(data_name, epoch, epochs_since_improvement, encoder, decoder
     :param bleu4: validation BLEU-4 score for this epoch
     :param is_best: is this checkpoint the best so far?
     """
+
+    # print("this epoch is best: ", is_best)
     state = {'epoch': epoch,
              'epochs_since_improvement': epochs_since_improvement,
              'bleu-4': bleu4,
@@ -267,12 +277,12 @@ def save_checkpoint(data_name, epoch, epochs_since_improvement, encoder, decoder
 
 
         
-    filename = f'checkpoint/{data_name}/epoch_{epoch}.pth.tar'
+    filename = f'{checkpoint_path}/epoch_{epoch}.pth.tar'
 
     torch.save(state, filename)
     # If this checkpoint is the best so far, store a copy so it doesn't get overwritten by a worse checkpoint
     if is_best:
-        filename = f'checkpoint/{data_name}/Best.pth.tar'
+        filename = f'{checkpoint_path}/Best.pth.tar'
         torch.save(state, filename)
 
 
