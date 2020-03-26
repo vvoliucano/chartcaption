@@ -17,7 +17,8 @@ svg_number = 40
 
 def make_sure_dir(dirname):
     if os.path.exists(dirname):
-        shutil.rmtree(dirname)
+        os.system(f"rm -r {dirname}")
+        # shutil.rmtree(dirname)
     os.mkdir(dirname)
 
 def svg_read(filename, need_soup = False):
