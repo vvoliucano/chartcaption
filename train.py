@@ -20,12 +20,15 @@ parser.add_argument('--beam_size', '-b', default=5, type=int, help='beam size fo
 parser.add_argument('--dont_smooth', dest='smooth', action='store_false', help='do not smooth alpha overlay')
 parser.add_argument('--image_type', type=str, default = 'pixel', help='image type as input')
 parser.add_argument('--svg_channel', type=int, default = 75)
-parser.add_argument('--svg_channel_list', type=str, default = "", help='using svg list')
+parser.add_argument('--input_nc', type=str, default = "", help='using svg list')
+parser.add_argument('--output_nc', type=str, default = '', help='using svg output list')
 parser.add_argument('--svg_element_number', type = int, default = 40)
 parser.add_argument('--pretrained_model', type=str, default = "none")
 parser.add_argument('--max_epoch', type = int, default = 120)
 
-
+# [3, 2, 4, 3, 1], output_nc = [5, 5, 5, 5, 5])
+# input_nc = "3,2,4,3,1"
+# output_nc = "5,5,5,5,5"
 
 args = parser.parse_args()
 
@@ -97,7 +100,14 @@ def main():
                                              lr=decoder_lr)
 
         if args.image_type == "svg":
-            encoder = SvgEncoder(svg_channel = args.svg_channel, svg_element_number = args.svg_element_number)
+            if args.input_nc == "":
+                encoder = SvgEncoder(svg_channel = args.svg_channel, svg_element_number = args.svg_element_number)
+            else:
+                input_nc = [int(item) for item in args.input_nc.split(",")]
+                output_nc = [int(item) for item in args.output_nc.split(",")]
+                args.svg_channel = sum(input_nc)
+                encoder = SvgCompEncoder(svg_channel = args.svg_channel, input_nc = input_nc, output_nc = output_nc, svg_element_number = args.svg_element_number)
+
         else:
             encoder = Encoder()
             encoder.fine_tune(fine_tune_encoder)

@@ -895,13 +895,13 @@ def get_rect_list(rect):
     return list
 
 def get_rect_list_visual(rect):
-    type = [1, 0, 0]
+    this_type = [1, 0, 0]
     position = [rect['width'], rect['height'], rect['left'], rect['right'], rect['up'], rect['down']]
     color = rect['fill']
     opacity = [rect['opacity']]
     quantity = [get_rect_attr(rect, 'q0', 0), get_rect_attr(rect, 'q1', 0)]
 
-    list = type + position + color + opacity
+    list = this_type + position + color + opacity
     # print(f'The attribute of each rectangle is {len(list)}')
     return list
 

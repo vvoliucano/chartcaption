@@ -90,5 +90,29 @@ python caption.py --img ./data_generator/svg/2.svg  --model checkpoint/chart_5_c
 python caption.py --img ./data_generator/svg2/2.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-03-26-13-05/Best.pth.tar --word_map data/svg_output_20200326/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg
 
 
+# 20200328
+python create_input_files.py --dataset chart --karpathy_json_path data_generator/svg2/dataset.json --image_folder ./data_generator/svg2 --output_folder data/svg_output_20200328 --image_type svg 
+
+# 训练模型
+python train.py --data_folder data/svg_output_20200328 --data_name chart_5_cap_5_min_wf --image_type svg --svg_channel 13
+
+# 使用模型
+python caption.py --img ./data_generator/svg/2.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-03-26-10-56/Best.pth.tar --word_map data/svg_output_20200328/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg
+
+# 使用模型on dl
+python caption.py --img ./data_generator/svg2/2.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-03-26-13-05/Best.pth.tar --word_map data/svg_output_20200328/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg
+
+
+# 20200328
+
+# 训练模型
+python train.py --data_folder data/svg_output_20200328 --data_name chart_5_cap_5_min_wf --image_type svg --svg_channel 13
+
+python train.py --data_folder data/svg_output_20200328 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 3,2,4,3,1 --output_nc 5,5,5,5,5
+
+
+# 使用模型on dl
+python caption.py --img ./data_generator/svg2/2.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-03-26-13-05/Best.pth.tar --word_map data/svg_output_20200328/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg
+
 
 

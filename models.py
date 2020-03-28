@@ -222,20 +222,21 @@ class DecoderWithAttention(nn.Module):
 class SvgCompEncoder(nn.Module):
     """
     Encoder.
+    this_type + position (size, position) + color + opacity
     """
-    def __init__(self, svg_channel=20, svg_element_number = 10, use_bias=False, input_nc = [3, 4, 5, 8], output_nc = [5, 5, 5, 5]):
-        super(SvgEncoder, self).__init__()
-
+    def __init__(self, svg_channel=20, svg_element_number = 10, use_bias=False, input_nc = [3, 2, 4, 3, 1], output_nc = [5, 5, 5, 5, 5]):
+        super(SvgCompEncoder, self).__init__()
+        print(input_nc)
         svg_channel = sum(input_nc)
-
-        for i, input_channel in input_nc:
+        for i, input_channel in enumerate(input_nc):
             model = [nn.Conv1d(input_nc[i], output_nc[i], kernel_size = 1),
                     nn.BatchNorm1d(output_nc[i])
                     ]
             exec("self.embedding{} = nn.Sequential(*model)".format(i))
-        total_nc = sum(svg_channel_output)
-        self.channel_input = svg_channel_input
-        self.channel_output = svg_channel_output
+        total_nc = sum(output_nc)
+        self.input_parts = len(input_nc)
+        self.input_nc = input_nc
+        self.output_nc = output_nc
         self.total_nc = total_nc
         self.linear = nn.Conv1d(total_nc, total_nc, kernel_size = 1)
         # type_encoder = [nn.Conv1d(3, type_out_nc, kernel_size = 1),
@@ -243,7 +244,7 @@ class SvgCompEncoder(nn.Module):
         # 这不是一个简单的尝试
 
         modules = [nn.ReflectionPad1d(3),
-                nn.Conv1d(svg_channel, 256, kernel_size=7, padding=0, bias=use_bias),
+                nn.Conv1d(total_nc, 256, kernel_size=7, padding=0, bias=use_bias),
                 nn.BatchNorm1d(256),
                 nn.ReLU(True),
                 nn.ReflectionPad1d(3),
@@ -252,7 +253,6 @@ class SvgCompEncoder(nn.Module):
                 ]
 
         self.model = nn.Sequential(*modules)
-
 
         # resnet = torchvision.models.resnet101(pretrained=False)  # pretrained ImageNet ResNet-101
 
@@ -276,14 +276,18 @@ class SvgCompEncoder(nn.Module):
 
         input_array = torch.split(input, self.input_nc, dim = 1) #  这边根据input——nc的数组对输入的数据进行分裂
         
+        # print(input_)
+
         assert(len(input_array) == len(self.input_nc))
         embedding_results = []
         for i in range(self.input_parts):
             exec("embedding_results.append(self.embedding{}(input_array[i]))".format(i)) # 对每个模块输出一部分
         total = torch.cat(embedding_results, 1)
+        # print("total shape: ", total.shape)
         # assert(self.total_nc == total.data.shape[1])
         # total = self.debug_embedding(input)
         out = self.linear(total)
+        out = self.model(out)
      
         # print("images.shape", images.shape)
         # out = self.model(images)  # (batch_size, 2048, image_size/32, image_size/32)
