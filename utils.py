@@ -11,7 +11,7 @@ from random import seed, choice, sample
 from extract_svg import parse_svg_string
 # fr import svg_read
 
-svg_channel = 75
+svg_channel = 13 # 
 svg_number = 40
 
 
@@ -30,6 +30,7 @@ def svg_read(filename, need_soup = False):
     a_numpy, id_array, soup = parse_svg_string(svg_string, min_element_num=svg_number, simple = True)
     img = np.transpose(a_numpy)
     img = img - 0.5
+    # 查看图像的大小
     # print("img size", img.shape)
     # for i in img:
     #     print(i[0])

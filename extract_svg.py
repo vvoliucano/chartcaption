@@ -834,6 +834,8 @@ def parse_svg_string(svg_string, min_element_num = 7, simple = False):
         # print(important_rects)
     else:
         important_rects, data, soup = parse_unknown_svg(svg_string)
+
+
     if 'vis_type' in data and data['vis_type']=="load_scatter_line_plot":
         elements = [getDataPointList(dp) for dp in important_rects]
         id_array = [i for i in range(len(important_rects))]
@@ -843,8 +845,12 @@ def parse_svg_string(svg_string, min_element_num = 7, simple = False):
     else:
         elements = []
 
+
         for rect in important_rects:
-            list = get_rect_list(rect)
+            if (simple):
+                list = get_rect_list_visual(rect)
+            else:
+                list = get_rect_list(rect)
             elements.append(list)
         if len(important_rects) < min_element_num:
             for i in range(len(important_rects), min_element_num):
@@ -888,6 +894,16 @@ def get_rect_list(rect):
     # print(f'The attribute of each rectangle is {len(list)}')
     return list
 
+def get_rect_list_visual(rect):
+    type = [1, 0, 0]
+    position = [rect['width'], rect['height'], rect['left'], rect['right'], rect['up'], rect['down']]
+    color = rect['fill']
+    opacity = [rect['opacity']]
+    quantity = [get_rect_attr(rect, 'q0', 0), get_rect_attr(rect, 'q1', 0)]
+
+    list = type + position + color + opacity
+    # print(f'The attribute of each rectangle is {len(list)}')
+    return list
 
 
 def parse_scatter_plot(soup, circles_attr, texts_attr, need_data_soup = False):

@@ -5,7 +5,7 @@ import torch.utils.data
 import torchvision.transforms as transforms
 from torch import nn
 from torch.nn.utils.rnn import pack_padded_sequence
-from models import Encoder, DecoderWithAttention, SvgEncoder
+from models import Encoder, DecoderWithAttention, SvgEncoder, SvgCompEncoder
 from datasets import *
 from utils import *
 from nltk.translate.bleu_score import corpus_bleu
@@ -20,6 +20,7 @@ parser.add_argument('--beam_size', '-b', default=5, type=int, help='beam size fo
 parser.add_argument('--dont_smooth', dest='smooth', action='store_false', help='do not smooth alpha overlay')
 parser.add_argument('--image_type', type=str, default = 'pixel', help='image type as input')
 parser.add_argument('--svg_channel', type=int, default = 75)
+parser.add_argument('--svg_channel_list', type=str, default = "", help='using svg list')
 parser.add_argument('--svg_element_number', type = int, default = 40)
 parser.add_argument('--pretrained_model', type=str, default = "none")
 parser.add_argument('--max_epoch', type = int, default = 120)

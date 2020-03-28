@@ -86,6 +86,9 @@ python train.py --data_folder data/svg_output_20200326 --data_name chart_5_cap_5
 # 使用模型
 python caption.py --img ./data_generator/svg/2.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-03-26-10-56/Best.pth.tar --word_map data/svg_output_20200326/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg
 
+# 使用模型on dl
+python caption.py --img ./data_generator/svg2/2.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-03-26-13-05/Best.pth.tar --word_map data/svg_output_20200326/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg
+
 
 
 
