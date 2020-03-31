@@ -122,6 +122,9 @@ python caption.py --img ./data_generator/svg2/2.svg  --model checkpoint/chart_5_
 
 python caption.py --img ./data_generator/svg2/2.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-03-29-00-26/Best.pth.tar --word_map data/svg_output_20200328/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg
 
+# 采用更少的参数： embed dim 32, attention_dim 32, 
+
+python train.py --data_folder data/svg_output_20200328 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 3,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 32 --attention_dim 32 --decoder_dim 32
 
 
 
