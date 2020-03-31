@@ -1,0 +1,1772 @@
+{
+  "dataset": "grouped_stacked_bar_charts",
+  "images": [
+    {
+      "sentids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "imgid": 0,
+      "sentences": [
+        {
+          "tokens": [
+            "the",
+            "purple",
+            "bar",
+            "goes",
+            "steady",
+            "from",
+            "<#1>",
+            "to",
+            "<#3>",
+            "and",
+            "goes",
+            "up",
+            "from",
+            "<#3>",
+            "to",
+            "<#5>"
+          ],
+          "raw": "the purple bar goes steady from <#1> to <#3> and goes up from <#3> to <#5>",
+          "imgid": 0,
+          "sentid": 0
+        },
+        {
+          "tokens": [
+            "<#5>",
+            "is",
+            "the",
+            "maximum",
+            "of",
+            "purple",
+            "bars"
+          ],
+          "raw": "<#5> is the maximum of purple bars",
+          "imgid": 0,
+          "sentid": 1
+        },
+        {
+          "tokens": [
+            "The",
+            "minimum",
+            "occurs",
+            "in",
+            "<#2>",
+            "of",
+            "purple",
+            "bars"
+          ],
+          "raw": "The minimum occurs in <#2> of purple bars",
+          "imgid": 0,
+          "sentid": 2
+        },
+        {
+          "tokens": [
+            "the",
+            "cyan",
+            "bar",
+            "goes",
+            "steady",
+            "from",
+            "<#1>",
+            "to",
+            "<#2>",
+            "and",
+            "goes",
+            "down",
+            "from",
+            "<#2>",
+            "to",
+            "<#5>"
+          ],
+          "raw": "the cyan bar goes steady from <#1> to <#2> and goes down from <#2> to <#5>",
+          "imgid": 0,
+          "sentid": 3
+        },
+        {
+          "tokens": [
+            "<#1>",
+            "is",
+            "the",
+            "maximum",
+            "of",
+            "cyan",
+            "bars"
+          ],
+          "raw": "<#1> is the maximum of cyan bars",
+          "imgid": 0,
+          "sentid": 4
+        },
+        {
+          "tokens": [
+            "<#5>",
+            "is",
+            "the",
+            "minimum",
+            "of",
+            "cyan",
+            "bars"
+          ],
+          "raw": "<#5> is the minimum of cyan bars",
+          "imgid": 0,
+          "sentid": 5
+        },
+        {
+          "tokens": [
+            "the",
+            "orange",
+            "bar",
+            "goes",
+            "up",
+            "from",
+            "<#1>",
+            "to",
+            "<#3>",
+            "and",
+            "goes",
+            "steady",
+            "from",
+            "<#3>",
+            "to",
+            "<#5>"
+          ],
+          "raw": "the orange bar goes up from <#1> to <#3> and goes steady from <#3> to <#5>",
+          "imgid": 0,
+          "sentid": 6
+        },
+        {
+          "tokens": [
+            "The",
+            "maximum",
+            "occurs",
+            "in",
+            "<#3>",
+            "of",
+            "orange",
+            "bars"
+          ],
+          "raw": "The maximum occurs in <#3> of orange bars",
+          "imgid": 0,
+          "sentid": 7
+        },
+        {
+          "tokens": [
+            "The",
+            "minimum",
+            "occurs",
+            "in",
+            "<#1>",
+            "of",
+            "orange",
+            "bars"
+          ],
+          "raw": "The minimum occurs in <#1> of orange bars",
+          "imgid": 0,
+          "sentid": 8
+        },
+        {
+          "tokens": [
+            "the",
+            "blue",
+            "bar",
+            "goes",
+            "up"
+          ],
+          "raw": "the blue bar goes up",
+          "imgid": 0,
+          "sentid": 9
+        },
+        {
+          "tokens": [
+            "The",
+            "maximum",
+            "occurs",
+            "in",
+            "<#5>",
+            "of",
+            "blue",
+            "bars"
+          ],
+          "raw": "The maximum occurs in <#5> of blue bars",
+          "imgid": 0,
+          "sentid": 10
+        },
+        {
+          "tokens": [
+            "<#1>",
+            "is",
+            "the",
+            "minimum",
+            "of",
+            "blue",
+            "bars"
+          ],
+          "raw": "<#1> is the minimum of blue bars",
+          "imgid": 0,
+          "sentid": 11
+        }
+      ],
+      "split": "train",
+      "filename": "0.svg"
+    },
+    {
+      "sentids": [
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "imgid": 1,
+      "sentences": [
+        {
+          "tokens": [
+            "the",
+            "green",
+            "bar",
+            "goes",
+            "steady",
+            "from",
+            "<#1>",
+            "to",
+            "<#5>",
+            "and",
+            "goes",
+            "up",
+            "from",
+            "<#5>",
+            "to",
+            "<#9>"
+          ],
+          "raw": "the green bar goes steady from <#1> to <#5> and goes up from <#5> to <#9>",
+          "imgid": 1,
+          "sentid": 12
+        },
+        {
+          "tokens": [
+            "<#9>",
+            "is",
+            "the",
+            "maximum",
+            "of",
+            "green",
+            "bars"
+          ],
+          "raw": "<#9> is the maximum of green bars",
+          "imgid": 1,
+          "sentid": 13
+        },
+        {
+          "tokens": [
+            "<#1>",
+            "is",
+            "the",
+            "minimum",
+            "of",
+            "green",
+            "bars"
+          ],
+          "raw": "<#1> is the minimum of green bars",
+          "imgid": 1,
+          "sentid": 14
+        },
+        {
+          "tokens": [
+            "the",
+            "orange",
+            "bar",
+            "goes",
+            "up"
+          ],
+          "raw": "the orange bar goes up",
+          "imgid": 1,
+          "sentid": 15
+        },
+        {
+          "tokens": [
+            "The",
+            "maximum",
+            "occurs",
+            "in",
+            "<#9>",
+            "of",
+            "orange",
+            "bars"
+          ],
+          "raw": "The maximum occurs in <#9> of orange bars",
+          "imgid": 1,
+          "sentid": 16
+        },
+        {
+          "tokens": [
+            "The",
+            "minimum",
+            "occurs",
+            "in",
+            "<#1>",
+            "of",
+            "orange",
+            "bars"
+          ],
+          "raw": "The minimum occurs in <#1> of orange bars",
+          "imgid": 1,
+          "sentid": 17
+        },
+        {
+          "tokens": [
+            "the",
+            "red",
+            "bar",
+            "goes",
+            "down",
+            "from",
+            "<#1>",
+            "to",
+            "<#5>",
+            "and",
+            "goes",
+            "steady",
+            "from",
+            "<#5>",
+            "to",
+            "<#9>"
+          ],
+          "raw": "the red bar goes down from <#1> to <#5> and goes steady from <#5> to <#9>",
+          "imgid": 1,
+          "sentid": 18
+        },
+        {
+          "tokens": [
+            "<#1>",
+            "is",
+            "the",
+            "maximum",
+            "of",
+            "red",
+            "bars"
+          ],
+          "raw": "<#1> is the maximum of red bars",
+          "imgid": 1,
+          "sentid": 19
+        },
+        {
+          "tokens": [
+            "<#9>",
+            "is",
+            "the",
+            "minimum",
+            "of",
+            "red",
+            "bars"
+          ],
+          "raw": "<#9> is the minimum of red bars",
+          "imgid": 1,
+          "sentid": 20
+        }
+      ],
+      "split": "train",
+      "filename": "1.svg"
+    },
+    {
+      "sentids": [
+        21,
+        22,
+        23,
+        24,
+        25,
+        26
+      ],
+      "imgid": 2,
+      "sentences": [
+        {
+          "tokens": [
+            "the",
+            "purple",
+            "bar",
+            "goes",
+            "steady",
+            "from",
+            "<#1>",
+            "to",
+            "<#4>",
+            "and",
+            "goes",
+            "up",
+            "from",
+            "<#4>",
+            "to",
+            "<#5>"
+          ],
+          "raw": "the purple bar goes steady from <#1> to <#4> and goes up from <#4> to <#5>",
+          "imgid": 2,
+          "sentid": 21
+        },
+        {
+          "tokens": [
+            "The",
+            "maximum",
+            "occurs",
+            "in",
+            "<#5>",
+            "of",
+            "purple",
+            "bars"
+          ],
+          "raw": "The maximum occurs in <#5> of purple bars",
+          "imgid": 2,
+          "sentid": 22
+        },
+        {
+          "tokens": [
+            "The",
+            "minimum",
+            "occurs",
+            "in",
+            "<#1>",
+            "of",
+            "purple",
+            "bars"
+          ],
+          "raw": "The minimum occurs in <#1> of purple bars",
+          "imgid": 2,
+          "sentid": 23
+        },
+        {
+          "tokens": [
+            "the",
+            "orange",
+            "bar",
+            "goes",
+            "steady"
+          ],
+          "raw": "the orange bar goes steady",
+          "imgid": 2,
+          "sentid": 24
+        },
+        {
+          "tokens": [
+            "The",
+            "maximum",
+            "occurs",
+            "in",
+            "<#4>",
+            "of",
+            "orange",
+            "bars"
+          ],
+          "raw": "The maximum occurs in <#4> of orange bars",
+          "imgid": 2,
+          "sentid": 25
+        },
+        {
+          "tokens": [
+            "<#2>",
+            "and",
+            "<#3>",
+            "are",
+            "the",
+            "minimum",
+            "of",
+            "orange",
+            "bars"
+          ],
+          "raw": "<#2> and <#3> are the minimum of orange bars",
+          "imgid": 2,
+          "sentid": 26
+        }
+      ],
+      "split": "val",
+      "filename": "2.svg"
+    },
+    {
+      "sentids": [
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+      ],
+      "imgid": 3,
+      "sentences": [
+        {
+          "tokens": [
+            "the",
+            "blue",
+            "bar",
+            "goes",
+            "up",
+            "from",
+            "<#1>",
+            "to",
+            "<#2>",
+            "and",
+            "goes",
+            "down",
+            "from",
+            "<#2>",
+            "to",
+            "<#7>"
+          ],
+          "raw": "the blue bar goes up from <#1> to <#2> and goes down from <#2> to <#7>",
+          "imgid": 3,
+          "sentid": 27
+        },
+        {
+          "tokens": [
+            "<#2>",
+            "is",
+            "the",
+            "maximum",
+            "of",
+            "blue",
+            "bars"
+          ],
+          "raw": "<#2> is the maximum of blue bars",
+          "imgid": 3,
+          "sentid": 28
+        },
+        {
+          "tokens": [
+            "The",
+            "minimum",
+            "occurs",
+            "in",
+            "<#7>",
+            "of",
+            "blue",
+            "bars"
+          ],
+          "raw": "The minimum occurs in <#7> of blue bars",
+          "imgid": 3,
+          "sentid": 29
+        },
+        {
+          "tokens": [
+            "the",
+            "green",
+            "bar",
+            "goes",
+            "steady",
+            "from",
+            "<#1>",
+            "to",
+            "<#5>",
+            "and",
+            "goes",
+            "down",
+            "from",
+            "<#5>",
+            "to",
+            "<#7>"
+          ],
+          "raw": "the green bar goes steady from <#1> to <#5> and goes down from <#5> to <#7>",
+          "imgid": 3,
+          "sentid": 30
+        },
+        {
+          "tokens": [
+            "The",
+            "maximum",
+            "occurs",
+            "in",
+            "<#5>",
+            "of",
+            "green",
+            "bars"
+          ],
+          "raw": "The maximum occurs in <#5> of green bars",
+          "imgid": 3,
+          "sentid": 31
+        },
+        {
+          "tokens": [
+            "<#7>",
+            "is",
+            "the",
+            "minimum",
+            "of",
+            "green",
+            "bars"
+          ],
+          "raw": "<#7> is the minimum of green bars",
+          "imgid": 3,
+          "sentid": 32
+        },
+        {
+          "tokens": [
+            "the",
+            "orange",
+            "bar",
+            "goes",
+            "down",
+            "from",
+            "<#1>",
+            "to",
+            "<#3>",
+            "and",
+            "goes",
+            "steady",
+            "from",
+            "<#3>",
+            "to",
+            "<#7>"
+          ],
+          "raw": "the orange bar goes down from <#1> to <#3> and goes steady from <#3> to <#7>",
+          "imgid": 3,
+          "sentid": 33
+        },
+        {
+          "tokens": [
+            "The",
+            "maximum",
+            "occurs",
+            "in",
+            "<#1>",
+            "of",
+            "orange",
+            "bars"
+          ],
+          "raw": "The maximum occurs in <#1> of orange bars",
+          "imgid": 3,
+          "sentid": 34
+        },
+        {
+          "tokens": [
+            "The",
+            "minimum",
+            "occurs",
+            "in",
+            "<#4>",
+            "of",
+            "orange",
+            "bars"
+          ],
+          "raw": "The minimum occurs in <#4> of orange bars",
+          "imgid": 3,
+          "sentid": 35
+        }
+      ],
+      "split": "test",
+      "filename": "3.svg"
+    },
+    {
+      "sentids": [
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47
+      ],
+      "imgid": 4,
+      "sentences": [
+        {
+          "tokens": [
+            "the",
+            "yellow",
+            "bar",
+            "goes",
+            "up",
+            "from",
+            "<#1>",
+            "to",
+            "<#4>",
+            "and",
+            "goes",
+            "steady",
+            "from",
+            "<#4>",
+            "to",
+            "<#9>"
+          ],
+          "raw": "the yellow bar goes up from <#1> to <#4> and goes steady from <#4> to <#9>",
+          "imgid": 4,
+          "sentid": 36
+        },
+        {
+          "tokens": [
+            "<#4>",
+            "is",
+            "the",
+            "maximum",
+            "of",
+            "yellow",
+            "bars"
+          ],
+          "raw": "<#4> is the maximum of yellow bars",
+          "imgid": 4,
+          "sentid": 37
+        },
+        {
+          "tokens": [
+            "<#1>",
+            "is",
+            "the",
+            "minimum",
+            "of",
+            "yellow",
+            "bars"
+          ],
+          "raw": "<#1> is the minimum of yellow bars",
+          "imgid": 4,
+          "sentid": 38
+        },
+        {
+          "tokens": [
+            "the",
+            "blue",
+            "bar",
+            "goes",
+            "down"
+          ],
+          "raw": "the blue bar goes down",
+          "imgid": 4,
+          "sentid": 39
+        },
+        {
+          "tokens": [
+            "<#1>",
+            "is",
+            "the",
+            "maximum",
+            "of",
+            "blue",
+            "bars"
+          ],
+          "raw": "<#1> is the maximum of blue bars",
+          "imgid": 4,
+          "sentid": 40
+        },
+        {
+          "tokens": [
+            "The",
+            "minimum",
+            "occurs",
+            "in",
+            "<#9>",
+            "of",
+            "blue",
+            "bars"
+          ],
+          "raw": "The minimum occurs in <#9> of blue bars",
+          "imgid": 4,
+          "sentid": 41
+        },
+        {
+          "tokens": [
+            "the",
+            "purple",
+            "bar",
+            "goes",
+            "up",
+            "from",
+            "<#1>",
+            "to",
+            "<#6>",
+            "and",
+            "goes",
+            "down",
+            "from",
+            "<#6>",
+            "to",
+            "<#9>"
+          ],
+          "raw": "the purple bar goes up from <#1> to <#6> and goes down from <#6> to <#9>",
+          "imgid": 4,
+          "sentid": 42
+        },
+        {
+          "tokens": [
+            "<#6>",
+            "is",
+            "the",
+            "maximum",
+            "of",
+            "purple",
+            "bars"
+          ],
+          "raw": "<#6> is the maximum of purple bars",
+          "imgid": 4,
+          "sentid": 43
+        },
+        {
+          "tokens": [
+            "The",
+            "minimum",
+            "occurs",
+            "in",
+            "<#1>",
+            "of",
+            "purple",
+            "bars"
+          ],
+          "raw": "The minimum occurs in <#1> of purple bars",
+          "imgid": 4,
+          "sentid": 44
+        },
+        {
+          "tokens": [
+            "the",
+            "red",
+            "bar",
+            "goes",
+            "steady",
+            "from",
+            "<#1>",
+            "to",
+            "<#3>",
+            "and",
+            "goes",
+            "up",
+            "from",
+            "<#3>",
+            "to",
+            "<#9>"
+          ],
+          "raw": "the red bar goes steady from <#1> to <#3> and goes up from <#3> to <#9>",
+          "imgid": 4,
+          "sentid": 45
+        },
+        {
+          "tokens": [
+            "<#9>",
+            "is",
+            "the",
+            "maximum",
+            "of",
+            "red",
+            "bars"
+          ],
+          "raw": "<#9> is the maximum of red bars",
+          "imgid": 4,
+          "sentid": 46
+        },
+        {
+          "tokens": [
+            "The",
+            "minimum",
+            "occurs",
+            "in",
+            "<#3>",
+            "of",
+            "red",
+            "bars"
+          ],
+          "raw": "The minimum occurs in <#3> of red bars",
+          "imgid": 4,
+          "sentid": 47
+        }
+      ],
+      "split": "train",
+      "filename": "4.svg"
+    },
+    {
+      "sentids": [
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59
+      ],
+      "imgid": 5,
+      "sentences": [
+        {
+          "tokens": [
+            "the",
+            "cyan",
+            "bar",
+            "goes",
+            "up",
+            "from",
+            "<#1>",
+            "to",
+            "<#2>",
+            "and",
+            "goes",
+            "steady",
+            "from",
+            "<#2>",
+            "to",
+            "<#9>"
+          ],
+          "raw": "the cyan bar goes up from <#1> to <#2> and goes steady from <#2> to <#9>",
+          "imgid": 5,
+          "sentid": 48
+        },
+        {
+          "tokens": [
+            "The",
+            "maximum",
+            "occurs",
+            "in",
+            "<#4>",
+            "of",
+            "cyan",
+            "bars"
+          ],
+          "raw": "The maximum occurs in <#4> of cyan bars",
+          "imgid": 5,
+          "sentid": 49
+        },
+        {
+          "tokens": [
+            "<#1>",
+            "is",
+            "the",
+            "minimum",
+            "of",
+            "cyan",
+            "bars"
+          ],
+          "raw": "<#1> is the minimum of cyan bars",
+          "imgid": 5,
+          "sentid": 50
+        },
+        {
+          "tokens": [
+            "the",
+            "yellow",
+            "bar",
+            "goes",
+            "down",
+            "from",
+            "<#1>",
+            "to",
+            "<#5>",
+            "and",
+            "goes",
+            "steady",
+            "from",
+            "<#5>",
+            "to",
+            "<#9>"
+          ],
+          "raw": "the yellow bar goes down from <#1> to <#5> and goes steady from <#5> to <#9>",
+          "imgid": 5,
+          "sentid": 51
+        },
+        {
+          "tokens": [
+            "The",
+            "maximum",
+            "occurs",
+            "in",
+            "<#1>",
+            "of",
+            "yellow",
+            "bars"
+          ],
+          "raw": "The maximum occurs in <#1> of yellow bars",
+          "imgid": 5,
+          "sentid": 52
+        },
+        {
+          "tokens": [
+            "The",
+            "minimum",
+            "occurs",
+            "in",
+            "<#5>",
+            "of",
+            "yellow",
+            "bars"
+          ],
+          "raw": "The minimum occurs in <#5> of yellow bars",
+          "imgid": 5,
+          "sentid": 53
+        },
+        {
+          "tokens": [
+            "the",
+            "purple",
+            "bar",
+            "goes",
+            "up"
+          ],
+          "raw": "the purple bar goes up",
+          "imgid": 5,
+          "sentid": 54
+        },
+        {
+          "tokens": [
+            "<#9>",
+            "is",
+            "the",
+            "maximum",
+            "of",
+            "purple",
+            "bars"
+          ],
+          "raw": "<#9> is the maximum of purple bars",
+          "imgid": 5,
+          "sentid": 55
+        },
+        {
+          "tokens": [
+            "<#1>",
+            "is",
+            "the",
+            "minimum",
+            "of",
+            "purple",
+            "bars"
+          ],
+          "raw": "<#1> is the minimum of purple bars",
+          "imgid": 5,
+          "sentid": 56
+        },
+        {
+          "tokens": [
+            "the",
+            "red",
+            "bar",
+            "goes",
+            "down"
+          ],
+          "raw": "the red bar goes down",
+          "imgid": 5,
+          "sentid": 57
+        },
+        {
+          "tokens": [
+            "The",
+            "maximum",
+            "occurs",
+            "in",
+            "<#1>",
+            "of",
+            "red",
+            "bars"
+          ],
+          "raw": "The maximum occurs in <#1> of red bars",
+          "imgid": 5,
+          "sentid": 58
+        },
+        {
+          "tokens": [
+            "<#9>",
+            "is",
+            "the",
+            "minimum",
+            "of",
+            "red",
+            "bars"
+          ],
+          "raw": "<#9> is the minimum of red bars",
+          "imgid": 5,
+          "sentid": 59
+        }
+      ],
+      "split": "train",
+      "filename": "5.svg"
+    },
+    {
+      "sentids": [
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68
+      ],
+      "imgid": 6,
+      "sentences": [
+        {
+          "tokens": [
+            "the",
+            "yellow",
+            "bar",
+            "goes",
+            "down",
+            "from",
+            "<#1>",
+            "to",
+            "<#3>",
+            "and",
+            "goes",
+            "steady",
+            "from",
+            "<#3>",
+            "to",
+            "<#5>"
+          ],
+          "raw": "the yellow bar goes down from <#1> to <#3> and goes steady from <#3> to <#5>",
+          "imgid": 6,
+          "sentid": 60
+        },
+        {
+          "tokens": [
+            "<#1>",
+            "is",
+            "the",
+            "maximum",
+            "of",
+            "yellow",
+            "bars"
+          ],
+          "raw": "<#1> is the maximum of yellow bars",
+          "imgid": 6,
+          "sentid": 61
+        },
+        {
+          "tokens": [
+            "<#5>",
+            "is",
+            "the",
+            "minimum",
+            "of",
+            "yellow",
+            "bars"
+          ],
+          "raw": "<#5> is the minimum of yellow bars",
+          "imgid": 6,
+          "sentid": 62
+        },
+        {
+          "tokens": [
+            "the",
+            "green",
+            "bar",
+            "goes",
+            "down",
+            "from",
+            "<#1>",
+            "to",
+            "<#2>",
+            "and",
+            "goes",
+            "steady",
+            "from",
+            "<#2>",
+            "to",
+            "<#5>"
+          ],
+          "raw": "the green bar goes down from <#1> to <#2> and goes steady from <#2> to <#5>",
+          "imgid": 6,
+          "sentid": 63
+        },
+        {
+          "tokens": [
+            "<#1>",
+            "is",
+            "the",
+            "maximum",
+            "of",
+            "green",
+            "bars"
+          ],
+          "raw": "<#1> is the maximum of green bars",
+          "imgid": 6,
+          "sentid": 64
+        },
+        {
+          "tokens": [
+            "The",
+            "minimum",
+            "occurs",
+            "in",
+            "<#2>",
+            "of",
+            "green",
+            "bars"
+          ],
+          "raw": "The minimum occurs in <#2> of green bars",
+          "imgid": 6,
+          "sentid": 65
+        },
+        {
+          "tokens": [
+            "the",
+            "red",
+            "bar",
+            "goes",
+            "down",
+            "from",
+            "<#1>",
+            "to",
+            "<#4>",
+            "and",
+            "goes",
+            "up",
+            "from",
+            "<#4>",
+            "to",
+            "<#5>"
+          ],
+          "raw": "the red bar goes down from <#1> to <#4> and goes up from <#4> to <#5>",
+          "imgid": 6,
+          "sentid": 66
+        },
+        {
+          "tokens": [
+            "The",
+            "maximum",
+            "occurs",
+            "in",
+            "<#1>",
+            "of",
+            "red",
+            "bars"
+          ],
+          "raw": "The maximum occurs in <#1> of red bars",
+          "imgid": 6,
+          "sentid": 67
+        },
+        {
+          "tokens": [
+            "The",
+            "minimum",
+            "occurs",
+            "in",
+            "<#4>",
+            "of",
+            "red",
+            "bars"
+          ],
+          "raw": "The minimum occurs in <#4> of red bars",
+          "imgid": 6,
+          "sentid": 68
+        }
+      ],
+      "split": "train",
+      "filename": "6.svg"
+    },
+    {
+      "sentids": [
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80
+      ],
+      "imgid": 7,
+      "sentences": [
+        {
+          "tokens": [
+            "the",
+            "orange",
+            "bar",
+            "goes",
+            "down"
+          ],
+          "raw": "the orange bar goes down",
+          "imgid": 7,
+          "sentid": 69
+        },
+        {
+          "tokens": [
+            "The",
+            "maximum",
+            "occurs",
+            "in",
+            "<#1>",
+            "of",
+            "orange",
+            "bars"
+          ],
+          "raw": "The maximum occurs in <#1> of orange bars",
+          "imgid": 7,
+          "sentid": 70
+        },
+        {
+          "tokens": [
+            "The",
+            "minimum",
+            "occurs",
+            "in",
+            "<#10>",
+            "of",
+            "orange",
+            "bars"
+          ],
+          "raw": "The minimum occurs in <#10> of orange bars",
+          "imgid": 7,
+          "sentid": 71
+        },
+        {
+          "tokens": [
+            "the",
+            "purple",
+            "bar",
+            "goes",
+            "steady",
+            "from",
+            "<#1>",
+            "to",
+            "<#9>",
+            "and",
+            "goes",
+            "down",
+            "from",
+            "<#9>",
+            "to",
+            "<#10>"
+          ],
+          "raw": "the purple bar goes steady from <#1> to <#9> and goes down from <#9> to <#10>",
+          "imgid": 7,
+          "sentid": 72
+        },
+        {
+          "tokens": [
+            "The",
+            "maximum",
+            "occurs",
+            "in",
+            "<#5>",
+            "of",
+            "purple",
+            "bars"
+          ],
+          "raw": "The maximum occurs in <#5> of purple bars",
+          "imgid": 7,
+          "sentid": 73
+        },
+        {
+          "tokens": [
+            "The",
+            "minimum",
+            "occurs",
+            "in",
+            "<#10>",
+            "of",
+            "purple",
+            "bars"
+          ],
+          "raw": "The minimum occurs in <#10> of purple bars",
+          "imgid": 7,
+          "sentid": 74
+        },
+        {
+          "tokens": [
+            "the",
+            "green",
+            "bar",
+            "goes",
+            "down",
+            "from",
+            "<#1>",
+            "to",
+            "<#5>",
+            "and",
+            "goes",
+            "up",
+            "from",
+            "<#5>",
+            "to",
+            "<#10>"
+          ],
+          "raw": "the green bar goes down from <#1> to <#5> and goes up from <#5> to <#10>",
+          "imgid": 7,
+          "sentid": 75
+        },
+        {
+          "tokens": [
+            "<#1>",
+            "is",
+            "the",
+            "maximum",
+            "of",
+            "green",
+            "bars"
+          ],
+          "raw": "<#1> is the maximum of green bars",
+          "imgid": 7,
+          "sentid": 76
+        },
+        {
+          "tokens": [
+            "The",
+            "minimum",
+            "occurs",
+            "in",
+            "<#5>",
+            "of",
+            "green",
+            "bars"
+          ],
+          "raw": "The minimum occurs in <#5> of green bars",
+          "imgid": 7,
+          "sentid": 77
+        },
+        {
+          "tokens": [
+            "the",
+            "cyan",
+            "bar",
+            "goes",
+            "steady"
+          ],
+          "raw": "the cyan bar goes steady",
+          "imgid": 7,
+          "sentid": 78
+        },
+        {
+          "tokens": [
+            "<#10>",
+            "is",
+            "the",
+            "maximum",
+            "of",
+            "cyan",
+            "bars"
+          ],
+          "raw": "<#10> is the maximum of cyan bars",
+          "imgid": 7,
+          "sentid": 79
+        },
+        {
+          "tokens": [
+            "<#3>",
+            "is",
+            "the",
+            "minimum",
+            "of",
+            "cyan",
+            "bars"
+          ],
+          "raw": "<#3> is the minimum of cyan bars",
+          "imgid": 7,
+          "sentid": 80
+        }
+      ],
+      "split": "train",
+      "filename": "7.svg"
+    },
+    {
+      "sentids": [
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        88,
+        89
+      ],
+      "imgid": 8,
+      "sentences": [
+        {
+          "tokens": [
+            "the",
+            "orange",
+            "bar",
+            "goes",
+            "down",
+            "from",
+            "<#1>",
+            "to",
+            "<#6>",
+            "and",
+            "goes",
+            "steady",
+            "from",
+            "<#6>",
+            "to",
+            "<#9>"
+          ],
+          "raw": "the orange bar goes down from <#1> to <#6> and goes steady from <#6> to <#9>",
+          "imgid": 8,
+          "sentid": 81
+        },
+        {
+          "tokens": [
+            "The",
+            "maximum",
+            "occurs",
+            "in",
+            "<#1>",
+            "of",
+            "orange",
+            "bars"
+          ],
+          "raw": "The maximum occurs in <#1> of orange bars",
+          "imgid": 8,
+          "sentid": 82
+        },
+        {
+          "tokens": [
+            "The",
+            "minimum",
+            "occurs",
+            "in",
+            "<#8>",
+            "of",
+            "orange",
+            "bars"
+          ],
+          "raw": "The minimum occurs in <#8> of orange bars",
+          "imgid": 8,
+          "sentid": 83
+        },
+        {
+          "tokens": [
+            "the",
+            "blue",
+            "bar",
+            "goes",
+            "up",
+            "from",
+            "<#1>",
+            "to",
+            "<#3>",
+            "and",
+            "goes",
+            "steady",
+            "from",
+            "<#3>",
+            "to",
+            "<#9>"
+          ],
+          "raw": "the blue bar goes up from <#1> to <#3> and goes steady from <#3> to <#9>",
+          "imgid": 8,
+          "sentid": 84
+        },
+        {
+          "tokens": [
+            "The",
+            "maximum",
+            "occurs",
+            "in",
+            "<#3>",
+            "of",
+            "blue",
+            "bars"
+          ],
+          "raw": "The maximum occurs in <#3> of blue bars",
+          "imgid": 8,
+          "sentid": 85
+        },
+        {
+          "tokens": [
+            "<#1>",
+            "is",
+            "the",
+            "minimum",
+            "of",
+            "blue",
+            "bars"
+          ],
+          "raw": "<#1> is the minimum of blue bars",
+          "imgid": 8,
+          "sentid": 86
+        },
+        {
+          "tokens": [
+            "the",
+            "yellow",
+            "bar",
+            "goes",
+            "down",
+            "from",
+            "<#1>",
+            "to",
+            "<#7>",
+            "and",
+            "goes",
+            "up",
+            "from",
+            "<#7>",
+            "to",
+            "<#9>"
+          ],
+          "raw": "the yellow bar goes down from <#1> to <#7> and goes up from <#7> to <#9>",
+          "imgid": 8,
+          "sentid": 87
+        },
+        {
+          "tokens": [
+            "The",
+            "maximum",
+            "occurs",
+            "in",
+            "<#1>",
+            "of",
+            "yellow",
+            "bars"
+          ],
+          "raw": "The maximum occurs in <#1> of yellow bars",
+          "imgid": 8,
+          "sentid": 88
+        },
+        {
+          "tokens": [
+            "The",
+            "minimum",
+            "occurs",
+            "in",
+            "<#7>",
+            "of",
+            "yellow",
+            "bars"
+          ],
+          "raw": "The minimum occurs in <#7> of yellow bars",
+          "imgid": 8,
+          "sentid": 89
+        }
+      ],
+      "split": "train",
+      "filename": "8.svg"
+    },
+    {
+      "sentids": [
+        90,
+        91,
+        92,
+        93,
+        94,
+        95
+      ],
+      "imgid": 9,
+      "sentences": [
+        {
+          "tokens": [
+            "the",
+            "purple",
+            "bar",
+            "goes",
+            "down",
+            "from",
+            "<#1>",
+            "to",
+            "<#4>",
+            "and",
+            "goes",
+            "up",
+            "from",
+            "<#4>",
+            "to",
+            "<#9>"
+          ],
+          "raw": "the purple bar goes down from <#1> to <#4> and goes up from <#4> to <#9>",
+          "imgid": 9,
+          "sentid": 90
+        },
+        {
+          "tokens": [
+            "<#9>",
+            "is",
+            "the",
+            "maximum",
+            "of",
+            "purple",
+            "bars"
+          ],
+          "raw": "<#9> is the maximum of purple bars",
+          "imgid": 9,
+          "sentid": 91
+        },
+        {
+          "tokens": [
+            "<#4>",
+            "is",
+            "the",
+            "minimum",
+            "of",
+            "purple",
+            "bars"
+          ],
+          "raw": "<#4> is the minimum of purple bars",
+          "imgid": 9,
+          "sentid": 92
+        },
+        {
+          "tokens": [
+            "the",
+            "cyan",
+            "bar",
+            "goes",
+            "down",
+            "from",
+            "<#1>",
+            "to",
+            "<#2>",
+            "and",
+            "goes",
+            "steady",
+            "from",
+            "<#2>",
+            "to",
+            "<#9>"
+          ],
+          "raw": "the cyan bar goes down from <#1> to <#2> and goes steady from <#2> to <#9>",
+          "imgid": 9,
+          "sentid": 93
+        },
+        {
+          "tokens": [
+            "The",
+            "maximum",
+            "occurs",
+            "in",
+            "<#1>",
+            "of",
+            "cyan",
+            "bars"
+          ],
+          "raw": "The maximum occurs in <#1> of cyan bars",
+          "imgid": 9,
+          "sentid": 94
+        },
+        {
+          "tokens": [
+            "The",
+            "minimum",
+            "occurs",
+            "in",
+            "<#7>",
+            "of",
+            "cyan",
+            "bars"
+          ],
+          "raw": "The minimum occurs in <#7> of cyan bars",
+          "imgid": 9,
+          "sentid": 95
+        }
+      ],
+      "split": "train",
+      "filename": "9.svg"
+    }
+  ]
+}
