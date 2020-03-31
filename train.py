@@ -25,6 +25,11 @@ parser.add_argument('--output_nc', type=str, default = '', help='using svg outpu
 parser.add_argument('--svg_element_number', type = int, default = 40)
 parser.add_argument('--pretrained_model', type=str, default = "none")
 parser.add_argument('--max_epoch', type = int, default = 120)
+parser.add_argument("--emb_dim", type = int, default = 512)
+parser.add_argument("--attention_dim", type = int, default = 512)
+parser.add_argument('--decoder_dim', type = int, default = 512)
+
+
 
 # [3, 2, 4, 3, 1], output_nc = [5, 5, 5, 5, 5])
 # input_nc = "3,2,4,3,1"
@@ -45,9 +50,12 @@ data_folder = args.data_folder # '/home/can.liu/caption/data/karpathy_output/'  
 data_name = args.data_name #'coco_5_cap_per_img_5_min_word_freq'  # base name shared by data files
 
 # Model parameters
-emb_dim = 512  # dimension of word embeddings
-attention_dim = 512  # dimension of attention linear layers
-decoder_dim = 512  # dimension of decoder RNN
+
+emb_dim = args.emb_dim  # dimension of word embeddings 词汇 embed 
+attention_dim = args.attention_dim  # dimension of attention linear layers
+decoder_dim = args.decoder_dim  # dimension of decoder RNN
+
+
 dropout = 0.5
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")  # sets device for model and PyTorch tensors
 cudnn.benchmark = True  # set to true only if inputs to model are fixed size; otherwise lot of computational overhead
