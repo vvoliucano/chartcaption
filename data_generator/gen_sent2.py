@@ -35,6 +35,7 @@ grouped_settings = {
     "type1": "barchart",
     "type2": "grouped",
 }
+
 stacked_settings = {
     "min_attr": 2,
     "max_attr": 4, # max <= len(color_set)
@@ -47,6 +48,7 @@ stacked_settings = {
     "type1": "barchart",
     "type2": "stacked",
 }
+
 color_set = {
     "red": "#FF0000",
     "orange": "#FFA500",

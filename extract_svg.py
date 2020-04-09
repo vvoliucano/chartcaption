@@ -690,7 +690,7 @@ def get_text_information(X_axis, Y_axis, legend, texts_attr):
 
 def parse_unknown_svg_visual_elements(svg_string, need_data_soup = False, need_text = False):
     # need_text = True
-    print("this need_text is ", need_text)
+    # print("this need_text is ", need_text)
     soup = bs4.BeautifulSoup(svg_string, "html5lib")
     svg = soup.select("svg")
     rects = soup.select("rect")
@@ -707,7 +707,7 @@ def parse_unknown_svg_visual_elements(svg_string, need_data_soup = False, need_t
     # print("texts length", len(texts))
     # print("text", texts)
     texts_attr = [parse_a_text_visual(text) for text in texts]
-    print("texts_attr", texts_attr)
+    # print("texts_attr", texts_attr)
     if need_text:
         rects_attr.extend(texts_attr)
 
@@ -719,7 +719,7 @@ def parse_unknown_svg_visual_elements(svg_string, need_data_soup = False, need_t
     # print("texts_attr", texts_attr)
 
     text_information = [rect['text'] for rect in rects_attr]
-    print("text information", text_information)
+    # print("text information", text_information)
 
     important_rects = uniform_important_elements(rects_attr)
     data = {}
@@ -949,7 +949,7 @@ def parse_svg_string(svg_string, min_element_num = 7, simple = False, need_text 
                 elements.append([0 for i in range(len(elements[0]))])
             if need_text:
                 text.extend(["<pad>" for i in range(min_element_num - len(text))])
-                print("text after uniform", text)
+                # print("text after uniform", text)
         # print("I want to see the important rects")
         # print("element number", len(elements[0]))
         # print(important_rects)

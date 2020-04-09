@@ -27,7 +27,7 @@ def svg_read(filename, need_soup = False, need_text = False):
     # a = []
     # img = np.random.random_sample((20, 10))
     f = open(filename)
-    print("open file", filename)
+    # print("open file", filename)
     svg_string = f.read()
     # print(svg_string)
     if need_text:
@@ -178,7 +178,7 @@ def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_i
                 else:
                     if need_text:
                         img, img_text = svg_read(impaths[i], need_text = need_text)
-                        print("img_text: ", img_text)
+                        # print("img_text: ", img_text)
                     else:
                         img = svg_read(impaths[i], need_text = need_text)
 
@@ -216,7 +216,7 @@ def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_i
                     caplens.append(c_len)
 
 
-            print("word_map", word_map)
+            # print("word_map", word_map)
             # Sanity check
             assert images.shape[0] * captions_per_image == len(enc_captions) == len(caplens)
 
