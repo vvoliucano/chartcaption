@@ -257,6 +257,7 @@ def parse_a_rect(rect):
     up = y
     down = y + height
     rect_attr = {
+        "type": "rect",
         "origin": rect,
         "width": width,
         "height": height,
@@ -268,10 +269,70 @@ def parse_a_rect(rect):
         "x": x,
         "y": y,
         "up": up,
-        "down": down}
+        "down": down,
+        "text": ""}
     return rect_attr
 
+def parse_a_text_visual(text):
+    value = float(get_attr(text, "q0", 0)) #走个形式，省点代码，其实没有卵用
+    color  = parse_fill(get_attr(text, "fill", "#000"))
+    opacity = float(get_attr(text, "opacity", 1))
+    x, y = get_position(text)
+    font_size = get_font_size(text)
+    # print("text", text)
+    # print("text string", text.string)
+    if text.string == None:
+        content = ""
+    else:
+        content = text.string.replace("\n", "").replace(" ", "")
+
+    # 此处只是用到非常虚弱的假设，width = font-size * 字母的数目
+    # 而，height = font-size, 当然了在不同的字体中会有所不同，
+
+    height = font_size
+    width = font_size * len(content)
+    text_anchor = get_attr(text, "text-anchor", "start")
+    if text_anchor == "start":
+        x = x;
+    elif text_anchor == "middle":
+        x = x - width/2 
+    else:
+        x = x - width
+    left = x
+    right = x + width
+    up = y
+    down = y + height
+    rect_attr = {
+        "type": "text",
+        "origin": text,
+        "width": width,
+        "height": height,
+        "left": left,
+        "right": right,
+        "value": value,
+        "fill": color,
+        "opacity": opacity,
+        "x": x,
+        "y": y,
+        "up": up,
+        "down": down,
+        "text": content
+        }
+    return rect_attr
+
+
+    # bbox_w = float(get_attr(text, "bbox_w", 0))
+    # bbox_h = float(get_attr(text, "bbox_h", 0))
+
+    # # print("bbox content", bbox_x, bbox_y, bbox_w, bbox_h)
+    
+    # # print(content)
+    # return_content = {"x": x, "y": y, "content": content, "orgin":text, "font_size": font_size, "text_anchor": text_anchor, "bbox_x": bbox_x, "bbox_y": bbox_y, "bbox_w": bbox_w, "bbox_h": bbox_h}
+    # # print("text content", return_content)
+    # return return_content
+
 def parse_a_text(text):
+    # 这是在假装有bounding box 的情况下，
     x, y = get_position(text)
     bbox_x, bbox_y = get_position(text, is_bbox = True)
     font_size = get_font_size(text)
@@ -627,17 +688,44 @@ def get_text_information(X_axis, Y_axis, legend, texts_attr):
 
     return text_collection
 
-def parse_unknown_svg_visual_elements(svg_string, need_data_soup = False):
+def parse_unknown_svg_visual_elements(svg_string, need_data_soup = False, need_text = False):
+    # need_text = True
+    print("this need_text is ", need_text)
     soup = bs4.BeautifulSoup(svg_string, "html5lib")
     svg = soup.select("svg")
     rects = soup.select("rect")
-
     rects_attr = [parse_a_rect(rect) for rect in rects]
+
+    texts = soup.select("text")
+    newtexts = []
+    for text in texts:
+        if text.has_attr("transform") and "-90" in text["transform"]:
+            continue
+        else:
+            newtexts.append(text)
+    texts = newtexts
+    # print("texts length", len(texts))
+    # print("text", texts)
+    texts_attr = [parse_a_text_visual(text) for text in texts]
+    print("texts_attr", texts_attr)
+    if need_text:
+        rects_attr.extend(texts_attr)
+
     for i, rect in enumerate(rects_attr):
         rect["origin"]["caption_id"] = str(i)
-        rect["origin"]["caption_sha"] = "5"
+
+    # 添加相应的id
+
+    # print("texts_attr", texts_attr)
+
+    text_information = [rect['text'] for rect in rects_attr]
+    print("text information", text_information)
+
     important_rects = uniform_important_elements(rects_attr)
     data = {}
+
+    if need_text:
+        return important_rects, data, soup, text_information
 
     return important_rects, data, soup
 
@@ -828,9 +916,13 @@ def getDataPointList(data):
     list = type + position + color + opacity + quantity + cate0_array + cate1_array + ordi0_array
     return list
 
-def parse_svg_string(svg_string, min_element_num = 7, simple = False):
+def parse_svg_string(svg_string, min_element_num = 7, simple = False, need_text = False):
     if (simple):
-        important_rects, data, soup = parse_unknown_svg_visual_elements(svg_string)
+        if need_text:
+            important_rects, data, soup, text = parse_unknown_svg_visual_elements(svg_string, need_text = need_text)
+        else:
+            important_rects, data, soup = parse_unknown_svg_visual_elements(svg_string, need_text)
+
         # print(important_rects)
     else:
         important_rects, data, soup = parse_unknown_svg(svg_string)
@@ -855,6 +947,9 @@ def parse_svg_string(svg_string, min_element_num = 7, simple = False):
         if len(important_rects) < min_element_num:
             for i in range(len(important_rects), min_element_num):
                 elements.append([0 for i in range(len(elements[0]))])
+            if need_text:
+                text.extend(["<pad>" for i in range(min_element_num - len(text))])
+                print("text after uniform", text)
         # print("I want to see the important rects")
         # print("element number", len(elements[0]))
         # print(important_rects)
@@ -868,6 +963,9 @@ def parse_svg_string(svg_string, min_element_num = 7, simple = False):
         if sum(id_array) == - len(id_array):
             id_array = [i for i in range(len(id_array))]
         # print(f"The id array is {id_array}")
+    if need_text:
+        return numpy.asarray(elements), id_array, soup, text
+
     return numpy.asarray(elements), id_array, soup
 
 def get_rect_list(rect):
@@ -896,6 +994,10 @@ def get_rect_list(rect):
 
 def get_rect_list_visual(rect):
     this_type = [1, 0, 0]
+    if rect["type"] == "rect":
+        this_type = [1, 0, 0]
+    elif rect["type"] == "text":
+        this_type = [0, 0, 1]
     position = [rect['width'], rect['height'], rect['left'], rect['right'], rect['up'], rect['down']]
     color = rect['fill']
     opacity = [rect['opacity']]

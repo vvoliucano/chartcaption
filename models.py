@@ -105,6 +105,7 @@ class DecoderWithAttention(nn.Module):
         super(DecoderWithAttention, self).__init__()
 
         self.encoder_dim = encoder_dim
+        # print("encoder dim", encoder_dim)
         self.attention_dim = attention_dim
         self.embed_dim = embed_dim
         self.decoder_dim = decoder_dim
@@ -114,6 +115,7 @@ class DecoderWithAttention(nn.Module):
         self.attention = Attention(encoder_dim, decoder_dim, attention_dim)  # attention network
 
         self.embedding = nn.Embedding(vocab_size, embed_dim)  # embedding layer
+        # 词向量层，将词汇从编号转化成为向量，
         self.dropout = nn.Dropout(p=self.dropout)
         self.decode_step = nn.LSTMCell(embed_dim + encoder_dim, decoder_dim, bias=True)  # decoding LSTMCell
         self.init_h = nn.Linear(encoder_dim, decoder_dim)  # linear layer to find initial hidden state of LSTMCell
@@ -185,7 +187,18 @@ class DecoderWithAttention(nn.Module):
         encoded_captions = encoded_captions[sort_ind]
 
         # Embedding
+        # encoded_captions.shape torch.Size([8, 52])
+        # embeddings shape torch.Size([8, 52, 512])
+        # encoded_captions.shape torch.Size([5, 52])
+        # embeddings shape torch.Size([5, 52, 512])
+
+
+        # print("encoded_captions.shape", encoded_captions.shape)
+        # print("self.embedding shape", self.embedding.shape)
+        # print("encoded_captions", encoded_captions.shape)
+        # print("encoded_captions[0]", encoded_captions[0])
         embeddings = self.embedding(encoded_captions)  # (batch_size, max_caption_length, embed_dim)
+        # print("embeddings shape", embeddings.shape)
 
         # Initialize LSTM state
         h, c = self.init_hidden_state(encoder_out)  # (batch_size, decoder_dim)
@@ -224,7 +237,7 @@ class SvgCompEncoder(nn.Module):
     Encoder.
     this_type + position (size, position) + color + opacity
     """
-    def __init__(self, svg_channel=20, svg_element_number = 10, use_bias=False, input_nc = [3, 2, 4, 3, 1], output_nc = [5, 5, 5, 5, 5]):
+    def __init__(self, svg_channel=20, svg_element_number = 10, use_bias=False, input_nc = [3, 2, 4, 3, 1], output_nc = [5, 5, 5, 5, 5], image_encoder_num = 2048):
         super(SvgCompEncoder, self).__init__()
         print(input_nc)
         svg_channel = sum(input_nc)
@@ -241,14 +254,14 @@ class SvgCompEncoder(nn.Module):
         self.linear = nn.Conv1d(total_nc, total_nc, kernel_size = 1)
         # type_encoder = [nn.Conv1d(3, type_out_nc, kernel_size = 1),
                             # nn.BatchNorm1d(type_out_nc)]
-        # 这不是一个简单的尝试
+        # 这是一个复杂的尝试
 
         modules = [nn.ReflectionPad1d(3),
                 nn.Conv1d(total_nc, 256, kernel_size=7, padding=0, bias=use_bias),
                 nn.BatchNorm1d(256),
                 nn.ReLU(True),
                 nn.ReflectionPad1d(3),
-                nn.Conv1d(256, 2048, kernel_size=7, padding=0, bias=use_bias),
+                nn.Conv1d(256, image_encoder_num, kernel_size=7, padding=0, bias=use_bias),
                 nn.Tanh()
                 ]
 
@@ -315,7 +328,7 @@ class SvgEncoder(nn.Module):
     """
     Encoder.
     """
-    def __init__(self, svg_channel=20, svg_element_number = 10, use_bias=False):
+    def __init__(self, svg_channel=20, svg_element_number = 10, use_bias=False, image_encoder_num = 2048):
         super(SvgEncoder, self).__init__()
 
         # 这是一个简单的尝试
@@ -325,7 +338,7 @@ class SvgEncoder(nn.Module):
                 nn.BatchNorm1d(256),
                 nn.ReLU(True),
                 nn.ReflectionPad1d(3),
-                nn.Conv1d(256, 2048, kernel_size=7, padding=0, bias=use_bias),
+                nn.Conv1d(256, image_encoder_num, kernel_size=7, padding=0, bias=use_bias),
                 nn.Tanh()
                 ]
 

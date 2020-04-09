@@ -35,6 +35,11 @@ class CaptionDataset(Dataset):
         with open(os.path.join(data_folder, self.split + '_CAPLENS_' + data_name + '.json'), 'r') as j:
             self.caplens = json.load(j)
 
+        # Load image text information (completely into memory)
+        with open(os.path.join(data_folder, self.split + '_IMAGE_TEXT_' + data_name + '.json'), 'r') as j:
+            self.image_texts = json.load(j)
+
+
         # PyTorch transformation pipeline for the image (normalizing, etc.)
         self.transform = transform
         if transform == "svg":
@@ -58,15 +63,19 @@ class CaptionDataset(Dataset):
 
         caption = torch.LongTensor(self.captions[i])
 
+        image_text = torch.LongTensor(self.image_texts[i // self.cpi])
+
         caplen = torch.LongTensor([self.caplens[i]])
 
+        # 此处有修改，增加了输入的数据格式，除了图像和相应的caption之外，图像中的文字也得到了相应的输入 
+
         if self.split is 'TRAIN':
-            return img, caption, caplen
+            return img, caption, caplen, image_text
         else:
             # For validation of testing, also return all 'captions_per_image' captions to find BLEU-4 score
             all_captions = torch.LongTensor(
                 self.captions[((i // self.cpi) * self.cpi):(((i // self.cpi) * self.cpi) + self.cpi)])
-            return img, caption, caplen, all_captions
+            return img, caption, caplen, image_text, all_captions
 
     def __len__(self):
         return self.dataset_size

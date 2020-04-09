@@ -1,5 +1,6 @@
 import time
 import torch.backends.cudnn as cudnn
+import torch
 import torch.optim
 import torch.utils.data
 import torchvision.transforms as transforms
@@ -28,7 +29,9 @@ parser.add_argument('--max_epoch', type = int, default = 120)
 parser.add_argument("--emb_dim", type = int, default = 512)
 parser.add_argument("--attention_dim", type = int, default = 512)
 parser.add_argument('--decoder_dim', type = int, default = 512)
-
+parser.add_argument('--encoder_dim', type = int, default = 2048)
+parser.add_argument('--encode_word', type = str, default = "no", help = "using text as input")
+parser.add_argument('--need_text', action='store_true', help="decide whether need text")
 
 
 # [3, 2, 4, 3, 1], output_nc = [5, 5, 5, 5, 5])
@@ -54,7 +57,12 @@ data_name = args.data_name #'coco_5_cap_per_img_5_min_word_freq'  # base name sh
 emb_dim = args.emb_dim  # dimension of word embeddings 词汇 embed 
 attention_dim = args.attention_dim  # dimension of attention linear layers
 decoder_dim = args.decoder_dim  # dimension of decoder RNN
+encoder_dim = args.encoder_dim # dimension of encoder dim, which is the output of the encoder of the image and the input of the decoder.
 
+# Input encoder with words
+encode_word = False
+if args.encode_word == "yes":
+    encode_word = True
 
 dropout = 0.5
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")  # sets device for model and PyTorch tensors
@@ -103,6 +111,7 @@ def main():
                                        embed_dim=emb_dim,
                                        decoder_dim=decoder_dim,
                                        vocab_size=len(word_map),
+                                       encoder_dim = encoder_dim,
                                        dropout=dropout)
         decoder_optimizer = torch.optim.Adam(params=filter(lambda p: p.requires_grad, decoder.parameters()),
                                              lr=decoder_lr)
@@ -114,7 +123,11 @@ def main():
                 input_nc = [int(item) for item in args.input_nc.split(",")]
                 output_nc = [int(item) for item in args.output_nc.split(",")]
                 args.svg_channel = sum(input_nc)
-                encoder = SvgCompEncoder(svg_channel = args.svg_channel, input_nc = input_nc, output_nc = output_nc, svg_element_number = args.svg_element_number)
+                if args.need_text:
+                    # 此处仅使用encoder - embed 的维度， 预留出embed 的dim 作为输入的自然语言的位置
+                    encoder = SvgCompEncoder(svg_channel = args.svg_channel, input_nc = input_nc, output_nc = output_nc, svg_element_number = args.svg_element_number, image_encoder_num = encoder_dim - emb_dim) 
+                else:
+                    encoder = SvgCompEncoder(svg_channel = args.svg_channel, input_nc = input_nc, output_nc = output_nc, svg_element_number = args.svg_element_number, image_encoder_num = encoder_dim)
 
         else:
             encoder = Encoder()
@@ -227,16 +240,27 @@ def train(train_loader, encoder, decoder, criterion, encoder_optimizer, decoder_
     start = time.time()
 
     # Batches
-    for i, (imgs, caps, caplens) in enumerate(train_loader):
+    for i, (imgs, caps, caplens, image_text) in enumerate(train_loader):
         data_time.update(time.time() - start)
-
+        # print(image_text)
         # Move to GPU, if available
         imgs = imgs.to(device)
         caps = caps.to(device)
         caplens = caplens.to(device)
+        image_text = image_text.to(device)
 
         # Forward prop.
         imgs = encoder(imgs)
+        # print("encoded imgs shape: ", imgs.shape)
+        
+        if args.need_text:
+            # print("image text shape", image_text.shape)
+            encoded_image_text = decoder.embedding(image_text)
+            # print("image text encoded", encoded_image_text.shape)
+            imgs = torch.cat((imgs, encoded_image_text), 2)
+            # print("img dimension after cating: ", imgs.shape)
+
+        # print("imgs. shape", imgs.shape)
         scores, caps_sorted, decode_lengths, alphas, sort_ind = decoder(imgs, caps, caplens)
 
         # Since we decoded starting with <start>, the targets are all words after <start>, up to <end>
@@ -321,16 +345,25 @@ def validate(val_loader, encoder, decoder, criterion):
     # solves the issue #57
     with torch.no_grad():
         # Batches
-        for i, (imgs, caps, caplens, allcaps) in enumerate(val_loader):
+        for i, (imgs, caps, caplens, image_text, allcaps) in enumerate(val_loader):
 
             # Move to device, if available
             imgs = imgs.to(device)
             caps = caps.to(device)
             caplens = caplens.to(device)
+            image_text = image_text.to(device)
 
             # Forward prop.
             if encoder is not None:
                 imgs = encoder(imgs)
+                if args.need_text:
+                    # print("image text shape", image_text.shape)
+                    encoded_image_text = decoder.embedding(image_text)
+                    # print("image text encoded", encoded_image_text.shape)
+                    imgs = torch.cat((imgs, encoded_image_text), 2)
+                    # print("img dimension after cating: ", imgs.shape)
+
+
             scores, caps_sorted, decode_lengths, alphas, sort_ind = decoder(imgs, caps, caplens)
 
             # Since we decoded starting with <start>, the targets are all words after <start>, up to <end>

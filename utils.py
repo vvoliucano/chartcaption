@@ -21,13 +21,19 @@ def make_sure_dir(dirname):
         # shutil.rmtree(dirname)
     os.mkdir(dirname)
 
-def svg_read(filename, need_soup = False):
+
+
+def svg_read(filename, need_soup = False, need_text = False):
     # a = []
     # img = np.random.random_sample((20, 10))
     f = open(filename)
+    print("open file", filename)
     svg_string = f.read()
     # print(svg_string)
-    a_numpy, id_array, soup = parse_svg_string(svg_string, min_element_num=svg_number, simple = True)
+    if need_text:
+        a_numpy, id_array, soup, text = parse_svg_string(svg_string, min_element_num=svg_number, simple = True, need_text = need_text)
+    else:
+        a_numpy, id_array, soup = parse_svg_string(svg_string, min_element_num=svg_number, simple = True, need_text = need_text)
     img = np.transpose(a_numpy)
     img = img - 0.5
     # 查看图像的大小
@@ -36,14 +42,20 @@ def svg_read(filename, need_soup = False):
     #     print(i[0])
     # for i in img[0]:
     #     print(i)
+
     if need_soup:
-        return img, soup
+        if need_text:
+            return img, soup, text
+        else:
+            return img, soup
+    if need_text:
+        return img, text
     return img
 
 
 
 def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_image, min_word_freq, output_folder,
-                       max_len=100, image_type = "pixel"):
+                       max_len=100, image_type = "pixel", need_text = False):
     """
     Creates input files for training, validation, and test data.
 
@@ -118,8 +130,6 @@ def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_i
     base_filename = dataset + '_' + str(captions_per_image) + '_cap_' + str(min_word_freq) + '_min_wf'
 
     # Save word map to a JSON
-    with open(os.path.join(output_folder, 'WORDMAP_' + base_filename + '.json'), 'w') as j:
-        json.dump(word_map, j)
 
     # Sample captions for each image, save images to HDF5 file, and captions and their lengths to JSON files
     seed(123)
@@ -142,6 +152,7 @@ def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_i
 
             enc_captions = []
             caplens = []
+            image_text = []
 
             for i, path in enumerate(tqdm(impaths)):
 
@@ -165,16 +176,38 @@ def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_i
                     assert img.shape == (3, 256, 256)
                     assert np.max(img) <= 255
                 else:
-                    img = svg_read(impaths[i])
+                    if need_text:
+                        img, img_text = svg_read(impaths[i], need_text = need_text)
+                        print("img_text: ", img_text)
+                    else:
+                        img = svg_read(impaths[i], need_text = need_text)
+
+
+
+
+                if need_text:
+                    img_text = [word.lower() for word in img_text]
+                    for word in img_text:
+                        if word != '' and word not in word_map:
+                            word_map[word] = len(word_map)    
+                    encoded_image_text = [word_map.get(word, 0) for word in img_text]
+                    image_text.append(encoded_image_text)
+                                            # 添加图形中出现的词汇
+                
+
+
 
                 # Save image to HDF5 file
                 images[i] = img
+                # print(img)
                 # print(img)
 
                 for j, c in enumerate(captions):
                     # Encode captions
                     enc_c = [word_map['<start>']] + [word_map.get(word, word_map['<unk>']) for word in c] + [
                         word_map['<end>']] + [word_map['<pad>']] * (max_len - len(c))
+                    
+                    # print("enc_c", enc_c)
 
                     # Find caption lengths
                     c_len = len(c) + 2
@@ -182,6 +215,8 @@ def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_i
                     enc_captions.append(enc_c)
                     caplens.append(c_len)
 
+
+            print("word_map", word_map)
             # Sanity check
             assert images.shape[0] * captions_per_image == len(enc_captions) == len(caplens)
 
@@ -191,6 +226,13 @@ def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_i
 
             with open(os.path.join(output_folder, split + '_CAPLENS_' + base_filename + '.json'), 'w') as j:
                 json.dump(caplens, j)
+
+            with open(os.path.join(output_folder, split + '_IMAGE_TEXT_' + base_filename + '.json'), 'w') as j:
+                json.dump(image_text, j)
+
+    with open(os.path.join(output_folder, 'WORDMAP_' + base_filename + '.json'), 'w') as j:
+        json.dump(word_map, j)
+
 
 
 def init_embedding(embeddings):
