@@ -146,8 +146,6 @@ python create_input_files.py --dataset chart --karpathy_json_path data_generator
 
 python train.py --data_folder data/svg_output_20200408 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 3,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512
 
-
-
 python train.py --data_folder data/svg_output_20200408 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 3,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text
 
 
@@ -157,4 +155,18 @@ python create_input_files.py --dataset chart --karpathy_json_path data_generator
 
 python train.py --data_folder data/svg_output_20200409 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 3,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text
 
+# 20200410
+
+python3 gen_sent2.py -n 10 -p svg20200410
+# 测试生成数据的过程
+
+python3 gen_sentence.py -n 10 -p svg20200410_try
+# 测试能否生成具有文字的数据集// 事实证明，可以
+
+# 下一步是解析数据集，即从数据集中解析其中的相应的数据
+python create_input_files.py
+
+# 再下一步是测试其中是否可以正常运行
+
+# 我觉得OK
 

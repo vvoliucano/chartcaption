@@ -12,6 +12,12 @@ def draw_barchart(bar_values_all, colors_all, vsettings, color_set, svg_file_nam
     return
 
 def draw_grouped_barchart(bar_values_all, colors_all, vsettings, color_set, svg_file_name):
+    print("bar_values_all", bar_values_all)
+    print("colors_all", colors_all)
+    print('vsettings', vsettings)
+    print("color_set", color_set)
+    print("svg_file_name", svg_file_name)
+
     attr_num = len(bar_values_all)
     assert(attr_num != 0)
     bar_num = len(bar_values_all[0])
