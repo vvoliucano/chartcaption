@@ -164,7 +164,18 @@ python3 gen_sentence.py -n 50000 -p svg20200410
 # 测试能否生成具有文字的数据集// 事实证明，可以
 
 # 下一步是解析数据集，即从数据集中解析其中的相应的数据
-python create_input_files.py
+
+
+python create_input_files.py --dataset chart --karpathy_json_path data_generator/svg20200410/dataset.json --image_folder ./data_generator/svg20200410 --output_folder data/svg_output_20200410 --image_type svg --need_text 
+
+
+python train.py --data_folder data/svg_output_20200410 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 3,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text
+
+
+python caption.py --img ./data_generator/svg20200410/222.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-04-10-16-11/Best.pth.tar --word_map data/svg_output_20200410/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg
+
+
+# /home/can.liu/caption/chartcaption/checkpoint/chart_5_cap_5_min_wf-2020-04-10-16-11
 
 # 再下一步是测试其中是否可以正常运行
 

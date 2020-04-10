@@ -31,9 +31,9 @@ def get_pixel_image_from_file(image_path):
     image = transform(img)  # (3, 256, 256)
     return image
 
-def get_svg_image_from_file(image_path):
+def get_svg_image_from_file(image_path, need_text):
     # img = np.random.random_sample((20, 10))
-    img, soup = svg_read(image_path, need_soup = True)
+    img, soup, image_text = svg_read(image_path, need_soup = True, need_text = need_text)
     # elements = soup.findAll(attrs = {"caption_sha", "5"})
     # elements = soup.findAll(attrs = {"caption_id":  "2"})
     elements = soup.findAll(attrs = {"caption_sha":  "5"})
@@ -43,12 +43,13 @@ def get_svg_image_from_file(image_path):
     # print("element_number", element_number)
     # print(soup.findAll(attrs = {"caption_id":  "2"}))
     # print(soup)
-    with open("1.html", "w") as file:
-        file.write(str(soup))
+    # with open("1.html", "w") as file:
+    #     file.write(str(soup))
     img = torch.FloatTensor(img).to(device)
-    return img, soup, element_number
+    image_text = torch.FloatTensor(image_text).to(device)
+    return img, soup, element_number, image_text
 
-def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=3, image_type="pixel"):
+def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=3, image_type="pixel", need_text = False):
     """
     Reads an image and captions it with beam search.
 
@@ -63,17 +64,30 @@ def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=
     k = beam_size
     vocab_size = len(word_map)
 
-    if image_type == "pixel":   
-        image = get_pixel_image_from_file(image_path)
-    else:
-        image, soup, element_number = get_svg_image_from_file(image_path)
+    
+    if need_text:
+        image, soup, element_number, image_text = get_svg_image_from_file(image_path, need_text = need_text)
+        image = image.unsqueeze(0)  # (1, 3, 256, 256)
+        image_text = image_text.unsqueeze(0) # 添加一个
+        encoder_out = encoder(image)  # (1, enc_image_size, encoder_dim)
+        enc_image_size = encoder_out.size(1)
+        print("encoder_out.shape", encoder_out.shape)
+        encoder_dim = encoder_out.size(-1) # 
+
+    else:  
+        image, soup, element_number = get_svg_image_from_file(image_path, need_text = need_text)
+        image = image.unsqueeze(0)  # (1, 3, 256, 256)
+        encoder_out = encoder(image)  # (1, enc_image_size, enc_image_size, encoder_dim)
+        enc_image_size = encoder_out.size(1)
+        print("encoder_out.shape", encoder_out.shape)
+        encoder_dim = encoder_out.size(-1) # 
 
     # Encode
     image = image.unsqueeze(0)  # (1, 3, 256, 256)
     encoder_out = encoder(image)  # (1, enc_image_size, enc_image_size, encoder_dim)
     enc_image_size = encoder_out.size(1)
     print("encoder_out.shape", encoder_out.shape)
-    encoder_dim = encoder_out.size(-1)
+    encoder_dim = encoder_out.size(-1) # 
 
     # Flatten encoding
     encoder_out = encoder_out.view(1, -1, encoder_dim)  # (1, num_pixels, encoder_dim)
@@ -329,6 +343,7 @@ if __name__ == '__main__':
     parser.add_argument('--beam_size', '-b', default=5, type=int, help='beam size for beam search')
     parser.add_argument('--dont_smooth', dest='smooth', action='store_false', help='do not smooth alpha overlay')
     parser.add_argument('--image_type', type=str, default = 'pixel', help='image type as input')
+    parser.add_argument('--need_text', action='store_true', help="decide whether need text")
 
 
 # python caption.py --img /home/can.liu/caption/data/coco_2014/val2014/COCO_val2014_000000204853.jpg --model /home/can.liu/caption/chartcaption/BEST_checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar --word_map /home/can.liu/caption/data/karpathy_output/WORDMAP_coco_5_cap_per_img_5_min_word_freq.json
@@ -354,7 +369,7 @@ if __name__ == '__main__':
 
     # Encode, decode with attention and beam search
     if args.image_type == "pixel":
-        seq, alphas = caption_image_beam_search(encoder, decoder, args.img, word_map, args.beam_size, args.image_type)
+        seq, alphas = caption_image_beam_search(encoder, decoder, args.img, word_map, args.beam_size, args.image_type, need_text = args.need_text)
         alphas = torch.FloatTensor(alphas)
         visualize_att(args.img, seq, alphas, rev_word_map, args.smooth)
 
