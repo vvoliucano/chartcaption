@@ -33,6 +33,7 @@ def get_pixel_image_from_file(image_path):
 
 def get_svg_image_from_file(image_path, need_text):
     # img = np.random.random_sample((20, 10))
+    print("need_text or not ", need_text)
     img, soup, image_text = svg_read(image_path, need_soup = True, need_text = need_text)
     # elements = soup.findAll(attrs = {"caption_sha", "5"})
     # elements = soup.findAll(attrs = {"caption_id":  "2"})
@@ -350,8 +351,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    output_file = "data/" + args.img.split("/")[-1][0:-4] + ".jpg"
-    print(output_file)
+    # output_file = "data/" + args.img.split("/")[-1][0:-4] + ".jpg"
+    # print(output_file)
 
     # Load model
     checkpoint = torch.load(args.model, map_location=str(device))
@@ -374,7 +375,7 @@ if __name__ == '__main__':
         visualize_att(args.img, seq, alphas, rev_word_map, args.smooth)
 
     else:
-        seqs, alphas, soup, element_number = caption_image_beam_search(encoder, decoder, args.img, word_map, args.beam_size, args.image_type)
+        seqs, alphas, soup, element_number = caption_image_beam_search(encoder, decoder, args.img, word_map, args.beam_size, args.image_type, need_text = args.need_text)
         alphas = [torch.FloatTensor(alpha) for alpha in alphas]
         # alphas = torch.FloatTensor(alphas)
         for i, seq in enumerate(seqs):
