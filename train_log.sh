@@ -160,7 +160,7 @@ python train.py --data_folder data/svg_output_20200409 --data_name chart_5_cap_5
 python3 gen_sent2.py -n 10 -p svg20200410
 # 测试生成数据的过程
 
-python3 gen_sentence.py -n 10 -p svg20200410_try
+python3 gen_sentence.py -n 50000 -p svg20200410
 # 测试能否生成具有文字的数据集// 事实证明，可以
 
 # 下一步是解析数据集，即从数据集中解析其中的相应的数据
