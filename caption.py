@@ -12,6 +12,7 @@ from skimage.transform import resize as imresize
 from PIL import Image
 from utils import svg_read
 import bs4
+import os
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -31,15 +32,22 @@ def get_pixel_image_from_file(image_path):
     image = transform(img)  # (3, 256, 256)
     return image
 
-def get_svg_image_from_file(image_path, need_text):
+def get_svg_image_from_file(image_path, need_text, wordmap):
     # img = np.random.random_sample((20, 10))
-    print("need_text or not ", need_text)
-    img, soup, image_text = svg_read(image_path, need_soup = True, need_text = need_text)
+    # print("need_text or not ", need_text)
+    img, soup, image_text = svg_read(image_path, need_soup = True, need_text = True)
     # elements = soup.findAll(attrs = {"caption_sha", "5"})
     # elements = soup.findAll(attrs = {"caption_id":  "2"})
-    elements = soup.findAll(attrs = {"caption_sha":  "5"})
+
+    print("image_text", image_text)
+    encoded_image_text = [wordmap.get(word, 0) for word in image_text]
+    print("image_text", encoded_image_text)
+    # image_text_try = torch.LongTensor(image_text)
+    # print("image text length ", len(image_text))
+    # elements = soup.findAll(attrs = {"caption_sha":  "5"})
     # print("elements", elements)
-    element_number = len(elements)
+    element_number = sum([item != "<pad>" for item in image_text])
+    # print("element_number", element_number)
     # element_number = len()
     # print("element_number", element_number)
     # print(soup.findAll(attrs = {"caption_id":  "2"}))
@@ -47,8 +55,8 @@ def get_svg_image_from_file(image_path, need_text):
     # with open("1.html", "w") as file:
     #     file.write(str(soup))
     img = torch.FloatTensor(img).to(device)
-    image_text = torch.FloatTensor(image_text).to(device)
-    return img, soup, element_number, image_text
+    encoded_image_text = torch.LongTensor(encoded_image_text).to(device)
+    return img, soup, element_number, encoded_image_text
 
 def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=3, image_type="pixel", need_text = False):
     """
@@ -67,29 +75,31 @@ def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=
 
     
     if need_text:
-        image, soup, element_number, image_text = get_svg_image_from_file(image_path, need_text = need_text)
-        image = image.unsqueeze(0)  # (1, 3, 256, 256)
-        image_text = image_text.unsqueeze(0) # 添加一个
+        image, soup, element_number, image_text = get_svg_image_from_file(image_path, need_text = need_text, wordmap = word_map)
+        # encoded_image_text = [word_map.get(word, 0) for word in img_text]
+        # 注意，此时的image text 还是原始的文字
+        # 此时需要将文字转化成为相应的对象
+        print("image_size", image.shape)
+        # print("element_number")
+        image = image.unsqueeze(0)  # (1, 13, 40)
+        image_text = image_text.unsqueeze(0) # 添加一个 (1, 40)
         encoder_out = encoder(image)  # (1, enc_image_size, encoder_dim)
+        encoded_image_text = decoder.embedding(image_text) # (1, 40, 512)
+        encoder_out = torch.cat((encoder_out, encoded_image_text), 2)
         enc_image_size = encoder_out.size(1)
         print("encoder_out.shape", encoder_out.shape)
         encoder_dim = encoder_out.size(-1) # 
 
     else:  
         image, soup, element_number = get_svg_image_from_file(image_path, need_text = need_text)
-        image = image.unsqueeze(0)  # (1, 3, 256, 256)
+        image = image.unsqueeze(0)  # (1, 13, 40)
         encoder_out = encoder(image)  # (1, enc_image_size, enc_image_size, encoder_dim)
         enc_image_size = encoder_out.size(1)
         print("encoder_out.shape", encoder_out.shape)
         encoder_dim = encoder_out.size(-1) # 
 
     # Encode
-    image = image.unsqueeze(0)  # (1, 3, 256, 256)
-    encoder_out = encoder(image)  # (1, enc_image_size, enc_image_size, encoder_dim)
-    enc_image_size = encoder_out.size(1)
-    print("encoder_out.shape", encoder_out.shape)
-    encoder_dim = encoder_out.size(-1) # 
-
+  
     # Flatten encoding
     encoder_out = encoder_out.view(1, -1, encoder_dim)  # (1, num_pixels, encoder_dim)
     num_pixels = encoder_out.size(1)
@@ -276,6 +286,8 @@ def visualize_att_svg(soup, element_number, image_path, seq, alphas, rev_word_ma
         current_alpha = current_alpha.view(current_alpha.shape[0], 1)
         current_alpha_numpy = current_alpha.numpy().reshape(current_alpha.shape[0])
         # print(np.max(current_alpha_numpy), np.min(current_alpha_numpy))
+        # print("element_number", element_number)
+        # print("current_alpha_numpy ", current_alpha_numpy)
         current_alpha_max = np.max(current_alpha_numpy[0:element_number])
         
         for i in range(element_number):
@@ -354,6 +366,10 @@ if __name__ == '__main__':
     # output_file = "data/" + args.img.split("/")[-1][0:-4] + ".jpg"
     # print(output_file)
 
+    output_file = "data/" + args.model.split('/')[-2] + "/result_of_" +  args.img.split("/")[-1] + "/"
+    print(output_file)
+    os.system(f"mkdir -p {output_file}")
+
     # Load model
     checkpoint = torch.load(args.model, map_location=str(device))
     decoder = checkpoint['decoder']
@@ -369,13 +385,17 @@ if __name__ == '__main__':
     rev_word_map = {v: k for k, v in word_map.items()}  # ix2word
 
     # Encode, decode with attention and beam search
+
+    # 这部分已经没有用了
     if args.image_type == "pixel":
         seq, alphas = caption_image_beam_search(encoder, decoder, args.img, word_map, args.beam_size, args.image_type, need_text = args.need_text)
         alphas = torch.FloatTensor(alphas)
         visualize_att(args.img, seq, alphas, rev_word_map, args.smooth)
 
+    # 这部分才是实际使用的
     else:
         seqs, alphas, soup, element_number = caption_image_beam_search(encoder, decoder, args.img, word_map, args.beam_size, args.image_type, need_text = args.need_text)
+        # print("element_number", element_number)
         alphas = [torch.FloatTensor(alpha) for alpha in alphas]
         # alphas = torch.FloatTensor(alphas)
         for i, seq in enumerate(seqs):

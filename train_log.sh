@@ -161,6 +161,8 @@ python3 gen_sent2.py -n 10 -p svg20200410
 # 测试生成数据的过程
 
 python3 gen_sentence.py -n 50000 -p svg20200410
+
+python3 gen_sentence.py -n 10 -p svg20200410
 # 测试能否生成具有文字的数据集// 事实证明，可以
 
 # 下一步是解析数据集，即从数据集中解析其中的相应的数据
@@ -173,6 +175,9 @@ python train.py --data_folder data/svg_output_20200410 --data_name chart_5_cap_5
 
 
 python caption.py --img ./data_generator/svg20200410/222.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-04-10-16-11/Best.pth.tar --word_map data/svg_output_20200410/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg --need_text
+
+python caption.py --img ./data_generator/svg20200410/2.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-04-10-23-26/Best.pth.tar --word_map data/svg_output_20200410/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg --need_text
+
 
 
 # /home/can.liu/caption/chartcaption/checkpoint/chart_5_cap_5_min_wf-2020-04-10-16-11
