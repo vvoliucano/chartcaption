@@ -1,0 +1,770 @@
+{
+  "dataset": "weak",
+  "images": [
+    {
+      "sentids": [
+        0
+      ],
+      "imgid": 0,
+      "sentences": [
+        {
+          "tokens": [
+            "The",
+            "Value",
+            "of",
+            "E",
+            "increase",
+            "greatly",
+            "from",
+            "2010",
+            "to",
+            "2012;",
+            "while",
+            "A",
+            "decrease",
+            "during",
+            "the",
+            "same",
+            "period",
+            "."
+          ],
+          "raw": "The Value of E increase greatly from 2010 to 2012; while A decrease during the same period .",
+          "imgid": 0,
+          "sentid": 0
+        }
+      ],
+      "split": "train",
+      "filename": "000000.svg"
+    },
+    {
+      "sentids": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "imgid": 1,
+      "sentences": [
+        {
+          "tokens": [
+            "The",
+            "Value",
+            "of",
+            "A",
+            "decrease",
+            "with",
+            "steady",
+            "steps",
+            "from",
+            "2010",
+            "to",
+            "2015;",
+            "while",
+            "F",
+            "increase",
+            "with",
+            "steady",
+            "steps",
+            "during",
+            "the",
+            "same",
+            "period",
+            "."
+          ],
+          "raw": "The Value of A decrease with steady steps from 2010 to 2015; while F increase with steady steps during the same period .",
+          "imgid": 1,
+          "sentid": 1
+        },
+        {
+          "tokens": [
+            "The",
+            "sum",
+            "value",
+            "of",
+            "A",
+            "and",
+            "F",
+            "has",
+            "an",
+            "unusual",
+            "rise",
+            "in",
+            "2012",
+            "."
+          ],
+          "raw": "The sum value of A and F has an unusual rise in 2012 .",
+          "imgid": 1,
+          "sentid": 2
+        },
+        {
+          "tokens": [
+            "There",
+            "is",
+            "an",
+            "unusual",
+            "rise",
+            "in",
+            "2012",
+            "of",
+            "A",
+            "and",
+            "F",
+            "."
+          ],
+          "raw": "There is an unusual rise in 2012 of A and F .",
+          "imgid": 1,
+          "sentid": 3
+        },
+        {
+          "tokens": [
+            "The",
+            "sum",
+            "of",
+            "The",
+            "Value",
+            "A",
+            "and",
+            "F",
+            "increase",
+            "from",
+            "2010",
+            "to",
+            "2012",
+            ",",
+            "then",
+            "it",
+            "decrease",
+            "by",
+            "2013",
+            ",",
+            "then",
+            "it",
+            "increase",
+            "by",
+            "2015",
+            "."
+          ],
+          "raw": "The sum of The Value A and F increase from 2010 to 2012 , then it decrease by 2013 , then it increase by 2015 .",
+          "imgid": 1,
+          "sentid": 4
+        }
+      ],
+      "split": "train",
+      "filename": "000001.svg"
+    },
+    {
+      "sentids": [
+        5,
+        6,
+        7
+      ],
+      "imgid": 2,
+      "sentences": [
+        {
+          "tokens": [
+            "The",
+            "value",
+            "of",
+            "B",
+            ",",
+            "F",
+            "and",
+            "E",
+            "increase",
+            "slightly",
+            "with",
+            "steady",
+            "steps",
+            "from",
+            "2010",
+            "to",
+            "2014",
+            "."
+          ],
+          "raw": "The value of B , F and E increase slightly with steady steps from 2010 to 2014 .",
+          "imgid": 2,
+          "sentid": 5
+        },
+        {
+          "tokens": [
+            "The",
+            "Value",
+            "of",
+            "F",
+            "suddenly",
+            "increase",
+            "to",
+            "1",
+            ".327547607734249",
+            "in",
+            "2013",
+            "."
+          ],
+          "raw": "The Value of F suddenly increase to 1 .327547607734249 in 2013 .",
+          "imgid": 2,
+          "sentid": 6
+        },
+        {
+          "tokens": [
+            "B",
+            "has",
+            "the",
+            "lowest",
+            "average",
+            "value",
+            "of",
+            "2010",
+            ",",
+            "2011",
+            ",",
+            "2012",
+            ",",
+            "2013",
+            "and",
+            "2014",
+            "."
+          ],
+          "raw": "B has the lowest average value of 2010 , 2011 , 2012 , 2013 and 2014 .",
+          "imgid": 2,
+          "sentid": 7
+        }
+      ],
+      "split": "test",
+      "filename": "000002.svg"
+    },
+    {
+      "sentids": [
+        8
+      ],
+      "imgid": 3,
+      "sentences": [
+        {
+          "tokens": [
+            "The",
+            "sum",
+            "of",
+            "The",
+            "Value",
+            "A",
+            ",",
+            "E",
+            ",",
+            "B",
+            "and",
+            "C",
+            "decrease",
+            "greatly",
+            "from",
+            "2010",
+            "to",
+            "2011",
+            ",",
+            "then",
+            "it",
+            "keeps",
+            "stable",
+            "by",
+            "2012",
+            "."
+          ],
+          "raw": "The sum of The Value A , E , B and C decrease greatly from 2010 to 2011 , then it keeps stable by 2012 .",
+          "imgid": 3,
+          "sentid": 8
+        }
+      ],
+      "split": "train",
+      "filename": "000003.svg"
+    },
+    {
+      "sentids": [
+        9,
+        10
+      ],
+      "imgid": 4,
+      "sentences": [
+        {
+          "tokens": [
+            "The",
+            "Value",
+            "of",
+            "A",
+            "increase",
+            "with",
+            "steady",
+            "steps",
+            "from",
+            "2010",
+            "to",
+            "2014;",
+            "while",
+            "C",
+            ",",
+            "F",
+            "and",
+            "D",
+            "decrease",
+            "during",
+            "the",
+            "same",
+            "period",
+            "."
+          ],
+          "raw": "The Value of A increase with steady steps from 2010 to 2014; while C , F and D decrease during the same period .",
+          "imgid": 4,
+          "sentid": 9
+        },
+        {
+          "tokens": [
+            "The",
+            "sum",
+            "of",
+            "The",
+            "Value",
+            "A",
+            ",",
+            "C",
+            ",",
+            "F",
+            "and",
+            "D",
+            "keeps",
+            "stable",
+            "from",
+            "2010",
+            "to",
+            "2012",
+            ",",
+            "then",
+            "it",
+            "decrease",
+            "to",
+            "2",
+            ".83",
+            "by",
+            "2014",
+            "."
+          ],
+          "raw": "The sum of The Value A , C , F and D keeps stable from 2010 to 2012 , then it decrease to 2 .83 by 2014 .",
+          "imgid": 4,
+          "sentid": 10
+        }
+      ],
+      "split": "train",
+      "filename": "000004.svg"
+    },
+    {
+      "sentids": [
+        11
+      ],
+      "imgid": 5,
+      "sentences": [
+        {
+          "tokens": [
+            "The",
+            "Value",
+            "of",
+            "D",
+            "decrease",
+            "greatly",
+            "from",
+            "2010",
+            "to",
+            "2011",
+            ",",
+            "then",
+            "it",
+            "increase",
+            "greatly",
+            "to",
+            "1",
+            ".47",
+            "by",
+            "2013;",
+            "while",
+            "E",
+            "increase",
+            "with",
+            "steady",
+            "steps",
+            "during",
+            "the",
+            "same",
+            "period",
+            "."
+          ],
+          "raw": "The Value of D decrease greatly from 2010 to 2011 , then it increase greatly to 1 .47 by 2013; while E increase with steady steps during the same period .",
+          "imgid": 5,
+          "sentid": 11
+        }
+      ],
+      "split": "train",
+      "filename": "000005.svg"
+    },
+    {
+      "sentids": [
+        12,
+        13,
+        14
+      ],
+      "imgid": 6,
+      "sentences": [
+        {
+          "tokens": [
+            "The",
+            "Value",
+            "of",
+            "B",
+            "increase",
+            "greatly",
+            "with",
+            "steady",
+            "steps",
+            "from",
+            "2010",
+            "to",
+            "2013",
+            ",",
+            "then",
+            "it",
+            "decrease",
+            "greatly",
+            "by",
+            "2014",
+            "."
+          ],
+          "raw": "The Value of B increase greatly with steady steps from 2010 to 2013 , then it decrease greatly by 2014 .",
+          "imgid": 6,
+          "sentid": 12
+        },
+        {
+          "tokens": [
+            "The",
+            "Value",
+            "of",
+            "B",
+            "increase",
+            "greatly",
+            "with",
+            "steady",
+            "steps",
+            "from",
+            "2010",
+            "to",
+            "2013",
+            ",",
+            "then",
+            "it",
+            "decrease",
+            "greatly",
+            "to",
+            "0",
+            ".51",
+            "by",
+            "2014;",
+            "while",
+            "E",
+            ",",
+            "D",
+            ",",
+            "A",
+            "and",
+            "F",
+            "decrease",
+            "with",
+            "steady",
+            "steps",
+            "during",
+            "the",
+            "same",
+            "period",
+            "."
+          ],
+          "raw": "The Value of B increase greatly with steady steps from 2010 to 2013 , then it decrease greatly to 0 .51 by 2014; while E , D , A and F decrease with steady steps during the same period .",
+          "imgid": 6,
+          "sentid": 13
+        },
+        {
+          "tokens": [
+            "The",
+            "sum",
+            "of",
+            "The",
+            "Value",
+            "E",
+            ",",
+            "D",
+            ",",
+            "A",
+            ",",
+            "F",
+            "and",
+            "B",
+            "decrease",
+            "with",
+            "steady",
+            "steps",
+            "from",
+            "2010",
+            "to",
+            "2013",
+            ",",
+            "then",
+            "it",
+            "decrease",
+            "greatly",
+            "to",
+            "1",
+            ".3",
+            "by",
+            "2014",
+            "."
+          ],
+          "raw": "The sum of The Value E , D , A , F and B decrease with steady steps from 2010 to 2013 , then it decrease greatly to 1 .3 by 2014 .",
+          "imgid": 6,
+          "sentid": 14
+        }
+      ],
+      "split": "train",
+      "filename": "000006.svg"
+    },
+    {
+      "sentids": [
+        15,
+        16
+      ],
+      "imgid": 7,
+      "sentences": [
+        {
+          "tokens": [
+            "The",
+            "Value",
+            "of",
+            "F",
+            "increase",
+            "with",
+            "steady",
+            "steps",
+            "from",
+            "2010",
+            "to",
+            "2014;",
+            "while",
+            "C",
+            ",",
+            "B",
+            "and",
+            "A",
+            "decrease",
+            "greatly",
+            "during",
+            "the",
+            "same",
+            "period",
+            "."
+          ],
+          "raw": "The Value of F increase with steady steps from 2010 to 2014; while C , B and A decrease greatly during the same period .",
+          "imgid": 7,
+          "sentid": 15
+        },
+        {
+          "tokens": [
+            "The",
+            "Value",
+            "of",
+            "B",
+            "suddenly",
+            "increase",
+            "to",
+            "0",
+            ".6214355743454678",
+            "in",
+            "2013",
+            "."
+          ],
+          "raw": "The Value of B suddenly increase to 0 .6214355743454678 in 2013 .",
+          "imgid": 7,
+          "sentid": 16
+        }
+      ],
+      "split": "test",
+      "filename": "000007.svg"
+    },
+    {
+      "sentids": [
+        17,
+        18,
+        19,
+        20
+      ],
+      "imgid": 8,
+      "sentences": [
+        {
+          "tokens": [
+            "The",
+            "Value",
+            "of",
+            "E",
+            "decrease",
+            "from",
+            "2010",
+            "to",
+            "2016;",
+            "while",
+            "B",
+            "and",
+            "C",
+            "increase",
+            "with",
+            "steady",
+            "steps",
+            "during",
+            "the",
+            "same",
+            "period",
+            "."
+          ],
+          "raw": "The Value of E decrease from 2010 to 2016; while B and C increase with steady steps during the same period .",
+          "imgid": 8,
+          "sentid": 17
+        },
+        {
+          "tokens": [
+            "The",
+            "sum",
+            "value",
+            "of",
+            "E",
+            ",",
+            "B",
+            "and",
+            "C",
+            "has",
+            "an",
+            "unusual",
+            "rise",
+            "in",
+            "2012",
+            "."
+          ],
+          "raw": "The sum value of E , B and C has an unusual rise in 2012 .",
+          "imgid": 8,
+          "sentid": 18
+        },
+        {
+          "tokens": [
+            "There",
+            "is",
+            "an",
+            "unusual",
+            "rise",
+            "in",
+            "2012",
+            "of",
+            "E",
+            ",",
+            "B",
+            "and",
+            "C",
+            "."
+          ],
+          "raw": "There is an unusual rise in 2012 of E , B and C .",
+          "imgid": 8,
+          "sentid": 19
+        },
+        {
+          "tokens": [
+            "The",
+            "sum",
+            "of",
+            "The",
+            "Value",
+            "E",
+            ",",
+            "B",
+            "and",
+            "C",
+            "keeps",
+            "stable",
+            "from",
+            "2010",
+            "to",
+            "2011",
+            ",",
+            "then",
+            "it",
+            "increase",
+            "greatly",
+            "to",
+            "3",
+            ".67",
+            "by",
+            "2012",
+            ",",
+            "then",
+            "it",
+            "keeps",
+            "stable",
+            "by",
+            "2016",
+            "."
+          ],
+          "raw": "The sum of The Value E , B and C keeps stable from 2010 to 2011 , then it increase greatly to 3 .67 by 2012 , then it keeps stable by 2016 .",
+          "imgid": 8,
+          "sentid": 20
+        }
+      ],
+      "split": "train",
+      "filename": "000008.svg"
+    },
+    {
+      "sentids": [
+        21
+      ],
+      "imgid": 9,
+      "sentences": [
+        {
+          "tokens": [
+            "The",
+            "Value",
+            "of",
+            "C",
+            "increase",
+            "greatly",
+            "from",
+            "2010",
+            "to",
+            "2013",
+            ",",
+            "then",
+            "it",
+            "decrease",
+            "with",
+            "steady",
+            "steps",
+            "by",
+            "2017;",
+            "while",
+            "F",
+            "and",
+            "D",
+            "increase",
+            "slightly",
+            "with",
+            "steady",
+            "steps",
+            "during",
+            "the",
+            "same",
+            "period",
+            "."
+          ],
+          "raw": "The Value of C increase greatly from 2010 to 2013 , then it decrease with steady steps by 2017; while F and D increase slightly with steady steps during the same period .",
+          "imgid": 9,
+          "sentid": 21
+        }
+      ],
+      "split": "train",
+      "filename": "000009.svg"
+    }
+  ]
+}

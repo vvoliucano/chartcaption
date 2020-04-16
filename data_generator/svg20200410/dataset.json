@@ -1,0 +1,531 @@
+{
+  "dataset": "weak",
+  "images": [
+    {
+      "sentids": [
+        0,
+        1,
+        2
+      ],
+      "imgid": 0,
+      "sentences": [
+        {
+          "tokens": [
+            "the",
+            "#FFA500",
+            "bar",
+            "goes",
+            "steady"
+          ],
+          "raw": "the #FFA500 bar goes steady",
+          "imgid": 0,
+          "sentid": 0
+        },
+        {
+          "tokens": [
+            "2196",
+            "is",
+            "the",
+            "maximum"
+          ],
+          "raw": "2196 is the maximum",
+          "imgid": 0,
+          "sentid": 1
+        },
+        {
+          "tokens": [
+            "The",
+            "minimum",
+            "occurs",
+            "in",
+            "2226"
+          ],
+          "raw": "The minimum occurs in 2226",
+          "imgid": 0,
+          "sentid": 2
+        }
+      ],
+      "split": "test",
+      "filename": "0.svg"
+    },
+    {
+      "sentids": [
+        3,
+        4,
+        5
+      ],
+      "imgid": 1,
+      "sentences": [
+        {
+          "tokens": [
+            "the",
+            "#008000",
+            "bar",
+            "goes",
+            "steady",
+            "from",
+            "1948",
+            "to",
+            "1972",
+            "and",
+            "goes",
+            "up",
+            "from",
+            "1972",
+            "to",
+            "2020"
+          ],
+          "raw": "the #008000 bar goes steady from 1948 to 1972 and goes up from 1972 to 2020",
+          "imgid": 1,
+          "sentid": 3
+        },
+        {
+          "tokens": [
+            "2020",
+            "is",
+            "the",
+            "maximum"
+          ],
+          "raw": "2020 is the maximum",
+          "imgid": 1,
+          "sentid": 4
+        },
+        {
+          "tokens": [
+            "The",
+            "minimum",
+            "occurs",
+            "in",
+            "1960"
+          ],
+          "raw": "The minimum occurs in 1960",
+          "imgid": 1,
+          "sentid": 5
+        }
+      ],
+      "split": "train",
+      "filename": "1.svg"
+    },
+    {
+      "sentids": [
+        6,
+        7,
+        8
+      ],
+      "imgid": 2,
+      "sentences": [
+        {
+          "tokens": [
+            "the",
+            "#FF0000",
+            "bar",
+            "goes",
+            "down"
+          ],
+          "raw": "the #FF0000 bar goes down",
+          "imgid": 2,
+          "sentid": 6
+        },
+        {
+          "tokens": [
+            "2183",
+            "is",
+            "the",
+            "maximum"
+          ],
+          "raw": "2183 is the maximum",
+          "imgid": 2,
+          "sentid": 7
+        },
+        {
+          "tokens": [
+            "2354",
+            "is",
+            "the",
+            "minimum"
+          ],
+          "raw": "2354 is the minimum",
+          "imgid": 2,
+          "sentid": 8
+        }
+      ],
+      "split": "test",
+      "filename": "2.svg"
+    },
+    {
+      "sentids": [
+        9,
+        10,
+        11
+      ],
+      "imgid": 3,
+      "sentences": [
+        {
+          "tokens": [
+            "the",
+            "#FF0000",
+            "bar",
+            "goes",
+            "down"
+          ],
+          "raw": "the #FF0000 bar goes down",
+          "imgid": 3,
+          "sentid": 9
+        },
+        {
+          "tokens": [
+            "2179",
+            "is",
+            "the",
+            "maximum"
+          ],
+          "raw": "2179 is the maximum",
+          "imgid": 3,
+          "sentid": 10
+        },
+        {
+          "tokens": [
+            "The",
+            "minimum",
+            "occurs",
+            "in",
+            "2215"
+          ],
+          "raw": "The minimum occurs in 2215",
+          "imgid": 3,
+          "sentid": 11
+        }
+      ],
+      "split": "train",
+      "filename": "3.svg"
+    },
+    {
+      "sentids": [
+        12,
+        13,
+        14
+      ],
+      "imgid": 4,
+      "sentences": [
+        {
+          "tokens": [
+            "the",
+            "#00FFFF",
+            "bar",
+            "goes",
+            "steady"
+          ],
+          "raw": "the #00FFFF bar goes steady",
+          "imgid": 4,
+          "sentid": 12
+        },
+        {
+          "tokens": [
+            "The",
+            "maximum",
+            "occurs",
+            "in",
+            "1978"
+          ],
+          "raw": "The maximum occurs in 1978",
+          "imgid": 4,
+          "sentid": 13
+        },
+        {
+          "tokens": [
+            "1918",
+            "and",
+            "1930",
+            "are",
+            "the",
+            "minimum"
+          ],
+          "raw": "1918 and 1930 are the minimum",
+          "imgid": 4,
+          "sentid": 14
+        }
+      ],
+      "split": "train",
+      "filename": "4.svg"
+    },
+    {
+      "sentids": [
+        15,
+        16,
+        17
+      ],
+      "imgid": 5,
+      "sentences": [
+        {
+          "tokens": [
+            "the",
+            "#800080",
+            "bar",
+            "goes",
+            "up",
+            "from",
+            "1819",
+            "to",
+            "1959",
+            "and",
+            "goes",
+            "steady",
+            "from",
+            "1959",
+            "to",
+            "1999"
+          ],
+          "raw": "the #800080 bar goes up from 1819 to 1959 and goes steady from 1959 to 1999",
+          "imgid": 5,
+          "sentid": 15
+        },
+        {
+          "tokens": [
+            "1979",
+            "is",
+            "the",
+            "maximum"
+          ],
+          "raw": "1979 is the maximum",
+          "imgid": 5,
+          "sentid": 16
+        },
+        {
+          "tokens": [
+            "1819",
+            "is",
+            "the",
+            "minimum"
+          ],
+          "raw": "1819 is the minimum",
+          "imgid": 5,
+          "sentid": 17
+        }
+      ],
+      "split": "test",
+      "filename": "5.svg"
+    },
+    {
+      "sentids": [
+        18,
+        19,
+        20
+      ],
+      "imgid": 6,
+      "sentences": [
+        {
+          "tokens": [
+            "the",
+            "#FFA500",
+            "bar",
+            "goes",
+            "steady"
+          ],
+          "raw": "the #FFA500 bar goes steady",
+          "imgid": 6,
+          "sentid": 18
+        },
+        {
+          "tokens": [
+            "2347",
+            "is",
+            "the",
+            "maximum"
+          ],
+          "raw": "2347 is the maximum",
+          "imgid": 6,
+          "sentid": 19
+        },
+        {
+          "tokens": [
+            "The",
+            "minimum",
+            "occurs",
+            "in",
+            "2262",
+            "and",
+            "2279"
+          ],
+          "raw": "The minimum occurs in 2262 and 2279",
+          "imgid": 6,
+          "sentid": 20
+        }
+      ],
+      "split": "train",
+      "filename": "6.svg"
+    },
+    {
+      "sentids": [
+        21,
+        22,
+        23
+      ],
+      "imgid": 7,
+      "sentences": [
+        {
+          "tokens": [
+            "the",
+            "#800080",
+            "bar",
+            "goes",
+            "down",
+            "from",
+            "1812",
+            "to",
+            "1820",
+            "and",
+            "goes",
+            "steady",
+            "from",
+            "1820",
+            "to",
+            "1832"
+          ],
+          "raw": "the #800080 bar goes down from 1812 to 1820 and goes steady from 1820 to 1832",
+          "imgid": 7,
+          "sentid": 21
+        },
+        {
+          "tokens": [
+            "1812",
+            "is",
+            "the",
+            "maximum"
+          ],
+          "raw": "1812 is the maximum",
+          "imgid": 7,
+          "sentid": 22
+        },
+        {
+          "tokens": [
+            "The",
+            "minimum",
+            "occurs",
+            "in",
+            "1832"
+          ],
+          "raw": "The minimum occurs in 1832",
+          "imgid": 7,
+          "sentid": 23
+        }
+      ],
+      "split": "val",
+      "filename": "7.svg"
+    },
+    {
+      "sentids": [
+        24,
+        25,
+        26
+      ],
+      "imgid": 8,
+      "sentences": [
+        {
+          "tokens": [
+            "the",
+            "#800080",
+            "bar",
+            "goes",
+            "up",
+            "from",
+            "1852",
+            "to",
+            "1876",
+            "and",
+            "goes",
+            "steady",
+            "from",
+            "1876",
+            "to",
+            "1884"
+          ],
+          "raw": "the #800080 bar goes up from 1852 to 1876 and goes steady from 1876 to 1884",
+          "imgid": 8,
+          "sentid": 24
+        },
+        {
+          "tokens": [
+            "1884",
+            "is",
+            "the",
+            "maximum"
+          ],
+          "raw": "1884 is the maximum",
+          "imgid": 8,
+          "sentid": 25
+        },
+        {
+          "tokens": [
+            "1852",
+            "is",
+            "the",
+            "minimum"
+          ],
+          "raw": "1852 is the minimum",
+          "imgid": 8,
+          "sentid": 26
+        }
+      ],
+      "split": "train",
+      "filename": "8.svg"
+    },
+    {
+      "sentids": [
+        27,
+        28,
+        29
+      ],
+      "imgid": 9,
+      "sentences": [
+        {
+          "tokens": [
+            "the",
+            "#0000FF",
+            "bar",
+            "goes",
+            "up",
+            "from",
+            "2172",
+            "to",
+            "2181",
+            "and",
+            "goes",
+            "down",
+            "from",
+            "2181",
+            "to",
+            "2253"
+          ],
+          "raw": "the #0000FF bar goes up from 2172 to 2181 and goes down from 2181 to 2253",
+          "imgid": 9,
+          "sentid": 27
+        },
+        {
+          "tokens": [
+            "The",
+            "maximum",
+            "occurs",
+            "in",
+            "2181"
+          ],
+          "raw": "The maximum occurs in 2181",
+          "imgid": 9,
+          "sentid": 28
+        },
+        {
+          "tokens": [
+            "2253",
+            "is",
+            "the",
+            "minimum"
+          ],
+          "raw": "2253 is the minimum",
+          "imgid": 9,
+          "sentid": 29
+        }
+      ],
+      "split": "train",
+      "filename": "9.svg"
+    }
+  ]
+}
