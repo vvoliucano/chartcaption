@@ -170,9 +170,7 @@ python3 gen_sentence.py -n 10 -p svg20200410
 
 python create_input_files.py --dataset chart --karpathy_json_path data_generator/svg20200410/dataset.json --image_folder ./data_generator/svg20200410 --output_folder data/svg_output_20200410 --image_type svg --need_text 
 
-
 python train.py --data_folder data/svg_output_20200410 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 3,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text
-
 
 python caption.py --img ./data_generator/svg20200410/222.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-04-10-16-11/Best.pth.tar --word_map data/svg_output_20200410/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg --need_text
 
@@ -185,4 +183,21 @@ python caption.py --img ./data_generator/svg20200410/2.svg  --model checkpoint/c
 # 再下一步是测试其中是否可以正常运行
 
 # 我觉得OK
+
+
+20200416
+
+# 切换到通用数据集所在的文件目录
+cd data_generator/before_data
+
+# 利用本地的nodejs 测试生成相应的可视化图表
+node gen_svg.js --input_file try_set.json --directory svg_try 
+
+# 以上测试说明，生成图表的js 在本地运行正常，其中使用了本地运行的js 运行d3的库，解决了d3网络版本和本地版本运行的差异
+# 涉及到文件读取等方式需要重新考量
+
+# 生成部分的配置文件，测试命令行参数的运行状况
+python new_data.py --number 10 --path svg_20200416
+node gen_svg.js --input_file svg_20200416/origin_data.json --directory svg_20200416
+
 

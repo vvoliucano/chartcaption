@@ -16,7 +16,7 @@ sen_count = args.number
 print("输出数目：", sen_count)
 
 svg_out_dir = args.path
-
+ 
 
 # color_set = ["red", "orange", "yellow", "green", "blue", "cyan", "purple"]
 color_set = ["#FF0000", "#FFA500", "#FFFF00", "#008000", "#0000FF", "#00FFFF", "#800080"]
@@ -264,7 +264,9 @@ def trans_template(pairs):
 if __name__ == '__main__':
     make_sure_dir(svg_out_dir)
     pairs = gen_n_pairs(sen_count, svg_out_dir)
-    # print(pairs)
+    print("第一个句子", pairs[0])
+    print("第一个句子 的第一个", pairs[0][1])
+    print("第一个句子 的第一个的第一个", pairs[0][1][1])
     res = trans_template(pairs)
     with open(os.path.join(svg_out_dir, "dataset.json"), "w", encoding="utf-8") as f:
         json.dump(res, f, indent=2)
