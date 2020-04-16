@@ -199,6 +199,9 @@ node gen_svg.js --input_file try_set.json --directory svg_try
 # 生成部分的配置文件，测试命令行参数的运行状况
 python new_data.py --number 10 --path svg_20200416
 
+python new_data.py --number 100000 --path svg_20200416
+
+
 node gen_svg.js --input_file svg_20200416/origin_data.json --directory svg_20200416
 
 
