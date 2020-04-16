@@ -7,6 +7,7 @@ import os
 import shutil
 import argparse
 import random
+from tqdm import tqdm
 
 
 def get_data_sentence():
@@ -85,7 +86,7 @@ if __name__ == '__main__':
     karparthy_file = os.path.join(setting_dir, "karparthy_dataset.json")
     # dataset_name = "try_set.json"
     output_data_set = []
-    for i in range(number):
+    for i in tqdm(range(number)):
         data = get_data_sentence()
         data["filename"] = str(i).zfill(6) + ".svg"
         output_data_set.append(data)
