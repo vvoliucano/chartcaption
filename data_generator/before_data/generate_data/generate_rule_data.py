@@ -164,15 +164,15 @@ def extract_trend_special(value_array):
         if judge_special(value_array[1] - value_array[0], value_array[2] - value_array[1]):
             index_special.append(1)
     else:
-        print(diff_ratio_sorted)
+        # print(diff_ratio_sorted)
         diff_ratio_chosen = diff_ratio_sorted[:int(number / 2)]
-        print(diff_ratio_chosen)
+        # print(diff_ratio_chosen)
         diff_ratio_chosen = sorted(diff_ratio_chosen, key = get_index)
         for item in diff_ratio_chosen:
             if judge_special(value_array[item['index']] - value_array[item['index'] - 1], value_array[item['index'] + 1] - value_array[item['index']]):
                 index_special.append(item['index'])
     index_special.append(len(value_array) - 1)
-    print(index_special)
+    # print(index_special)
     return index_special
 
 def extract_trend_special_old(value_array):
@@ -920,7 +920,7 @@ def generate_ocq_rule_data(vis_type, rule_type):
     elif vis_type == 'load_stack_bar_chart':
         if numpy.random.random() > 0.5:
             vis_type = 'load_stack_bar_chart_horizontal'
-        print(f'vis_type: {vis_type}')
+        # print(f'vis_type: {vis_type}')
         operations = [generate_ocq_stack_data, generate_single_complex_stack_data, generate_single_special_stack_data, generate_all_special_stack_data]
 
         return operations[numpy.random.randint(len(operations))](rule_type, vis_type = vis_type)

@@ -54,7 +54,7 @@ def convert_to_karparthy(original_data):
         for sen_index, sen in enumerate(sentences):
             sentid = cur_sentence_id + sen_index
             sen = sen["sentence"].replace(",", " ,").replace(".", " .")
-            print(sen)
+            # print(sen)
             sentence = {
                 "tokens": sen.split(" "),
                 "raw": sen,

@@ -198,7 +198,7 @@ def sentence_local_trend(data, focus_id, compare_id, major_name = 'c0', second_n
     sentences = []
     if len(ordinal_chosen) < 3:
         return []
-    print("see see category chosen: ", category_chosen)
+    # print("see see category chosen: ", category_chosen)
     ordinal_sum_quantity = get_sum_quantity_array(data, category_chosen)
     max_value = max(ordinal_sum_quantity)
 

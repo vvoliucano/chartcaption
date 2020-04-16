@@ -16,7 +16,7 @@ from qq_generator import generate_toy_qq_sentence
 
 
 def generate_sentence_by(data, focus_id, compare_id, major_name, second_name, version = 'English'):
-    print(f'Now deal with data type {data["type"]}')
+    # print(f'Now deal with data type {data["type"]}')
     if data['type'] == 'cq':
         return generate_cq_sentence(data, focus_id, compare_id, major_name, second_name, version = 'English')
     elif data['type'] == 'oq':
