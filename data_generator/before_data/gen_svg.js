@@ -1133,46 +1133,64 @@ var program = require('commander');
 
 program
   .version('0.0.1')
-  .option('-i, --input_file <string>', 'input file setting') // try_set.json
-  .option('-o, --output_file <string>', 'output file setting, dataset.json')
-  .option('-d, --directory <string>', 'Directory to store the svg file')
-  // .option('-n, --number', 'The number of the json', 'marble')
+  .option('-i, --input <string>', 'input file setting') // try_set.json
+  .option('-o, --output <string>', 'output file setting, dataset.json')
   .parse(process.argv);
 
 // console.log(program.cheese)
 
-input_file = program.input_file
-// output_file = program.output_file
+input_file = program.input
+output_file = program.output
 
 console.log(input_file)
-console.log(program.directory)
-
-dir = "./" + program.directory
-
-if (!fs.existsSync(dir)){
-    fs.mkdirSync(dir);
-}
+console.log(output_file)
 
 var input_data = JSON.parse(fs.readFileSync(input_file));
-// console.log(input_data)
-data_num = input_data.length;
+// d3.select(document.body).select("svg").remove()
+// 清除相应的svg，只保留一只
 
-for (var i = 0; i < data_num; i ++ )
-{
-  if (i % 1000 === 0)
-  {
-    console.log("...processing: " + i + "/" + data_num)
-  }
-	current_setting = input_data[i]
-	d3.select(document.body).select("svg").remove()
-	// 清除相应的svg，只保留一只
-
-	deal_with_data(current_setting)
-	d3.select(document.body).select('svg')
-		.attr('xmlns', 'http://www.w3.org/2000/svg')
+deal_with_data(input_data)
+d3.select(document.body).select('svg')
+  .attr('xmlns', 'http://www.w3.org/2000/svg')
 // console.log(document.body.innerHTML);
-	fs.writeFile(dir + "/" + current_setting.filename, document.body.innerHTML, 'utf8', (err) => {
-	  if (err) throw err;})
 
-}
+fs.writeFile(output_file, document.body.innerHTML, 'utf8', (err) => {
+  if (err) throw err;})
+
+
+
+// output_file = program.output_file
+
+// console.log(input_file)
+// console.log(program.directory)
+
+// dir = "./" + program.directory
+
+// if (!fs.existsSync(dir)){
+//     fs.mkdirSync(dir);
+// }
+
+// var input_data = JSON.parse(fs.readFileSync(input_file));
+// // console.log(input_data)
+// data_num = input_data.length;
+
+// for (var i = 0; i < data_num; i ++ )
+// {
+//   if (i % 1000 === 0)
+//   {
+//     console.log("...processing: " + i + "/" + data_num
+//     console.log(input_data[i].filename)  
+//   }
+// 	current_setting = input_data[i]
+// 	d3.select(document.body).select("svg").remove()
+// 	// 清除相应的svg，只保留一只
+
+// 	deal_with_data(current_setting)
+// 	d3.select(document.body).select('svg')
+// 		.attr('xmlns', 'http://www.w3.org/2000/svg')
+// // console.log(document.body.innerHTML);
+// 	fs.writeFile(dir + "/" + current_setting.filename, document.body.innerHTML, 'utf8', (err) => {
+// 	  if (err) throw err;})
+
+// }
 

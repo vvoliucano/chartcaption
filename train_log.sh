@@ -205,17 +205,24 @@ python new_data.py --number 100000 --path svg_20200416
 node gen_svg.js --input_file svg_20200416/origin_data.json --directory svg_20200416
 
 
+# 然而这种方法在生成的数据量大的情况下，node 没有办法执行，因此需要将配置文件更换一种方式存储
+
+
+# 我们生成了通用的数据集，在这个数据集中，构建了图表相关的大多数的特征种类以及描述的方式。我们同时也提供了
+
+
 20200417
 
 # 将生成的数据统一放在data 目录之下，
-
-# 我们生成了通用的数据集，在这个数据集中，构建了图表相关的大多数的特征种类以及描述的方式。我们同时也提供了
 
 python new_data.py --number 100000 --path ../../data/svg_origin_20200417
 
 node gen_svg.js --input_file ../../data/svg_origin_20200417/origin_data.json --directory ../../data/svg_origin_20200417
 
-
 node gen_svg.js --input_file ../../data/svg_origin_20200417/origin_data.json --directory ../../data/svg_origin_20200417
 
 ./gen_svg.js --input_file ../../data/svg_origin_20200417/origin_data.json --directory ../../data/svg_origin_20200417
+
+# 这种方式会让node 文件内存溢出，现将相关文件分离出来
+
+python new_data.py --number 10 --path ../../data/svg_origin_20200417
