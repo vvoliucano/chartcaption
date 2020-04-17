@@ -14,7 +14,7 @@ parser.add_argument('--image_type', type=str, default = 'pixel', help='image typ
 parser.add_argument('--need_text', action='store_true', help="decide whether need text")
 parser.add_argument('--max_element_number', default=40, type=int, help="decide whether need text")
 
-max_element_number
+# max_element_number
 
 args = parser.parse_args()
 

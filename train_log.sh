@@ -242,6 +242,6 @@ python new_data.py --number 100000 --path ../../data/20200417_dataset_bar --peri
 
 cd ../../
 
-python create_input_files.py --dataset chart --karpathy_json_path data/20200417_dataset_bar/karparthy_dataset.json --image_folder data/20200417_dataset_bar/svg --output_folder data/20200417_dataset_bar/deal --image_type svg --need_text 
+python create_input_files.py --dataset chart --karpathy_json_path data/20200417_dataset_bar/karparthy_dataset.json --image_folder data/20200417_dataset_bar/svg --output_folder data/20200417_dataset_bar/deal --image_type svg --need_text --max_element_number 100
 
 
