@@ -212,3 +212,5 @@ node gen_svg.js --input_file svg_20200416/origin_data.json --directory svg_20200
 python new_data.py --number 100 --path ../../data/svg_origin_20200417
 
 node gen_svg.js --input_file ../../data/svg_origin_20200417/origin_data.json --directory ../../data/svg_origin_20200417
+
+./gen_svg.js --input_file ../../data/svg_origin_20200417/origin_data.json --directory ../../data/svg_origin_20200417
