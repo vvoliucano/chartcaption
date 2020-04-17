@@ -104,7 +104,7 @@ if __name__ == '__main__':
         
         with open(current_filename, "w") as f:
             json.dump(current_data, f, indent = 2)
-        os.system(f"node gen_svg.js --input {current_filename} --output {svg_filename}", )
+        os.system(f"./gen_svg.js --input {current_filename} --output {svg_filename}", )
 
 
     karparthy_dataset = convert_to_karparthy(output_data_set)
