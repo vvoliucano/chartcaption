@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/home/can.liu/nodejs/node-v12.16.2-linux-x64/bin/node
 
 var d3 = require('d3');
 var jsdom = require('jsdom');
