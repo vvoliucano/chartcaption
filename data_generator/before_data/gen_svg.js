@@ -1142,8 +1142,8 @@ program
 input_file = program.input
 output_file = program.output
 
-console.log(input_file)
-console.log(output_file)
+// console.log(input_file)
+// console.log(output_file)
 
 var input_data = JSON.parse(fs.readFileSync(input_file));
 // d3.select(document.body).select("svg").remove()
