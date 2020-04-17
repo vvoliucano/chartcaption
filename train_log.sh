@@ -235,7 +235,7 @@ python new_data.py --number 100000 --path ../../data/svg_origin_20200417
 # 现在让每个配置文件每一百次运行一次
 
 
-python new_data.py --number 1000 --path try_dir --period 10
+python new_data.py --number 1000 --path try_dir --period 100
 
 
 

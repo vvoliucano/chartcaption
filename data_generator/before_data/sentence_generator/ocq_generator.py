@@ -139,7 +139,7 @@ def get_segment_parameter(ordinal_chosen, quantity_array, max_value):
 def get_cat_quantity_array(data, cat_index):
     return get_sum_quantity_array(data, [cat_index])
 
-def get_sentence(data, segment_array, segment_parameter_array, quantity_array, ordinal_name = 'o0', object_name = '', allow_absolute_value = True, is_compare = False):
+def get_sentence(data, segment_array, segment_parameter_array, quantity_array, ordinal_name = 'o0', object_name = '', allow_absolute_value = False, is_compare = False):
     sentence = ''
     for i in range(len(segment_array)):
         segment = segment_array[i]
@@ -281,17 +281,19 @@ def sentence_compare_trend(data, focus_id, compare_id, major_name = 'c0', second
 
     focus_segment_array, focus_parameter_array_ave, focus_quantity = get_ave_parameter(data, focus_category_chosen, focus_ordinal_chosen, max_value)
     compare_segment_array, compare_parameter_array_ave, compare_quantity = get_ave_parameter(data, compare_category_chosen, compare_ordinal_chosen, max_value)
-    if len(focus_category_chosen) > 1:
-        allow_absolute_value = False
-    else:
-        allow_absolute_value = True
+    allow_absolute_value = False
+
+    # if len(focus_category_chosen) > 1:
+    #     allow_absolute_value = False
+    # else:
+    #     allow_absolute_value = True
     focus_sentence = get_sentence(data, focus_segment_array, focus_parameter_array_ave, focus_quantity, object_name = '', allow_absolute_value = allow_absolute_value)
     focus_sentence = fix_sentence_end(focus_sentence)
 
-    if len(compare_category_chosen) > 1:
-        allow_absolute_value = False
-    else:
-        allow_absolute_value = True
+    # if len(compare_category_chosen) > 1:
+    #     allow_absolute_value = False
+    # else:
+    #     allow_absolute_value = True
     compare_sentence = get_sentence(data, compare_segment_array, compare_parameter_array_ave, compare_quantity, object_name = '', allow_absolute_value = allow_absolute_value, is_compare = True)
     sentence = f'{data["title"]} of {focus_name} {focus_sentence}; while {compare_name} {compare_sentence}'
 
