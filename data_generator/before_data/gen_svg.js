@@ -1159,6 +1159,10 @@ data_num = input_data.length;
 
 for (var i = 0; i < data_num; i ++ )
 {
+  if (i % 1000 === 0)
+  {
+    console.log("...processing: " + i + "/" + data_num)
+  }
 	current_setting = input_data[i]
 	d3.select(document.body).select("svg").remove()
 	// 清除相应的svg，只保留一只

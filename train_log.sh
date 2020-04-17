@@ -209,7 +209,12 @@ node gen_svg.js --input_file svg_20200416/origin_data.json --directory svg_20200
 
 # 将生成的数据统一放在data 目录之下，
 
-python new_data.py --number 100 --path ../../data/svg_origin_20200417
+# 我们生成了通用的数据集，在这个数据集中，构建了图表相关的大多数的特征种类以及描述的方式。我们同时也提供了
+
+python new_data.py --number 100000 --path ../../data/svg_origin_20200417
+
+node gen_svg.js --input_file ../../data/svg_origin_20200417/origin_data.json --directory ../../data/svg_origin_20200417
+
 
 node gen_svg.js --input_file ../../data/svg_origin_20200417/origin_data.json --directory ../../data/svg_origin_20200417
 
