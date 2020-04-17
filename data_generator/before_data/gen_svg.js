@@ -51,8 +51,8 @@ function deal_with_data (d) {
   let data_json = d
   // init_element_status(d)
   // console.log('element initial',element_status)
-  console.log(d.type)
-  console.log(d.vis_type)
+  // console.log(d.type)
+  // console.log(d.vis_type)
   switch (d['type']) {
     case 'ccq':
       deal_with_ccq(d)
