@@ -72,11 +72,14 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Show, Attend, and Tell - Tutorial - Generate Caption for SVG')
     parser.add_argument('--number', '-n', type=int, default = 10, help='number')
     parser.add_argument('--path', '-p', type=str, default = "svg", help='The path')
+    parser.add_argument('--period', '-i', type = int, default = 100, help = 'number of the iterater')
     # parser.add_argument()
     args = parser.parse_args()
 
+
     setting_dir = args.path
     number = args.number
+    period = args.period
     if os.path.isdir(setting_dir):
         print(f"The file {setting_dir} already exists, so we can delete them.")
         shutil.rmtree(setting_dir)
@@ -93,19 +96,26 @@ if __name__ == '__main__':
 
     # dataset_name = "try_set.json"
     output_data_set = []
+    tmp_set = []
     for i in tqdm(range(number)):
         current_data = get_data_sentence()
         svg_filename = str(i).zfill(6) + ".svg"
         current_data["filename"] = svg_filename
-        svg_filename = os.path.join(svg_dir, svg_filename)
+        tmp_set.append(current_data)
         output_data_set.append(current_data)
 
-        current_filename = os.path.join(json_dir, str(i).zfill(6) + ".json")
-        
-        with open(current_filename, "w") as f:
-            json.dump(current_data, f, indent = 2)
-        os.system(f"./gen_svg.js --input {current_filename} --output {svg_filename}", )
+        if (i + 1) % period == 0 or i == number - 1:
+            # print(i)
+            json_file = os.path.join(json_dir,  f"{str(i - period + 1).zfill(6)}-{str(i).zfill(6)}.json")
+            with open(json_file, "w") as f:
+                json.dump(tmp_set, f, indent = 2)
+            os.system(f"./gen_svg.js --input {json_file} --output_dir {svg_dir}")  
+            tmp_set = []
+            # with open(current_filename, "w") as f:
+            #     json.dump(current_data, f, indent = 2)
+            # os.system(f"./gen_svg.js --input {current_filename} --output {svg_filename}", )
 
+        svg_filename = os.path.join(svg_dir, svg_filename)
 
     karparthy_dataset = convert_to_karparthy(output_data_set)
 

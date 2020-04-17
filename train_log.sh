@@ -226,3 +226,16 @@ node gen_svg.js --input_file ../../data/svg_origin_20200417/origin_data.json --d
 # 这种方式会让node 文件内存溢出，现将相关文件分离出来
 
 python new_data.py --number 10 --path ../../data/svg_origin_20200417
+
+# 现在让每个配置文件运行一次，发现速度太慢
+python new_data.py --number 100000 --path ../../data/svg_origin_20200417
+
+
+./gen_svg.js --input_file ../../data/svg_origin_20200417/origin_data.json --directory ../../data/svg_origin_20200417
+# 现在让每个配置文件每一百次运行一次
+
+
+python new_data.py --number 1000 --path try_dir --period 10
+
+
+
