@@ -12,7 +12,7 @@ from extract_svg import parse_svg_string
 # fr import svg_read
 
 svg_channel = 13 # 
-svg_number = 40
+# svg_number = 40
 
 
 def make_sure_dir(dirname):
@@ -23,7 +23,7 @@ def make_sure_dir(dirname):
 
 
 
-def svg_read(filename, need_soup = False, need_text = False):
+def svg_read(filename, need_soup = False, need_text = False, svg_number = 40 ):
     # a = []
     # img = np.random.random_sample((20, 10))
     f = open(filename)
@@ -55,7 +55,7 @@ def svg_read(filename, need_soup = False, need_text = False):
 
 
 def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_image, min_word_freq, output_folder,
-                       max_len=100, image_type = "pixel", need_text = False):
+                       max_len=100, image_type = "pixel", need_text = False, max_element_number = 40):
     """
     Creates input files for training, validation, and test data.
 
@@ -177,7 +177,7 @@ def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_i
                     assert np.max(img) <= 255
                 else:
                     if need_text:
-                        img, img_text = svg_read(impaths[i], need_text = need_text)
+                        img, img_text = svg_read(impaths[i], need_text = need_text, svg_number = max_element_number)
                         # print("img_text: ", img_text)
                     else:
                         img = svg_read(impaths[i], need_text = need_text)

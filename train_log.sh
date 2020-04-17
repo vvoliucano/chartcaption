@@ -238,4 +238,10 @@ python new_data.py --number 100000 --path ../../data/svg_origin_20200417
 python new_data.py --number 1000 --path try_dir --period 100
 
 
+python new_data.py --number 100000 --path ../../data/20200417_dataset_bar --period 500
+
+cd ../../
+
+python create_input_files.py --dataset chart --karpathy_json_path data/20200417_dataset_bar/karparthy_dataset.json --image_folder data/20200417_dataset_bar/svg --output_folder data/20200417_dataset_bar/deal --image_type svg --need_text 
+
 
