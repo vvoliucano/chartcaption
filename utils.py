@@ -146,7 +146,7 @@ def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_i
             if image_type == "pixel":
                 images = h.create_dataset('images', (len(impaths), 3, 256, 256), dtype='uint8')
             else:
-                images = h.create_dataset('images', (len(impaths), svg_channel, svg_number), dtype='float32')
+                images = h.create_dataset('images', (len(impaths), svg_channel, max_element_number), dtype='float32')
 
             print("\nReading %s images and captions, storing to file...\n" % split)
 
