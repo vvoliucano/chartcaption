@@ -34,6 +34,7 @@ def svg_read(filename, need_soup = False, need_text = False, svg_number = 40 ):
         a_numpy, id_array, soup, text = parse_svg_string(svg_string, min_element_num=svg_number, simple = True, need_text = need_text)
     else:
         a_numpy, id_array, soup = parse_svg_string(svg_string, min_element_num=svg_number, simple = True, need_text = need_text)
+    # print(a_numpy[0])
     img = np.transpose(a_numpy)
     img = img - 0.5
     # 查看图像的大小
@@ -183,7 +184,11 @@ def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_i
                         img = svg_read(impaths[i], need_text = need_text)
 
 
-
+                if i == 0:
+                    print("see the situation of the first file")
+                    print(img)
+                    print(img[0])
+                    print(image_text)
 
                 if need_text:
                     img_text = [word.lower() for word in img_text]
