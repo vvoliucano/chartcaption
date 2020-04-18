@@ -109,7 +109,7 @@ if __name__ == '__main__':
             json_file = os.path.join(json_dir,  f"{str(i - period + 1).zfill(6)}-{str(i).zfill(6)}.json")
             with open(json_file, "w") as f:
                 json.dump(tmp_set, f, indent = 2)
-            os.system(f"./gen_svg.js --input {json_file} --output_dir {svg_dir}")  
+            os.system(f"node gen_svg.js --input {json_file} --output_dir {svg_dir}")  
             tmp_set = []
             # with open(current_filename, "w") as f:
             #     json.dump(current_data, f, indent = 2)

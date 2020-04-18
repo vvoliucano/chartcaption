@@ -32,10 +32,10 @@ def get_pixel_image_from_file(image_path):
     image = transform(img)  # (3, 256, 256)
     return image
 
-def get_svg_image_from_file(image_path, need_text, wordmap):
+def get_svg_image_from_file(image_path, need_text, wordmap, max_element_number):
     # img = np.random.random_sample((20, 10))
     # print("need_text or not ", need_text)
-    img, soup, image_text = svg_read(image_path, need_soup = True, need_text = True)
+    img, soup, image_text = svg_read(image_path, need_soup = True, need_text = True, svg_number = max_element_number)
     # elements = soup.findAll(attrs = {"caption_sha", "5"})
     # elements = soup.findAll(attrs = {"caption_id":  "2"})
 
@@ -58,7 +58,7 @@ def get_svg_image_from_file(image_path, need_text, wordmap):
     encoded_image_text = torch.LongTensor(encoded_image_text).to(device)
     return img, soup, element_number, encoded_image_text
 
-def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=3, image_type="pixel", need_text = False):
+def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=3, image_type="pixel", need_text = False, max_element_number = max_element_number):
     """
     Reads an image and captions it with beam search.
 
@@ -75,7 +75,7 @@ def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=
 
     
     if need_text:
-        image, soup, element_number, image_text = get_svg_image_from_file(image_path, need_text = need_text, wordmap = word_map)
+        image, soup, element_number, image_text = get_svg_image_from_file(image_path, need_text = need_text, wordmap = word_map, max_element_number = max_element_number)
         # encoded_image_text = [word_map.get(word, 0) for word in img_text]
         # 注意，此时的image text 还是原始的文字
         # 此时需要将文字转化成为相应的对象
@@ -91,7 +91,7 @@ def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=
         encoder_dim = encoder_out.size(-1) # 
 
     else:  
-        image, soup, element_number = get_svg_image_from_file(image_path, need_text = need_text)
+        image, soup, element_number = get_svg_image_from_file(image_path, need_text = need_text, wordmap = word_map, max_element_number = max_element_number)
         image = image.unsqueeze(0)  # (1, 13, 40)
         encoder_out = encoder(image)  # (1, enc_image_size, enc_image_size, encoder_dim)
         enc_image_size = encoder_out.size(1)
@@ -357,7 +357,8 @@ if __name__ == '__main__':
     parser.add_argument('--dont_smooth', dest='smooth', action='store_false', help='do not smooth alpha overlay')
     parser.add_argument('--image_type', type=str, default = 'pixel', help='image type as input')
     parser.add_argument('--need_text', action='store_true', help="decide whether need text")
-
+    parser.add_argument('--max_element_number', '-e', default=40, type=int, help='maximum element number')
+    
 
 # python caption.py --img /home/can.liu/caption/data/coco_2014/val2014/COCO_val2014_000000204853.jpg --model /home/can.liu/caption/chartcaption/BEST_checkpoint_coco_5_cap_per_img_5_min_word_freq.pth.tar --word_map /home/can.liu/caption/data/karpathy_output/WORDMAP_coco_5_cap_per_img_5_min_word_freq.json
 
@@ -394,7 +395,7 @@ if __name__ == '__main__':
 
     # 这部分才是实际使用的
     else:
-        seqs, alphas, soup, element_number = caption_image_beam_search(encoder, decoder, args.img, word_map, args.beam_size, args.image_type, need_text = args.need_text)
+        seqs, alphas, soup, element_number = caption_image_beam_search(encoder, decoder, args.img, word_map, args.beam_size, args.image_type, need_text = args.need_text, max_element_number = args.max_element_number)
         # print("element_number", element_number)
         alphas = [torch.FloatTensor(alpha) for alpha in alphas]
         # alphas = torch.FloatTensor(alphas)

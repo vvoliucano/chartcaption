@@ -33,9 +33,11 @@ def parse_fill(fill):
     # print(fill)
     if type(fill)==list and len(fill)==3:
         return fill
+    elif fill == "currentColor":
+        return [0, 0, 0]
     elif fill[0] != "#":
         print(f"I cannot handle this color {fill}")
-        return [-100, -100, -100]
+        return [0, 0, 0]
     elif len(fill) == 7:
         r = int(fill[1:3], 16)/255.0;
         g = int(fill[3:5], 16)/255.0;
