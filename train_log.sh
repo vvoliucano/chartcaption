@@ -262,7 +262,7 @@ python caption.py --img data/20200417_dataset_bar/svg/000002.svg  --model checkp
 
 20200418 
 
-
+# 本地测试版本
 # local 生成 配置文件，生成相应的svg 的文件
 python new_data.py --number 200 --path ../../data/20200418_dataset_bar --period 100
 
@@ -270,6 +270,11 @@ python new_data.py --number 200 --path ../../data/20200418_dataset_bar --period 
 python create_input_files.py --dataset chart --karpathy_json_path data/20200418_dataset_bar/karparthy_dataset.json --image_folder data/20200418_dataset_bar/svg --output_folder data/20200418_dataset_bar/deal --image_type svg --need_text --max_element_number 100
 
 
+# 实验室服务器版本 解决大小写问题
+python new_data.py --number 100000 --path ../../data/20200418_dataset_bar --period 100
+
+# 解析相应的数据，从配置文件和相应的svg 文件出发
+python create_input_files.py --dataset chart --karpathy_json_path data/20200418_dataset_bar/karparthy_dataset.json --image_folder data/20200418_dataset_bar/svg --output_folder data/20200418_dataset_bar/deal --image_type svg --need_text --max_element_number 100
 
 
 
