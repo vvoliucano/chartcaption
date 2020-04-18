@@ -58,7 +58,7 @@ def get_svg_image_from_file(image_path, need_text, wordmap, max_element_number):
     encoded_image_text = torch.LongTensor(encoded_image_text).to(device)
     return img, soup, element_number, encoded_image_text
 
-def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=3, image_type="pixel", need_text = False, max_element_number = max_element_number):
+def caption_image_beam_search(encoder, decoder, image_path, word_map, beam_size=3, image_type="pixel", need_text = False, max_element_number = 40):
     """
     Reads an image and captions it with beam search.
 
