@@ -286,7 +286,7 @@ def parse_a_text_visual(text):
     if text.string == None:
         content = ""
     else:
-        content = text.string.replace("\n", "").replace(" ", "")
+        content = text.string.replace("\n", "").replace(" ", "").lower()
 
     # 此处只是用到非常虚弱的假设，width = font-size * 字母的数目
     # 而，height = font-size, 当然了在不同的字体中会有所不同，
