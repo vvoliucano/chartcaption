@@ -38,7 +38,6 @@ def get_svg_image_from_file(image_path, need_text, wordmap, max_element_number):
     img, soup, image_text = svg_read(image_path, need_soup = True, need_text = True, svg_number = max_element_number)
     # elements = soup.findAll(attrs = {"caption_sha", "5"})
     # elements = soup.findAll(attrs = {"caption_id":  "2"})
-
     print("image_text", image_text)
     encoded_image_text = [wordmap.get(word, 0) for word in image_text]
     print("image_text", encoded_image_text)

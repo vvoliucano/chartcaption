@@ -277,6 +277,9 @@ python new_data.py --number 100000 --path ../../data/20200418_dataset_bar --peri
 python create_input_files.py --dataset chart --karpathy_json_path data/20200418_dataset_bar/karparthy_dataset.json --image_folder data/20200418_dataset_bar/svg --output_folder data/20200418_dataset_bar/deal --image_type svg --need_text --max_element_number 100
 
 
+python train.py --data_folder data/20200418_dataset_bar/deal --svg_element_number 100 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 3,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text
+
+python caption.py --img data/20200418_dataset_bar/svg/000001.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-04-18-17-03/Best.pth.tar --word_map data/20200418_dataset_bar/deal/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg --need_text --max_element_number 100
 
 
 
