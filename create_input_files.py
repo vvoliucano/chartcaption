@@ -1,4 +1,4 @@
-from utils import create_input_files
+from utils import create_input_files, create_input_files_replace_token
 import argparse
 
 parser = argparse.ArgumentParser(description='Show, Attend, and Tell - Tutorial - Generate Caption for SVG')
@@ -21,7 +21,7 @@ args = parser.parse_args()
 
 if __name__ == '__main__':
     # Create input files (along with word map)
-    create_input_files(dataset=args.dataset,
+    create_input_files_replace_token(dataset=args.dataset,
                        karpathy_json_path = args.karpathy_json_path,
                        image_folder = args.image_folder,
                        captions_per_image = args.captions_per_image,

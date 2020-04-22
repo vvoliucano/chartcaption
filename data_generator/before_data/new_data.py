@@ -110,6 +110,8 @@ if __name__ == '__main__':
             with open(json_file, "w") as f:
                 json.dump(tmp_set, f, indent = 2)
             os.system(f"./gen_svg.js --input {json_file} --output_dir {svg_dir}")  
+            # print(f"node gen_svg.js --input {json_file} --output_dir {svg_dir}")
+            
             tmp_set = []
             # with open(current_filename, "w") as f:
             #     json.dump(current_data, f, indent = 2)

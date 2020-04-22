@@ -32,7 +32,7 @@ const legendHeightRatio = .06
 const paddingValue = 0.2
 // let myheight = document.getElementById('visualization').clientWidth * 0.95
 // let mywidth = document.body.clientHeight * 0.8
-const myheight = flag? 350: 660
+const myheight = flag? 400: 660
 const mywidth = 800
 
 
@@ -65,6 +65,9 @@ function deal_with_data (d) {
       break;
     case 'oq':
       deal_with_oq(d)
+      break;
+    case 'qq':
+      deal_with_qq(d)
       break;
     default:
       console.log('I can not handle this kind of data!')
@@ -142,6 +145,10 @@ function deal_with_ocq(data) {
         load_group_bar_chart(data, 'c0', 'o0', 'q0')
       }
 }
+function deal_with_qq(data) {
+    load_scatter_plot(data, data["color"], 'q0', 'q1') 
+}
+
 
 function remove_old_vis(){
     // svg = d3.selectAll('#visualization')
@@ -166,16 +173,16 @@ let extent = function (array, key) {
 function CQQ(data, cat_color, cat_x, cat_y, position = 'vertical', tag='scatter') {
       this.tag = tag
   // initial chart set up
-      let windowWidth =  document.getElementById('visualization').clientWidth * 0.95
-      let windowHeight = document.body.clientHeight * 0.8
       this.height = myheight
       this.width = mywidth
-      this.svg = d3.select(document.body).append('svg')
-                  .attr('id','mySvg')
-                  .attr('viewBox', '0 0 ' + String(this.width) + ' ' + String(this.height))
-                  .attr('preserveAspectRatio', 'xMidYMid meet')
-                  .attr('height', windowHeight)
-                  .attr('width', windowWidth)
+      // let windowWidth =  document.getElementById('visualization').clientWidth * 0.95
+      // let windowHeight = document.body.clientHeight * 0.8
+      this.svg = d3.select(document.body).append("svg")
+                   .attr('id','mySvg')
+                   // .attr('viewBox', '0 0 ' + String(this.width) + ' ' + String(this.height))
+                   // .attr('preserveAspectRatio', 'xMidYMid meet')
+                   .attr('width', this.width)
+                   .attr('height', this.height)
 
       this.g = this.svg.append('g')
                        .attr('transform', 'translate(' + this.width * marginRate + ',' + this.height * marginRate + ')')
@@ -200,7 +207,7 @@ function CQQ(data, cat_color, cat_x, cat_y, position = 'vertical', tag='scatter'
         this.xScale.rangeRound(this.scaleHeight)
         this.yScale.rangeRound(this.scaleWidth)
         if (this.tag!='scatter') {
-          console.log('HELP!!!')
+          console.log('HELP!!!, the tag here is not scatter')
             this.xScale = d3.scalePoint()
                             .domain(this.data['o0'])
                             .range(this.scaleHeight)
@@ -1058,8 +1065,8 @@ function load_group_bar_chart_horizontal (data, cat_position, cat_color, quantit
 
 function load_scatter_plot (data, cat_color, x, y) {
     let chart = new CQQ(data, cat_color, x, y)
-    console.log('load_scatter_plot')
-    console.log(data)
+    // console.log('load_scatter_plot')
+    // console.log(data)
     chart.drawAxis()
     chart.drawLine()
     chart.drawScatterPlot()
@@ -1131,37 +1138,61 @@ data = {'title': 'The Value', 'unit': '', 'c0': ['C', 'F'], 'o0': ['2010', '2011
 
 var program = require('commander');
 
-program
-  .version('0.0.1')
-  .option('-i, --input <string>', 'input file setting') // try_set.json
-  .option('-o, --output_dir <string>', 'output file setting, dataset.json')
-  .parse(process.argv);
 
-// console.log(program.cheese)
 
-input_file = program.input
-directory = program.output_dir
+var type = "file2dir"; // "file2file"
+// type = ""
 
-if (!fs.existsSync(directory)){
-    fs.mkdirSync(directory);
+if (type === 'file2dir'){
+  program
+    .version('0.0.1')
+    .option('-i, --input <string>', 'input file setting') // try_set.json
+    .option('-o, --output_dir <string>', 'output file setting, dataset.json')
+    .parse(process.argv);
+
+  // console.log(program.cheese)
+
+  input_file = program.input
+  directory = program.output_dir
+
+  if (!fs.existsSync(directory)){
+      fs.mkdirSync(directory);
+  }
+
+  var input_data = JSON.parse(fs.readFileSync(input_file));
+  // console.log(input_data)
+  data_num = input_data.length;
+
+  for (var i = 0; i < data_num; i ++ )
+  {
+    current_setting = input_data[i]
+    d3.select(document.body).select("svg").remove()
+    // 清除相应的svg，只保留一只
+
+    deal_with_data(current_setting)
+    d3.select(document.body).select('svg')
+      .attr('xmlns', 'http://www.w3.org/2000/svg')
+  // console.log(document.body.innerHTML);
+    fs.writeFile(directory + "/" + current_setting.filename, document.body.innerHTML, 'utf8', (err) => {
+      if (err) throw err;})
+
+  }
 }
 
-var input_data = JSON.parse(fs.readFileSync(input_file));
-// console.log(input_data)
-data_num = input_data.length;
 
-for (var i = 0; i < data_num; i ++ )
-{
-	current_setting = input_data[i]
-	d3.select(document.body).select("svg").remove()
-	// 清除相应的svg，只保留一只
+else {
 
-	deal_with_data(current_setting)
-	d3.select(document.body).select('svg')
-		.attr('xmlns', 'http://www.w3.org/2000/svg')
+  input_file = "try_dir/scatter_0000.json"
+
+  var input_data = JSON.parse(fs.readFileSync(input_file));
+  current_setting = input_data
+  d3.select(document.body).select("svg").remove()
+  // 清除相应的svg，只保留一只
+
+  deal_with_data(current_setting)
+  d3.select(document.body).select('svg')
+    .attr('xmlns', 'http://www.w3.org/2000/svg')
 // console.log(document.body.innerHTML);
-	fs.writeFile(directory + "/" + current_setting.filename, document.body.innerHTML, 'utf8', (err) => {
-	  if (err) throw err;})
-
+  fs.writeFile("output_try.svg", document.body.innerHTML, 'utf8', (err) => {
+    if (err) throw err;})
 }
-

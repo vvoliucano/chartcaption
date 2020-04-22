@@ -23,18 +23,27 @@ def make_sure_dir(dirname):
 
 
 
-def svg_read(filename, need_soup = False, need_text = False, svg_number = 40 ):
+def svg_read(filename = "", need_soup = False, need_text = False, svg_number = 40, svg_string = "", use_svg_string = False ):
     # a = []
     # img = np.random.random_sample((20, 10))
-    f = open(filename)
-    # print("open file", filename)
-    svg_string = f.read()
+
+    if use_svg_string:
+        svg_string = svg_string
+    else:
+        f = open(filename)
+        # print("open file", filename)
+        svg_string = f.read()
+#  
+
     # print(svg_string)
     if need_text:
         a_numpy, id_array, soup, text = parse_svg_string(svg_string, min_element_num=svg_number, simple = True, need_text = need_text)
     else:
         a_numpy, id_array, soup = parse_svg_string(svg_string, min_element_num=svg_number, simple = True, need_text = need_text)
     # print(a_numpy[0])
+
+    # 需要考虑用 sentence 中的句子替换一下
+    print(text)
     img = np.transpose(a_numpy)
     img = img - 0.5
     # 查看图像的大小
@@ -52,6 +61,200 @@ def svg_read(filename, need_soup = False, need_text = False, svg_number = 40 ):
     if need_text:
         return img, text
     return img
+
+def create_input_files_replace_token(dataset, karpathy_json_path, image_folder, captions_per_image, min_word_freq, output_folder,
+                       max_len=100, image_type = "pixel", need_text = False, max_element_number = 40):
+    """
+    Creates input files for training, validation, and test data.
+
+    :param dataset: name of dataset, one of 'coco', 'flickr8k', 'flickr30k'
+    :param karpathy_json_path: path of Karpathy JSON file with splits and captions
+    :param image_folder: folder with downloaded images
+    :param captions_per_image: number of captions to sample per image
+    :param min_word_freq: words occuring less frequently than this threshold are binned as <unk>s
+    :param output_folder: folder to save files
+    :param max_len: don't sample captions longer than this length
+    """
+    print("min_freq", min_word_freq)
+
+    make_sure_dir(output_folder)
+
+    assert dataset in {'coco', 'flickr8k', 'flickr30k', "chart"}
+
+    # Read Karpathy JSON
+    with open(karpathy_json_path, 'r') as j:
+        data = json.load(j)
+
+    # Read image paths and captions for each image
+    train_image_paths = []
+    train_image_captions = []
+    val_image_paths = []
+    val_image_captions = []
+    test_image_paths = []
+    test_image_captions = []
+    word_freq = Counter()
+
+
+    # 此处需要进行修改，不能直接使用tokens，而对每个图像应该维护一个replace 列表。
+    # 1、首先从图中构建一个replace 列表
+    # 2、查找重复出现的可以替换的部分
+    # 3、
+
+    for img in data['images']:
+        captions = []
+        # 直接从此处获取 tokens
+        for c in img['sentences']:
+            # Update word frequency
+            # word_freq.update(c['tokens'])
+            if len(c['tokens']) <= max_len:
+                captions.append(c['raw'])
+
+        if len(captions) == 0:
+            continue
+
+        # print(word_freq)
+
+        path = os.path.join(image_folder, img['filepath'], img['filename']) if dataset == 'coco' else os.path.join(
+            image_folder, img['filename'])
+
+        if img['split'] in {'train', 'restval'}:
+            train_image_paths.append(path)
+            train_image_captions.append(captions)
+        elif img['split'] in {'val'}:
+            val_image_paths.append(path)
+            val_image_captions.append(captions)
+        elif img['split'] in {'test'}:
+            test_image_paths.append(path)
+            test_image_captions.append(captions)
+
+    # Sanity check
+    assert len(train_image_paths) == len(train_image_captions)
+    assert len(val_image_paths) == len(val_image_captions)
+    assert len(test_image_paths) == len(test_image_captions)
+
+    # Create word map
+    # words = [w for w in word_freq.keys() if word_freq[w] > min_word_freq]
+    # word_map = {k: v + 1 for v, k in enumerate(words)}
+    # 不初始化
+
+    word_map = {}
+    word_map['<unk>'] = len(word_map) + 1
+    word_map['<start>'] = len(word_map) + 1
+    word_map['<end>'] = len(word_map) + 1
+    # word_map['<#1>'] = len(word_map) + 1
+    word_map['<pad>'] = 0
+
+    # 这样初始化就什么都没了
+
+    # Create a base/root name for all output files
+    base_filename = dataset + '_' + str(captions_per_image) + '_cap_' + str(min_word_freq) + '_min_wf'
+
+    # Save word map to a JSON
+
+    # Sample captions for each image, save images to HDF5 file, and captions and their lengths to JSON files
+    seed(123)
+    for impaths, imcaps, split in [(train_image_paths, train_image_captions, 'TRAIN'),
+                                   (val_image_paths, val_image_captions, 'VAL'),
+                                   (test_image_paths, test_image_captions, 'TEST')]:
+        print(os.path.join(output_folder, split + '_IMAGES_' + base_filename + '.hdf5'))
+        print("image number", len(impaths))
+        with h5py.File(os.path.join(output_folder, split + '_IMAGES_' + base_filename + '.hdf5'), 'a') as h:
+            # Make a note of the number of captions we are sampling per image
+            h.attrs['captions_per_image'] = captions_per_image
+
+            # Create dataset inside HDF5 file to store images
+            if image_type == "pixel":
+                images = h.create_dataset('images', (len(impaths), 3, 256, 256), dtype='uint8')
+            else:
+                images = h.create_dataset('images', (len(impaths), svg_channel, max_element_number), dtype='float32')
+
+            print("\nReading %s images and captions, storing to file...\n" % split)
+
+            enc_captions = []
+            caplens = []
+            image_text = []
+
+            for i, path in enumerate(tqdm(impaths)):
+                # Sample captions
+                if len(imcaps[i]) < captions_per_image:
+                    captions = imcaps[i] + [choice(imcaps[i]) for _ in range(captions_per_image - len(imcaps[i]))]
+                else:
+                    captions = sample(imcaps[i], k=captions_per_image)
+                # Sanity check
+                assert len(captions) == captions_per_image
+                img, img_text = svg_read(impaths[i], need_text = need_text, svg_number = max_element_number)
+                
+                img_text = [word.lower() for word in img_text]
+
+                print("Image from text", img_text)
+
+                print("original caption", captions)
+
+                replace_token = {}
+
+                for word in img_text:
+                    if word != '' and word not in word_map:
+                        word_map[word] = len(word_map) 
+                    if word != '' and word != "<pad>":
+                        current_token = "<#" + str(len(replace_token)) + ">"
+                        replace_token[word] = current_token
+                        
+                for j, caption in enumerate(captions):
+                    caption = " " + caption + " "
+                    caption = caption.lower()
+                    caption = caption.replace(",", " ,").replace('.', " .").replace(';', " ;").replace("  ", " ")
+                    for word in replace_token:
+                        caption = caption.replace(" " + word + " ", " " + replace_token[word] + " ")
+                    caption = caption.strip()
+                    captions[j] = caption.split(" ")
+
+                print("replace caption", captions)
+                print("replaced token", replace_token)
+
+                encoded_image_text = [word_map.get(replace_token.get(word, ""), 0) for word in img_text]
+                image_text.append(encoded_image_text)
+                # 添加图形中出现的词汇
+                
+
+                # Save image to HDF5 file
+                images[i] = img
+                # print(img)
+                # print(img)
+
+                for j, c in enumerate(captions):
+                    # Encode captions
+                    for word in c:
+                        if word not in word_map:
+                            word_map[word] = len(word_map)
+
+                    enc_c = [word_map['<start>']] + [word_map.get(word, word_map['<unk>']) for word in c] + [
+                        word_map['<end>']] + [word_map['<pad>']] * (max_len - len(c))
+                    
+                    # print("enc_c", enc_c)
+
+                    # Find caption lengths
+                    c_len = len(c) + 2
+
+                    enc_captions.append(enc_c)
+                    caplens.append(c_len)
+
+
+            # print("word_map", word_map)
+            # Sanity check
+            assert images.shape[0] * captions_per_image == len(enc_captions) == len(caplens)
+
+            # Save encoded captions and their lengths to JSON files
+            with open(os.path.join(output_folder, split + '_CAPTIONS_' + base_filename + '.json'), 'w') as j:
+                json.dump(enc_captions, j)
+
+            with open(os.path.join(output_folder, split + '_CAPLENS_' + base_filename + '.json'), 'w') as j:
+                json.dump(caplens, j)
+
+            with open(os.path.join(output_folder, split + '_IMAGE_TEXT_' + base_filename + '.json'), 'w') as j:
+                json.dump(image_text, j)
+
+    with open(os.path.join(output_folder, 'WORDMAP_' + base_filename + '.json'), 'w') as j:
+        json.dump(word_map, j)
 
 
 
@@ -86,6 +289,12 @@ def create_input_files(dataset, karpathy_json_path, image_folder, captions_per_i
     test_image_paths = []
     test_image_captions = []
     word_freq = Counter()
+
+
+    # 此处需要进行修改，不能直接使用tokens，而对每个图像应该维护一个replace 列表。
+    # 1、首先从图中构建一个replace 列表
+    # 2、查找重复出现的可以替换的部分
+    # 3、
 
     for img in data['images']:
         captions = []
