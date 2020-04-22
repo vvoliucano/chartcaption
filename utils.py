@@ -43,7 +43,7 @@ def svg_read(filename = "", need_soup = False, need_text = False, svg_number = 4
     # print(a_numpy[0])
 
     # 需要考虑用 sentence 中的句子替换一下
-    print(text)
+    # print(text)
     img = np.transpose(a_numpy)
     img = img - 0.5
     # 查看图像的大小
@@ -186,9 +186,9 @@ def create_input_files_replace_token(dataset, karpathy_json_path, image_folder, 
                 
                 img_text = [word.lower() for word in img_text]
 
-                print("Image from text", img_text)
+                # print("Image from text", img_text)
 
-                print("original caption", captions)
+                # print("original caption", captions)
 
                 replace_token = {}
 
@@ -208,8 +208,8 @@ def create_input_files_replace_token(dataset, karpathy_json_path, image_folder, 
                     caption = caption.strip()
                     captions[j] = caption.split(" ")
 
-                print("replace caption", captions)
-                print("replaced token", replace_token)
+                # print("replace caption", captions)
+                # print("replaced token", replace_token)
 
                 encoded_image_text = [word_map.get(replace_token.get(word, ""), 0) for word in img_text]
                 image_text.append(encoded_image_text)
