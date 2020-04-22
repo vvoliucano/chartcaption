@@ -105,7 +105,7 @@ def create_input_files_replace_token(dataset, karpathy_json_path, image_folder, 
         # 直接从此处获取 tokens
         for c in img['sentences']:
             # Update word frequency
-            # word_freq.update(c['tokens'])
+            word_freq.update(c['tokens'])
             if len(c['tokens']) <= max_len:
                 captions.append(c['raw'])
 
@@ -133,11 +133,11 @@ def create_input_files_replace_token(dataset, karpathy_json_path, image_folder, 
     assert len(test_image_paths) == len(test_image_captions)
 
     # Create word map
-    # words = [w for w in word_freq.keys() if word_freq[w] > min_word_freq]
-    # word_map = {k: v + 1 for v, k in enumerate(words)}
+    words = [w for w in word_freq.keys() if word_freq[w] > min_word_freq]
+    word_map = {k: v + 1 for v, k in enumerate(words)}
     # 不初始化
 
-    word_map = {}
+    # word_map = {}
     word_map['<unk>'] = len(word_map) + 1
     word_map['<start>'] = len(word_map) + 1
     word_map['<end>'] = len(word_map) + 1
@@ -231,10 +231,7 @@ def create_input_files_replace_token(dataset, karpathy_json_path, image_folder, 
                     print(encoded_image_text)
 
                 for j, c in enumerate(captions):
-                    # Encode captions
-                    for word in c:
-                        if word not in word_map:
-                            word_map[word] = len(word_map)
+                    # Encode captions 其实完全没有必要
 
                     enc_c = [word_map['<start>']] + [word_map.get(word, word_map['<unk>']) for word in c] + [
                         word_map['<end>']] + [word_map['<pad>']] * (max_len - len(c))
