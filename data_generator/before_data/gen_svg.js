@@ -32,8 +32,10 @@ const legendHeightRatio = .06
 const paddingValue = 0.2
 // let myheight = document.getElementById('visualization').clientWidth * 0.95
 // let mywidth = document.body.clientHeight * 0.8
-const myheight = flag? 400: 660
+// const myheight = flag? 400: 660
+const myheight = 400
 const mywidth = 800
+
 
 
 Array.prototype.unique = function() {
@@ -72,6 +74,8 @@ function deal_with_data (d) {
     default:
       console.log('I can not handle this kind of data!')
   }
+  d3.select(document.body).select('svg').attr('height', 500)
+  d3.select(document.body).select('svg').select('g').attr('transform', 'translate(80,80)')
   // if (is_show) {
   //   let sent_data = { data_string: JSON.stringify(data_json),
   //                 svg_string: get_svg_string,
@@ -139,20 +143,26 @@ function deal_with_ocq(data) {
       	load_stack_bar_chart(data, 'o0', 'c0', 'q0')
       }
       else if (data.vis_type === "load_group_bar_chart_horizontal") {
-        if (Math.random() > 0.5) {
-          load_group_bar_chart_horizontal(data, 'c0', 'o0', 'q0')
-        }
-        else {
-          load_stack_bar_chart_horizontal(data, 'o0', 'c0', 'q0')
-        }
+        // if (Math.random() > 0.5) {
+        //   load_group_bar_chart_horizontal(data, 'c0', 'o0', 'q0')
+        // }
+        // else {
+        //   load_stack_bar_chart_horizontal(data, 'o0', 'c0', 'q0')
+        // }
+        
+        load_stack_bar_chart_horizontal(data, 'o0', 'c0', 'q0')
+
       }
       else {
-        if (Math.random() > 0.5) {
-          load_group_bar_chart(data, 'c0', 'o0', 'q0')
-        }
-        else {
-          load_group_bar_chart(data, 'o0', 'c0', 'q0')
-        }
+        // if (Math.random() > 0.5) {
+        //   load_group_bar_chart(data, 'c0', 'o0', 'q0')
+        // }
+        // else {
+        //   load_group_bar_chart(data, 'o0', 'c0', 'q0')
+        // }
+        
+        load_group_bar_chart(data, 'o0', 'c0', 'q0')
+
       }
 }
 function deal_with_qq(data) {
@@ -191,11 +201,11 @@ function CQQ(data, cat_color, cat_x, cat_y, position = 'vertical', tag='scatter'
                    .attr('id','mySvg')
                    // .attr('viewBox', '0 0 ' + String(this.width) + ' ' + String(this.height))
                    // .attr('preserveAspectRatio', 'xMidYMid meet')
-                   .attr('width', this.width)
+                   .attr('width', this.width + 100)
                    .attr('height', this.height)
 
       this.g = this.svg.append('g')
-                       .attr('transform', 'translate(' + this.width * marginRate + ',' + this.height * marginRate + ')')
+                       .attr('transform', 'translate(' + this.width * marginRate + ',' + this.height * marginRate + 100 + ')')
                        .classed('main_canvas', true)
       if (flag) {
         this.g.attr('transform', 'translate(' + this.width * marginRate + ',' + this.height * 0.1 + ')' )
@@ -934,8 +944,8 @@ CCQ.prototype.drawGroupBarChart = function() {
                   .attr('y', d => this.yScale(d[this.quantity]))
                   .attr('height', d => this.scaleHeight[0] - this.yScale(d[this.quantity]))
                   .attr('width', innerScale.bandwidth() - 4)
-    rects.attr('rx', 5)
-      .attr('ry', 5)
+    rects.attr('rx', 2)
+      .attr('ry', 2)
     return this
 }
 
