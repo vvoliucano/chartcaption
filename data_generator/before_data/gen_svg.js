@@ -139,10 +139,20 @@ function deal_with_ocq(data) {
       	load_stack_bar_chart(data, 'o0', 'c0', 'q0')
       }
       else if (data.vis_type === "load_group_bar_chart_horizontal") {
-      	load_group_bar_chart_horizontal(data, 'c0', 'o0', 'q0')
+        if (Math.random() > 0.5) {
+          load_group_bar_chart_horizontal(data, 'c0', 'o0', 'q0')
+        }
+        else {
+          load_stack_bar_chart_horizontal(data, 'o0', 'c0', 'q0')
+        }
       }
       else {
-        load_group_bar_chart(data, 'c0', 'o0', 'q0')
+        if (Math.random() > 0.5) {
+          load_group_bar_chart(data, 'c0', 'o0', 'q0')
+        }
+        else {
+          load_group_bar_chart(data, 'o0', 'c0', 'q0')
+        }
       }
 }
 function deal_with_qq(data) {

@@ -82,6 +82,8 @@ if __name__ == '__main__':
     else:
         node_name = "node "
 
+    print(f"The system is {sys.platform} and the node name is {node_name}")
+
     setting_dir = args.path
     number = args.number
     period = args.period

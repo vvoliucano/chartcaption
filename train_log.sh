@@ -316,3 +316,11 @@ python test_module.py --img data/20200418_dataset_bar/svg/000030.svg  --model ch
 python test_module.py --img data/20200418_dataset_bar/svg/000030.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-04-22-19-59/epoch_0.pth.tar --word_map checkpoint/chart_5_cap_5_min_wf-2020-04-22-19-59/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg --need_text --max_element_number 100 --replace_token
 
 checkpoint/chart_5_cap_5_min_wf-2020-04-22-19-59
+
+
+20200423
+
+python test_module.py --img data/20200418_dataset_bar/svg/000030.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-04-22-19-59/epoch_16.pth.tar --word_map checkpoint/chart_5_cap_5_min_wf-2020-04-22-19-59/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg --need_text --max_element_number 100 --replace_token
+
+python new_data.py --number 100 --path ../../data/20200423_dataset_bar --period 10
+
