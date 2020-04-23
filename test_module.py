@@ -39,42 +39,39 @@ def get_pixel_image_from_file(image_path):
     image = transform(img)  # (3, 256, 256)
     return image
 
-def parse_svg_string(svg_string, need_text, wordmap, max_element_number):
+def parse_svg_string(svg_string, need_text, wordmap, max_element_number, replace_token = False):
     # img = np.random.random_sample((20, 10))
     # print("need_text or not ", need_text)
     img, soup, image_text = svg_read(svg_string = svg_string, need_soup = True, need_text = True, svg_number = max_element_number, use_svg_string = True)
-    # elements = soup.findAll(attrs = {"caption_sha", "5"})
-    # elements = soup.findAll(attrs = {"caption_id":  "2"})
-    print("image_text", image_text)
-    encoded_image_text = [wordmap.get(word, 0) for word in image_text]
-    print("image_text", encoded_image_text)
-    # image_text_try = torch.LongTensor(image_text)
-    # print("image text length ", len(image_text))
-    # elements = soup.findAll(attrs = {"caption_sha":  "5"})
-    # print("elements", elements)
-    element_number = sum([item != "<pad>" for item in image_text])
-    # print("element_number", element_number)
-    # element_number = len()
-    # print("element_number", element_number)
-    # print(soup.findAll(attrs = {"caption_id":  "2"}))
-    # print(soup)
-    # with open("1.html", "w") as file:
-    #     file.write(str(soup))
-    img = torch.FloatTensor(img).to(device)
-    encoded_image_text = torch.LongTensor(encoded_image_text).to(device)
-    return img, soup, element_number, encoded_image_text
+    return pre_process_svg(img, soup, image_text, wordmap)
 
 
-def get_svg_image_from_file(image_path, need_text, wordmap, max_element_number):
+def parse_svg_file(image_path, need_text, wordmap, max_element_number, replace_token = False):
     # img = np.random.random_sample((20, 10))
     # print("need_text or not ", need_text)
 
     img, soup, image_text = svg_read(image_path, need_soup = True, need_text = True, svg_number = max_element_number)
     # elements = soup.findAll(attrs = {"caption_sha", "5"})
     # elements = soup.findAll(attrs = {"caption_id":  "2"})
+
+    return pre_process_svg(img, soup, image_text, wordmap, replace_token = replace_token)
+
+
+def pre_process_svg(img, soup, image_text, wordmap, replace_token = False):
     print("image_text", image_text)
-    encoded_image_text = [wordmap.get(word, 0) for word in image_text]
-    print("image_text", encoded_image_text)
+    replace_dict = {}
+    if replace_token:
+        for word in image_text:
+            if word != "" and word != "<pad>":
+                current_token = "<#" + str(len(replace_dict)) + ">"
+                replace_dict[word] = current_token
+            # else:
+
+        encoded_image_text = [word_map.get(replace_dict.get(word, ""), 0) for word in image_text]
+    else:
+        encoded_image_text = [wordmap.get(word, 0) for word in image_text]
+
+    print("encoded_image_text", encoded_image_text)
     # image_text_try = torch.LongTensor(image_text)
     # print("image text length ", len(image_text))
     # elements = soup.findAll(attrs = {"caption_sha":  "5"})
@@ -89,13 +86,13 @@ def get_svg_image_from_file(image_path, need_text, wordmap, max_element_number):
     #     file.write(str(soup))
     img = torch.FloatTensor(img).to(device)
     encoded_image_text = torch.LongTensor(encoded_image_text).to(device)
-    return img, soup, element_number, encoded_image_text
+    return img, soup, element_number, encoded_image_text, replace_dict
 
-def deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word_map, beam_size = 3):
+def deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word_map,  beam_size = 5):
    
     k = beam_size
     vocab_size = len(word_map)
-    
+    # rev_replace = {v: k for k, v in replace_dict.items()}
     # encoded_image_text = [word_map.get(word, 0) for word in img_text]
     # 注意，此时的image text 还是原始的文字
     # 此时需要将文字转化成为相应的对象
@@ -211,46 +208,7 @@ def deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word
     return seqs, alphas_of_seqs, soup, sorted_seqs_scores
 
 
-
-def visualize_att(image_path, seq, alphas, rev_word_map, smooth=True):
-    """
-    Visualizes caption with weights at every word.
-
-    Adapted from paper authors' repo: https://github.com/kelvinxu/arctic-captions/blob/master/alpha_visualization.ipynb
-
-    :param image_path: path to image that has been captioned
-    :param seq: caption
-    :param alphas: weights
-    :param rev_word_map: reverse word mapping, i.e. ix2word
-    :param smooth: smooth weights?
-    """
-    image = Image.open(image_path)
-    image = image.resize([14 * 24, 14 * 24], Image.LANCZOS)
-
-    words = [rev_word_map[ind] for ind in seq]
-
-    for t in range(len(words)):
-        if t > 50:
-            break
-        print("hhhhh")
-        plt.subplot(np.ceil(len(words) / 5.), 5, t + 1)
-
-        plt.text(0, 1, '%s' % (words[t]), color='black', backgroundcolor='white', fontsize=12)
-        # plt.imshow(image)
-        current_alpha = alphas[t, :]
-        if smooth:
-            alpha = skimage.transform.pyramid_expand(current_alpha.numpy(), upscale=24, sigma=8)
-        else:
-            alpha = skimage.transform.resize(current_alpha.numpy(), [14 * 24, 14 * 24])
-        if t == 0:
-            plt.imshow(alpha, alpha=0)
-        else:
-            plt.imshow(alpha, alpha=0.8)
-        plt.set_cmap(cm.Greys_r)
-        plt.axis('off')
-    plt.savefig("tmp.jpg")
-
-def visualize_att_svg(soup, element_number, image_path, seq, alphas, rev_word_map, output_file = "tmp.jpg", smooth=True):
+def visualize_att_svg(soup, element_number, image_path, seq, alphas, rev_word_map, output_file = "tmp.jpg", smooth=True, replace_dict = {}):
     """
     Visualizes caption with weights at every word.
 
@@ -266,7 +224,13 @@ def visualize_att_svg(soup, element_number, image_path, seq, alphas, rev_word_ma
     # image = image.resize([14 * 24, 14 * 24], Image.LANCZOS)
     print("seq", seq)
     words = [rev_word_map[ind] for ind in seq]
-    print("words", words)
+    rev_replace_dict = {v: k for k, v in replace_dict.items()}
+    print("words before", words)
+    print(rev_replace_dict)
+    for i, word in enumerate(words):
+        if word in rev_replace_dict:
+            words[i] = rev_replace_dict[word]
+    print("words after", words)
     soup_list = []
     for t in range(len(words)):
         if t > 50:
@@ -356,30 +320,30 @@ def process_image(image_path):
         # print("open file", filename)
     svg_string = f.read()
 #  
-
-    # image, soup, element_number, image_text = parse_svg_string(svg_string, need_text = True, wordmap = word_map, max_element_number = max_element_number)
-    # seqs, alphas, soup, scores = deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word_map)
     seqs, alphas, scores, soup, element_number = process_svg_string(svg_string)
     return seqs, alphas, scores, soup, element_number
 
 def process_svg_string(svg_string):
     print("svg_string, ", svg_string)
-    image, soup, element_number, image_text = parse_svg_string(svg_string, need_text = True, wordmap = word_map, max_element_number = max_element_number)
+    image, soup, element_number, image_text, replace_dict = parse_svg_string(svg_string, need_text = True, wordmap = word_map, max_element_number = max_element_number)
     seqs, alphas, soup, scores = deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word_map)
-    return seqs, alphas, scores, soup, element_number
+    return seqs, alphas, scores, soup, element_number, replace_dict
 
-def run_model(model_path, word_map_path, image_path, max_element_number = 100):
-    encoder, decoder = read_model(model_path = model_path)
-    # Load word map (word2ix)
-    word_map, rev_word_map = read_word_map(word_map_path)
-    image, soup, element_number, image_text = get_svg_image_from_file(image_path, need_text = True, wordmap = word_map, max_element_number = max_element_number)
+def run_model_file(model_path, word_map_path, image_path, max_element_number = 100, replace_token = False):
+    init_model(model_path, word_map_path, max_ele_num = max_element_number)
+
+    image, soup, element_number, image_text, replace_dict = parse_svg_file(image_path, need_text = True, wordmap = word_map, max_element_number = max_element_number, replace_token = replace_token)
+    print(replace_dict)
     seqs, alphas, soup, scores = deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word_map)
-    return seqs, alphas,scores, soup, element_number, rev_word_map
+    return seqs, alphas,scores, soup, element_number, rev_word_map, replace_dict
 
-def run_model_separate(model_path, word_map_path, image_path, max_element_number = 100):
+
+# 这个仅仅是调试用的
+
+def run_model_svg_string(model_path, word_map_path, image_path, max_element_number = 100):
     init_model(model_path, word_map_path, max_ele_num = max_element_number)
     svg_string = '<svg id="mySvg" width="800" height="350" xmlns="http://www.w3.org/2000/svg"><g transform="translate(80,35)" class="main_canvas"><g class="axis" transform="translate(0,280)" fill="none" font-size="10" font-family="sans-serif" text-anchor="middle"><g class="tick" opacity="1" transform="translate(56.5,0)"><text fill="currentColor" y="9" dy="0.71em" style="font-family: Oxygen; fill: #253039;">2010</text></g><g class="tick" opacity="1" transform="translate(144.5,0)"><text fill="currentColor" y="9" dy="0.71em" style="font-family: Oxygen; fill: #253039;">2011</text></g><g class="tick" opacity="1" transform="translate(232.5,0)"><text fill="currentColor" y="9" dy="0.71em" style="font-family: Oxygen; fill: #253039;">2012</text></g><g class="tick" opacity="1" transform="translate(320.5,0)"><text fill="currentColor" y="9" dy="0.71em" style="font-family: Oxygen; fill: #253039;">2013</text></g><g class="tick" opacity="1" transform="translate(408.5,0)"><text fill="currentColor" y="9" dy="0.71em" style="font-family: Oxygen; fill: #253039;">2014</text></g><g class="tick" opacity="1" transform="translate(496.5,0)"><text fill="currentColor" y="9" dy="0.71em" style="font-family: Oxygen; fill: #253039;">2015</text></g><g class="tick" opacity="1" transform="translate(584.5,0)"><text fill="currentColor" y="9" dy="0.71em" style="font-family: Oxygen; fill: #253039;">2016</text></g></g><g class="axis" fill="none" font-size="10" font-family="sans-serif" text-anchor="end"><g class="tick" opacity="1" transform="translate(0,280.5)"><line stroke="currentColor" x2="640"></line><text fill="currentColor" x="-3" dy="0.32em" style="font-family: Oxygen; fill: #253039;">0.0</text></g><g class="tick" opacity="1" transform="translate(0,204.5)"><line stroke="currentColor" x2="640" style="stroke-opacity: 0.3;"></line><text fill="currentColor" x="-3" dy="0.32em" style="font-family: Oxygen; fill: #253039;">0.5</text></g><g class="tick" opacity="1" transform="translate(0,129.5)"><line stroke="currentColor" x2="640" style="stroke-opacity: 0.3;"></line><text fill="currentColor" x="-3" dy="0.32em" style="font-family: Oxygen; fill: #253039;">1.0</text></g><g class="tick" opacity="1" transform="translate(0,53.5)"><line stroke="currentColor" x2="640" style="stroke-opacity: 0.3;"></line><text fill="currentColor" x="-3" dy="0.32em" style="font-family: Oxygen; fill: #253039;">1.5</text></g></g><text transform="translate(-35, 175) rotate(-90)" text-anchor="start" font-size="20px"></text><g><g fill="#fb8072"><rect class="element_0" id="0" o0="2010" c0="F" q0="0.5916307422726574" x="21" y="210" height="70" width="70"></rect><rect class="element_1" id="1" o0="2011" c0="F" q0="0.499292187816756" x="109" y="221" height="59" width="70"></rect><rect class="element_2" id="2" o0="2012" c0="F" q0="0.5833698942964443" x="197" y="211" height="69" width="70"></rect><rect class="element_3" id="3" o0="2013" c0="F" q0="0.580821550862816" x="285" y="211" height="69" width="70"></rect><rect class="element_4" id="4" o0="2014" c0="F" q0="0.5778160391056617" x="373" y="212" height="68" width="70"></rect><rect class="element_5" id="5" o0="2015" c0="F" q0="0.5374138350916083" x="461" y="216" height="64" width="70"></rect><rect class="element_6" id="6" o0="2016" c0="F" q0="0.5190015788311658" x="549" y="219" height="61" width="70"></rect></g><g fill="#d9d9d9"><rect class="element_7" id="7" o0="2010" c0="B" q0="1" x="21" y="92" height="118" width="70"></rect><rect class="element_8" id="8" o0="2011" c0="B" q0="1.0735472169341573" x="109" y="94" height="127" width="70"></rect><rect class="element_9" id="9" o0="2012" c0="B" q0="1.1706944287796168" x="197" y="73" height="138" width="70"></rect><rect class="element_10" id="10" o0="2013" c0="B" q0="1.2575450048813972" x="285" y="63" height="148" width="70"></rect><rect class="element_11" id="11" o0="2014" c0="B" q0="1.3372426823618313" x="373" y="53" height="159" width="70"></rect><rect class="element_12" id="12" o0="2015" c0="B" q0="1.7954980378161547" x="461" y="4" height="212" width="70"></rect><rect class="element_13" id="13" o0="2016" c0="B" q0="1.848192767898499" x="549" y="0" height="219" width="70"></rect></g></g><g transform="translate(640,0)" class="legend-wrap"><g transform="translate(0,0)"><rect width="15.120000000000001" height="15.120000000000001" fill="#fb8072" id="color-0" color-data="#fb8072" custom-id="0" data-toggle="popover" data-container="body" data-placement="right" onclick="addColorPicker(this)"></rect><text x="17.64" y="12.600000000000001" text-anchor="start" font-size="12.600000000000001">F</text></g><g transform="translate(0,16.8)"><rect width="15.120000000000001" height="15.120000000000001" fill="#d9d9d9" id="color-1" color-data="#d9d9d9" custom-id="1" data-toggle="popover" data-container="body" data-placement="right" onclick="addColorPicker(this)"></rect><text x="17.64" y="12.600000000000001" text-anchor="start" font-size="12.600000000000001">B</text></g></g><text class="title" text-anchor="middle" font-size="33.6" x="320" y="-44.8" style="font-family: Oxygen; font-weight: bold; fill: #253039;">THE VALUE</text></g></svg>'
-    seqs, alphas, scores, soup, element_number = process_svg_string(svg_string)
+    seqs, alphas, scores, soup, element_number, replace_dict = process_svg_string(svg_string)
     return seqs, alphas, scores, soup, element_number
 
 
@@ -398,7 +362,8 @@ if __name__ == '__main__':
     parser.add_argument('--need_text', action='store_true', help="decide whether need text")
     parser.add_argument('--max_element_number', '-e', default=100, type=int, help='maximum element number')
     parser.add_argument('--port', '-p', default=9999, type=int, help='maximum element number')
-    
+    parser.add_argument('--replace_token', action = "store_true", help="replace token")
+
     args = parser.parse_args()
     args.need_text = True
 
@@ -414,15 +379,17 @@ if __name__ == '__main__':
     word_map_path = args.word_map
     image_path = args.img 
 
-    seqs, alphas, scores, soup, element_number =  run_model_separate(model_path, word_map_path, image_path, max_element_number)
+    # seqs, alphas, scores, soup, element_number =  run_model_svg_string(model_path, word_map_path, image_path, max_element_number)
     
-    print(seqs)
+    # print(seqs)
 
 
     # 可视化到相应的文件目录
-    # seqs, alphas, scores, soup, element_number, rev_word_map = run_model(model_path, word_map_path, image_path, max_element_number = max_element_number)
-    # alphas = [torch.FloatTensor(alpha) for alpha in alphas]
-    # for i, seq in enumerate(seqs):
-    #     visualize_att_svg(soup, element_number, args.img, seq, alphas[i], rev_word_map, output_file + str(i), args.smooth)
+    seqs, alphas, scores, soup, element_number, rev_word_map, replace_dict = run_model_file(model_path, word_map_path, image_path, max_element_number = max_element_number, replace_token = args.replace_token)
+    alphas = [torch.FloatTensor(alpha) for alpha in alphas]
+
+
+    for i, seq in enumerate(seqs):
+        visualize_att_svg(soup, element_number, args.img, seq, alphas[i], rev_word_map, output_file + str(i), args.smooth, replace_dict = replace_dict)
 
 

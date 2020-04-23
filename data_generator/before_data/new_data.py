@@ -8,6 +8,7 @@ import shutil
 import argparse
 import random
 from tqdm import tqdm
+import sys
 
 
 def get_data_sentence():
@@ -76,6 +77,10 @@ if __name__ == '__main__':
     # parser.add_argument()
     args = parser.parse_args()
 
+    if sys.platform == "linux":
+        node_name = "./"
+    else:
+        node_name = "node "
 
     setting_dir = args.path
     number = args.number
@@ -109,7 +114,7 @@ if __name__ == '__main__':
             json_file = os.path.join(json_dir,  f"{str(i - period + 1).zfill(6)}-{str(i).zfill(6)}.json")
             with open(json_file, "w") as f:
                 json.dump(tmp_set, f, indent = 2)
-            os.system(f"./gen_svg.js --input {json_file} --output_dir {svg_dir}")  
+            os.system(f"{node_name}gen_svg.js --input {json_file} --output_dir {svg_dir}")  
             # print(f"node gen_svg.js --input {json_file} --output_dir {svg_dir}")
             
             tmp_set = []
