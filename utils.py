@@ -216,6 +216,7 @@ def create_input_files_replace_token(dataset, karpathy_json_path, image_folder, 
                     new_captions.extend(current_captions)
                     # captions[j] = caption.split(" ")
 
+                # print("new captions", new_captions)
                 captions = new_captions
 
                 # print("replace caption", captions)

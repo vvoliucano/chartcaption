@@ -366,7 +366,7 @@ python test_module.py --img data/20200424_dataset_bar/svg/000999.svg  --model ch
 # 小规模训练 chart_5_cap_5_min_wf-2020-04-24-11-44
 python train.py --data_folder data/20200424_dataset_bar/deal --svg_element_number 100 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 3,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text 
 
-
+# 出现一些问题
 python test_module.py --img data/20200424_dataset_bar/svg/000999.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-04-24-11-44/epoch_99_bleu_0.6830259834046531.pth.tar --word_map data/20200424_dataset_bar/deal/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg --need_text --max_element_number 100 --replace_token
 
 
