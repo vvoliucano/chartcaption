@@ -366,7 +366,12 @@ python test_module.py --img data/20200424_dataset_bar/svg/000999.svg  --model ch
 # 小规模训练 chart_5_cap_5_min_wf-2020-04-24-11-44
 python train.py --data_folder data/20200424_dataset_bar/deal --svg_element_number 100 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 3,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text 
 
-# 出现一些问题
+# 出现一些问题 一些词汇没有正确被替代，导致生成结果并不正确
 python test_module.py --img data/20200424_dataset_bar/svg/000999.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-04-24-11-44/epoch_99_bleu_0.6830259834046531.pth.tar --word_map data/20200424_dataset_bar/deal/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg --need_text --max_element_number 100 --replace_token
 
+# local 现在修改了相应的创建数据集的代码 运行良好
+python create_input_files.py --dataset chart --karpathy_json_path data/20200423_dataset_bar/karparthy_dataset.json --image_folder data/20200423_dataset_bar/svg --output_folder data/20200423_dataset_bar/deal --image_type svg --need_text --max_element_number 100
+
+# remote 将创建数据集的代码 在远程运行
+python create_input_files.py --dataset chart --karpathy_json_path data/20200424_dataset_bar/karparthy_dataset.json --image_folder data/20200424_dataset_bar/svg --output_folder data/20200424_dataset_bar/deal --image_type svg --need_text --max_element_number 100
 
