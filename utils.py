@@ -241,6 +241,9 @@ def create_input_files_replace_token(dataset, karpathy_json_path, image_folder, 
                 for j, c in enumerate(captions):
                     # Encode captions 其实完全没有必要
 
+                    if j >= captions_per_image:
+                        break
+
                     enc_c = [word_map['<start>']] + [word_map.get(word, word_map['<unk>']) for word in c] + [
                         word_map['<end>']] + [word_map['<pad>']] * (max_len - len(c))
                     
@@ -255,6 +258,11 @@ def create_input_files_replace_token(dataset, karpathy_json_path, image_folder, 
 
             # print("word_map", word_map)
             # Sanity check
+
+            print("images.shape[0] * captions_per_image", images.shape[0] * captions_per_image)
+            print("len(enc_captions)", len(enc_captions))
+            print("len(caplens)", len(caplens))
+
             assert images.shape[0] * captions_per_image == len(enc_captions) == len(caplens)
 
             # Save encoded captions and their lengths to JSON files
