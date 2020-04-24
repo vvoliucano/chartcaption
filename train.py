@@ -86,7 +86,7 @@ checkpoint = args.pretrained_model  # path to checkpoint, None if none
 if checkpoint == "none":
     checkpoint = None
 else:
-    checkpoint = "checkpoint/" + data_name + "/" + checkpoint
+    # checkpoint = "checkpoint/" + data_name + "/" + checkpoint
     print("Load checkpoint", checkpoint)
 
 
