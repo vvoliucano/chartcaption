@@ -201,6 +201,8 @@ def create_input_files_replace_token(dataset, karpathy_json_path, image_folder, 
                         replace_token[word] = current_token
                         if current_token not in word_map:
                             word_map[current_token] = len(word_map)
+
+                new_captions = []
                         
                 for j, caption in enumerate(captions):
                     caption = " " + caption + " "
@@ -209,7 +211,12 @@ def create_input_files_replace_token(dataset, karpathy_json_path, image_folder, 
                     for word in replace_token:
                         caption = caption.replace(" " + word + " ", " " + replace_token[word] + " ")
                     caption = caption.strip()
-                    captions[j] = caption.split(" ")
+                    current_captions = caption.split(";")
+                    current_captions = [c.strip().split(" ") for c in current_captions]
+                    new_captions.extend(current_captions)
+                    # captions[j] = caption.split(" ")
+
+                captions = new_captions
 
                 # print("replace caption", captions)
                 # print("replaced token", replace_token)
