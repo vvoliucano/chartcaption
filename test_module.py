@@ -13,6 +13,7 @@ from PIL import Image
 from utils import svg_read
 import bs4
 import os
+import time
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -97,6 +98,9 @@ def deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word
     # 注意，此时的image text 还是原始的文字
     # 此时需要将文字转化成为相应的对象
     print("image_size", image.shape)
+
+    time_start=time.time()
+
     # print("element_number")
     image = image.unsqueeze(0)  # (1, 13, 40)
     image_text = image_text.unsqueeze(0) # 添加一个 (1, 40)
@@ -104,7 +108,7 @@ def deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word
     encoded_image_text = decoder.embedding(image_text) # (1, 40, 512)
     encoder_out = torch.cat((encoder_out, encoded_image_text), 2)
     enc_image_size = encoder_out.size(1)
-    print("encoder_out.shape", encoder_out.shape)
+    # print("encoder_out.shape", encoder_out.shape)
     encoder_dim = encoder_out.size(-1) # 
 
 
@@ -198,11 +202,14 @@ def deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word
             break
         step += 1
 
-    print("complete_seqs_scores from svg", complete_seqs_scores)
+    # print("complete_seqs_scores from svg", complete_seqs_scores)
     sorted_seqs_scores = sorted(complete_seqs_scores, reverse = True)
     # print("sorted_seqs_scores", sorted_seqs_scores)
     seqs = [complete_seqs[complete_seqs_scores.index(seq_score)] for seq_score in sorted_seqs_scores]
     alphas_of_seqs = [complete_seqs_alpha[complete_seqs_scores.index(seq_score)] for seq_score in sorted_seqs_scores]
+
+    time_end=time.time()
+    print('time cost',time_end-time_start,'s')
 
 
     return seqs, alphas_of_seqs, soup, sorted_seqs_scores

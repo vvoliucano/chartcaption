@@ -33,7 +33,6 @@ parser.add_argument('--encoder_dim', type = int, default = 2048)
 parser.add_argument('--encode_word', type = str, default = "no", help = "using text as input") # In fact, this is useless
 parser.add_argument('--need_text', action='store_true', help="decide whether need text")
 
-
 # [3, 2, 4, 3, 1], output_nc = [5, 5, 5, 5, 5])
 # input_nc = "3,2,4,3,1"
 # output_nc = "5,5,5,5,5"

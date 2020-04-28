@@ -12,8 +12,6 @@ python train.py --data_folder /home/can.liu/caption/data/svg_try/try_output --da
 # 训练假数据
 python train.py --data_folder /home/can.liu/caption/data/svg_try/try_output --data_name flickr8k_5_cap_per_img_0_min_word_freq --image_type svg
 
-
-
 # 尝试svg位的情况
 python caption.py --img asf  --model BEST_checkpoint_flickr8k_5_cap_per_img_0_min_word_freq.pth.tar --word_map /home/can.liu/caption/data/try/try_output/WORDMAP_flickr8k_5_cap_per_img_0_min_word_freq.json  --image_type svg
 
@@ -372,6 +370,24 @@ python test_module.py --img data/20200424_dataset_bar/svg/000999.svg  --model ch
 # local 现在修改了相应的创建数据集的代码 运行良好
 python create_input_files.py --dataset chart --karpathy_json_path data/20200423_dataset_bar/karparthy_dataset.json --image_folder data/20200423_dataset_bar/svg --output_folder data/20200423_dataset_bar/deal --image_type svg --need_text --max_element_number 100
 
-# remote 将创建数据集的代码 在远程运行
+# remote 将创建数据集的代码 在远程运行 过程中修改了每个图片的caption 数量不一致的问题。
 python create_input_files.py --dataset chart --karpathy_json_path data/20200424_dataset_bar/karparthy_dataset.json --image_folder data/20200424_dataset_bar/svg --output_folder data/20200424_dataset_bar/deal --image_type svg --need_text --max_element_number 100
+
+# 重新在新的数据集下进行训练 所在目录 chart_5_cap_5_min_wf-2020-04-24-17-11
+python train.py --data_folder data/20200424_dataset_bar/deal --svg_element_number 100 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 3,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text 
+
+# 查看训练后的结果 显然在小规模数据集下，其功能并不完好
+python test_module.py --img data/20200424_dataset_bar/svg/000999.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-04-24-17-11/Best.pth.tar --word_map data/20200424_dataset_bar/deal/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg --need_text --max_element_number 100 --replace_token
+
+python test_module.py --img data/20200424_dataset_bar/svg/000998.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-04-24-17-11/Best.pth.tar --word_map data/20200424_dataset_bar/deal/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg --need_text --max_element_number 100 --replace_token
+
+# 那我们就在更为大型的数据集上进行测试
+
+python create_input_files.py --dataset chart --karpathy_json_path data/20200423_dataset_bar_new/karparthy_dataset.json --image_folder data/20200423_dataset_bar_new/svg --output_folder data/20200424_dataset_bar_new/deal --image_type svg --need_text --max_element_number 100
+
+# chart_5_cap_5_min_wf-2020-04-24-23-52
+python train.py --data_folder data/20200424_dataset_bar_new/deal --svg_element_number 100 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 3,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text 
+
+python test_module.py --img data/20200424_dataset_bar/svg/000999.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-04-24-23-52/Best.pth.tar --word_map data/20200424_dataset_bar_new/deal/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg --need_text --max_element_number 100 --replace_token
+python test_module.py --img data/20200424_dataset_bar/svg/000998.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-04-24-23-52/Best.pth.tar --word_map data/20200424_dataset_bar_new/deal/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg --need_text --max_element_number 100 --replace_token
 
