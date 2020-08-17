@@ -241,6 +241,7 @@ class SvgCompEncoder(nn.Module):
         super(SvgCompEncoder, self).__init__()
         print(input_nc)
         svg_channel = sum(input_nc)
+        # Build a full-connect encoder for each part of the channels
         for i, input_channel in enumerate(input_nc):
             model = [nn.Conv1d(input_nc[i], output_nc[i], kernel_size = 1),
                     nn.BatchNorm1d(output_nc[i])

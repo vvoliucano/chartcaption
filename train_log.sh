@@ -391,3 +391,41 @@ python train.py --data_folder data/20200424_dataset_bar_new/deal --svg_element_n
 python test_module.py --img data/20200424_dataset_bar/svg/000999.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-04-24-23-52/Best.pth.tar --word_map data/20200424_dataset_bar_new/deal/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg --need_text --max_element_number 100 --replace_token
 python test_module.py --img data/20200424_dataset_bar/svg/000998.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-04-24-23-52/Best.pth.tar --word_map data/20200424_dataset_bar_new/deal/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg --need_text --max_element_number 100 --replace_token
 
+# 2020428
+
+python new_data.py --number 10000 --path ../../data/20200428_dataset_bar_10000 --period 100
+
+python new_data.py --number 20000 --path ../../data/20200428_dataset_bar_20000 --period 100
+
+python new_data.py --number 40000 --path ../../data/20200428_dataset_bar_40000 --period 100
+
+python nes_data.py --number 80000 --path ../../data/20200428_dataset_bar_80000 --period 100
+
+python new_data.py --number 160000 --path ../../data/20200428_dataset_bar_160000 --period 100
+
+python create_input_files.py --dataset chart --karpathy_json_path data/20200428_dataset_bar_10000/karparthy_dataset.json --image_folder data/20200428_dataset_bar_10000/svg --output_folder data/20200428_dataset_bar_10000/deal --image_type svg --need_text --max_element_number 100
+
+python create_input_files.py --dataset chart --karpathy_json_path data/20200428_dataset_bar_20000/karparthy_dataset.json --image_folder data/20200428_dataset_bar_20000/svg --output_folder data/20200428_dataset_bar_20000/deal --image_type svg --need_text --max_element_number 100
+
+python create_input_files.py --dataset chart --karpathy_json_path data/20200428_dataset_bar_40000/karparthy_dataset.json --image_folder data/20200428_dataset_bar_40000/svg --output_folder data/20200428_dataset_bar_40000/deal --image_type svg --need_text --max_element_number 100
+
+python create_input_files.py --dataset chart --karpathy_json_path data/20200428_dataset_bar_80000/karparthy_dataset.json --image_folder data/20200428_dataset_bar_80000/svg --output_folder data/20200428_dataset_bar_80000/deal --image_type svg --need_text --max_element_number 100
+
+python create_input_files.py --dataset chart --karpathy_json_path data/20200428_dataset_bar_160000/karparthy_dataset.json --image_folder data/20200428_dataset_bar_160000/svg --output_folder data/20200428_dataset_bar_160000/deal --image_type svg --need_text --max_element_number 100
+
+python train.py --data_folder data/20200428_dataset_bar_10000/deal --svg_element_number 100 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 3,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text 
+# chart_5_cap_5_min_wf-2020-04-29-10-12
+
+python train.py --data_folder data/20200428_dataset_bar_20000/deal --svg_element_number 100 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 3,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text 
+# chart_5_cap_5_min_wf-2020-04-29-10-15
+
+python train.py --data_folder data/20200428_dataset_bar_40000/deal --svg_element_number 100 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 3,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text 
+# chart_5_cap_5_min_wf-2020-04-29-10-45
+
+python train.py --data_folder data/20200428_dataset_bar_80000/deal --svg_element_number 100 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 3,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text 
+# chart_5_cap_5_min_wf-2020-04-29-10-52
+
+python train.py --data_folder data/20200428_dataset_bar_160000/deal --svg_element_number 100 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 3,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text 
+
+
+

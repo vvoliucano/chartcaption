@@ -13,7 +13,7 @@ from nltk.translate.bleu_score import corpus_bleu
 import os
 import argparse
 
-parser = argparse.ArgumentParser(description='Show, Attend, and Tell - Tutorial - Generate Caption for SVG')
+parser = argparse.ArgumentParser(description='Generate Caption for SVG')
 
 parser.add_argument('--data_folder', type=str, default = "/home/can.liu/caption/data/karpathy_output/", help='folder with data files saved by create_input_files.py')
 parser.add_argument('--data_name', type=str, default = 'coco_5_cap_per_img_5_min_word_freq', help='base name shared by data files')
