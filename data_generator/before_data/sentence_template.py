@@ -8,7 +8,7 @@ import language_check
 
 def get_checked_sentence(text = "China's GDP increase from 2019 to 2020."):
 	tool = language_check.LanguageTool('en-US')
-	text = u'A sentence with a error in the Hitchhiker’s Guide tot he Galaxy'
+	# text = u'A sentence with a error in the Hitchhiker’s Guide tot he Galaxy'
 	matches = tool.check(text)
 	new_text = language_check.correct(text, matches)
 	return new_text
