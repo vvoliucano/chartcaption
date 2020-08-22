@@ -1,4 +1,4 @@
-from utils import create_input_files, create_input_files_replace_token
+from utils import create_input_files, create_input_files_replace_token, create_input_files_with_focus
 import argparse
 
 parser = argparse.ArgumentParser(description='Show, Attend, and Tell - Tutorial - Generate Caption for SVG')
@@ -13,6 +13,7 @@ parser.add_argument('--max_len', default=50, type=int, help='max length of the i
 parser.add_argument('--image_type', type=str, default = 'pixel', help='image type as input')
 parser.add_argument('--need_text', action='store_true', help="decide whether need text")
 parser.add_argument('--max_element_number', default=40, type=int, help="decide whether need text")
+parser.add_argument('--with_focus', action='store_true', help="decide whether focus is needed or not")
 
 # max_element_number
 
@@ -21,13 +22,26 @@ args = parser.parse_args()
 
 if __name__ == '__main__':
     # Create input files (along with word map)
+  if args.with_focus:
+    create_input_files_with_focus(dataset=args.dataset,
+                   karpathy_json_path = args.karpathy_json_path,
+                   image_folder = args.image_folder,
+                   captions_per_image = args.captions_per_image,
+                   min_word_freq = args.min_word_freq,
+                   output_folder= args.output_folder,
+                   max_len = args.max_len,
+                   image_type = args.image_type,
+                   need_text = args.need_text,
+                   max_element_number = args.max_element_number)
+    
+  else:
     create_input_files_replace_token(dataset=args.dataset,
-                       karpathy_json_path = args.karpathy_json_path,
-                       image_folder = args.image_folder,
-                       captions_per_image = args.captions_per_image,
-                       min_word_freq = args.min_word_freq,
-                       output_folder= args.output_folder,
-                       max_len = args.max_len,
-                       image_type = args.image_type,
-                       need_text = args.need_text,
-                       max_element_number = args.max_element_number)
+                   karpathy_json_path = args.karpathy_json_path,
+                   image_folder = args.image_folder,
+                   captions_per_image = args.captions_per_image,
+                   min_word_freq = args.min_word_freq,
+                   output_folder= args.output_folder,
+                   max_len = args.max_len,
+                   image_type = args.image_type,
+                   need_text = args.need_text,
+                   max_element_number = args.max_element_number)

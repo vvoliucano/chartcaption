@@ -427,5 +427,17 @@ python train.py --data_folder data/20200428_dataset_bar_80000/deal --svg_element
 
 python train.py --data_folder data/20200428_dataset_bar_160000/deal --svg_element_number 100 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 3,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text 
 
+# 20200819
+
+python create_input_files.py --dataset chart --karpathy_json_path data/20200423_dataset_bar/karparthy_dataset.json --image_folder data/20200423_dataset_bar/svg --output_folder data/20200820_dataset_try/ --image_type svg --need_text --max_element_number 100
+
+# 20200821 local
+python new_data.py --number 20 --path ../../data/20200820_dataset_bar_20 --period 20
+
+python create_input_files.py --dataset chart --karpathy_json_path data/20200820_dataset_bar_20/karparthy_dataset.json --image_folder data/20200820_dataset_bar_20/svg --output_folder data/20200820_dataset_bar_20/deal --image_type svg --need_text --max_element_number 100 --with_focus
+
+python train.py --data_folder data/20200820_dataset_bar_20/deal --svg_element_number 100 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 3,2,4,3,1,1 --output_nc 5,5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text 
+
+
 
 

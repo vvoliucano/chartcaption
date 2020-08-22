@@ -11,6 +11,26 @@ from tqdm import tqdm
 import sys
 
 
+def get_trend_data(begin_value = 1, number = 5, trend = "inc", rate = 0.2):
+
+    data_array = []
+    for i in range(number):
+        data_array.append(begin_value + rate * i) # 此处应该添加随机性
+
+
+
+    return data_array
+
+
+def gen_dimension(dimension = 1):
+    # if dimension = 1:
+    
+    return 
+
+
+
+
+
 def get_data_sentence():
     data = get_data("rule")
     sentences = []
@@ -25,6 +45,7 @@ def get_data_sentence():
                 sentences.append(answer)
                 break;
     data['sentences'] = sentences
+    # print(sentences)
     return data
 
 def gen_tvt(train, val, test):
@@ -53,15 +74,16 @@ def convert_to_karparthy(original_data):
             "split": gen_split(),
             "filename": item["filename"]
         }
-        for sen_index, sen in enumerate(sentences):
+        for sen_index, sentence_item in enumerate(sentences):
             sentid = cur_sentence_id + sen_index
-            sen = sen["sentence"].replace(",", " ,").replace(".", " .")
+            sen = sentence_item["sentence"].replace(",", " ,").replace(".", " .")
             # print(sen)
             sentence = {
                 "tokens": [item.lower() for item in sen.split(" ")],
                 "raw": sen,
                 "imgid": pindex,
                 "sentid": sentid,
+                "focus_id": sentence_item["focus_id"]
             }
             image["sentids"].append(sentid)
             image["sentences"].append(sentence)
@@ -126,8 +148,10 @@ if __name__ == '__main__':
             # os.system(f"./gen_svg.js --input {current_filename} --output {svg_filename}", )
 
         svg_filename = os.path.join(svg_dir, svg_filename)
+    # print(output_data_set[0])
 
     karparthy_dataset = convert_to_karparthy(output_data_set)
+    # print(karparthy_dataset)
 
     # print(karparthy_dataset)
 
