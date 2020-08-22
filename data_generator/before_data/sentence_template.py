@@ -36,7 +36,7 @@ if __name__ == '__main__':
 	end = 2020
 	begin_value = 20
 	end_value = 200
-	sentence = get_trend_sentence(begin, end, begin_value, end_value)
+	sentence = get_trend_sentence("China's GDP", begin, end, begin_value, end_value)
 	print("original_sentence", sentence)
 
 	new_sentence = get_checked_sentence(sentence)
