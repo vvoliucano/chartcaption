@@ -33,5 +33,4 @@
 		"{name1} catch up with {name2} in {position}",
 		"{name2} is surpassed by {name1} in {position}"
 	]
-	// maximum, the minimum, area-under-the-curve, smoothness, and intersection.
 }
