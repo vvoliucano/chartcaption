@@ -1,5 +1,13 @@
 import json
-import language_check
+import platform
+
+current_system = "linux"
+
+if platform.system() == "Darwin":
+	current_system = "macos"
+
+if current_system == "linux":
+	import language_check
 
 import time
 import random
@@ -51,5 +59,6 @@ if __name__ == '__main__':
 
 	print("Sentence: ", sentence)
 
-	new_sentence = get_checked_sentence(sentence)
-	print("new_sentence", new_sentence)
+	if current_system == "linux":
+		new_sentence = get_checked_sentence(sentence)
+		print("new_sentence", new_sentence)
