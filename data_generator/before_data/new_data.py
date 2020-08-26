@@ -25,6 +25,7 @@ def get_trend_data(begin_value = 1, number = 5, trend = "inc", rate = 0.2):
 def gen_dimension(dimension = 1):
     # if dimension = 1:
     
+    
     return 
 
 

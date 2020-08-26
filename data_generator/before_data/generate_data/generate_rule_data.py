@@ -104,20 +104,8 @@ def generate_data_array(data_full):
             id = id + 1
             data_array.append(datum)
     return data_array
-def generate_pack_data(data_metrics):
-    cat_name_array = ['A', 'B', 'C', 'D', 'E', 'F']
-    random.shuffle(cat_name_array)
-    category_num, ordinal_num = data_metrics.shape
-    data = {}
-    data['title'] = 'The Value'
-    data['unit'] = ''
-    data['c0'] = cat_name_array[:category_num]
-    data['o0'] = [str(2010 + i) for i in range(ordinal_num)]
-    data['data_array'] = generate_data_array(data_metrics)
-    data = add_type(data)
-    # data = add_small_random(data)
 
-    return data
+    
 
 def change_coordinate_to_id(coor, ordinal_num):
     return coor[0] * ordinal_num + coor[1]
@@ -198,114 +186,116 @@ def get_begin_end_value(begin_value, trend):
         end_value = end_value + add_value
     return begin_value, end_value
 
+
+
 def generate_single_complex_stack_data(rule_type, vis_type = 'load_stack_bar_chart', ordinal_min = 5, ordinal_max = 10, category_min = 2, category_max = 6):
 
-        while True:
-            ordinal_num = numpy.random.randint(ordinal_min, ordinal_max)
-            category_num = numpy.random.randint(category_min, category_max)
-            if ordinal_num * category_num < 30:
-                break;
-        # print("category_num")
-        # print(category_num)
-        begin_num = numpy.random.random()
-        cat_begin_value = [numpy.random.uniform(0.1, 1) for i in range(category_num)]
-        # 归一化，最大值为1
-        max_cat_begin_value = max(cat_begin_value)
-        cat_begin_value = [i/max_cat_begin_value for i in cat_begin_value]
+    while True:
+        ordinal_num = numpy.random.randint(ordinal_min, ordinal_max)
+        category_num = numpy.random.randint(category_min, category_max)
+        if ordinal_num * category_num < 30:
+            break;
+    # print("category_num")
+    # print(category_num)
+    begin_num = numpy.random.random()
+    cat_begin_value = [numpy.random.uniform(0.1, 1) for i in range(category_num)]
+    # 归一化，最大值为1
+    max_cat_begin_value = max(cat_begin_value)
+    cat_begin_value = [i/max_cat_begin_value for i in cat_begin_value]
 
-        small_cat, big_cat = get_big_small_index(cat_begin_value)
-        #
-        while True:
-            normal_trend = numpy.random.uniform(-10, 10)
-            special_trend = numpy.random.uniform(-10, 10)
-            if abs(normal_trend - special_trend) > 7 and abs(normal_trend) > 0.5 and abs(special_trend) > 0.5:
-                break
-        # print(normal_trend)
-        # print(special_trend)
-        special_list = get_special_list(category_num, max_num  = 1)
-        # print(f'special_list: {special_list}')
-        data_content = []
-        focus_coor = []
-        compare_coor = []
-        sentences = []
-        need_complex_trend = False
+    small_cat, big_cat = get_big_small_index(cat_begin_value)
+    #
+    while True:
+        normal_trend = numpy.random.uniform(-10, 10)
+        special_trend = numpy.random.uniform(-10, 10)
+        if abs(normal_trend - special_trend) > 7 and abs(normal_trend) > 0.5 and abs(special_trend) > 0.5:
+            break
+    # print(normal_trend)
+    # print(special_trend)
+    special_list = get_special_list(category_num, max_num  = 1)
+    # print(f'special_list: {special_list}')
+    data_content = []
+    focus_coor = []
+    compare_coor = []
+    sentences = []
+    need_complex_trend = False
 
-        for i in range(category_num):
-            this_focus = {}
-            this_focus[0] = cat_begin_value[i]
-            special_index = i
-            begin_value = this_focus[0]
-            if special_index in special_list:
-                if begin_value > 0.2 * sum(cat_begin_value) or special_index == 0:
-                    need_complex_trend = True
-                    middle_index = numpy.random.randint(1, ordinal_num - 1)
-                    end_value = this_focus[0] * (numpy.random.uniform(0.5, 1.8))
-                    if numpy.random.random() > 0.5:
-                        middle_value = max(begin_value, end_value) * numpy.random.uniform(1.2, 2)
-                    else:
-                        middle_value = min(begin_value, end_value) * numpy.random.uniform(0.3, 0.8)
-
-                    this_focus[middle_index] = middle_value
-
-                    this_focus[ordinal_num - 1] = end_value
-                    focus_coor.append([special_index, 0])
-                    focus_coor.append([special_index, middle_index])
-                    focus_coor.append([special_index, ordinal_num - 1])
+    for i in range(category_num):
+        this_focus = {}
+        this_focus[0] = cat_begin_value[i]
+        special_index = i
+        begin_value = this_focus[0]
+        if special_index in special_list:
+            if begin_value > 0.2 * sum(cat_begin_value) or special_index == 0:
+                need_complex_trend = True
+                middle_index = numpy.random.randint(1, ordinal_num - 1)
+                end_value = this_focus[0] * (numpy.random.uniform(0.5, 1.8))
+                if numpy.random.random() > 0.5:
+                    middle_value = max(begin_value, end_value) * numpy.random.uniform(1.2, 2)
                 else:
-                    trend = special_trend
-                    focus_coor.append([i, 0])
-                    focus_coor.append([i, ordinal_num - 1])
-                    this_focus[0], this_focus[ordinal_num - 1] = get_begin_end_value(begin_value, trend)
-                # print(f'this_focus: {this_focus}')
-            else:
-                trend = normal_trend
-                compare_coor.append([special_index, 0])
-                compare_coor.append([special_index, ordinal_num - 1])
-                begin_value, end_value = get_begin_end_value(begin_value, trend)
-                this_focus[0] = begin_value
+                    middle_value = min(begin_value, end_value) * numpy.random.uniform(0.3, 0.8)
+
+                this_focus[middle_index] = middle_value
+
                 this_focus[ordinal_num - 1] = end_value
-            data_content.append(this_focus)
+                focus_coor.append([special_index, 0])
+                focus_coor.append([special_index, middle_index])
+                focus_coor.append([special_index, ordinal_num - 1])
+            else:
+                trend = special_trend
+                focus_coor.append([i, 0])
+                focus_coor.append([i, ordinal_num - 1])
+                this_focus[0], this_focus[ordinal_num - 1] = get_begin_end_value(begin_value, trend)
+            # print(f'this_focus: {this_focus}')
+        else:
+            trend = normal_trend
+            compare_coor.append([special_index, 0])
+            compare_coor.append([special_index, ordinal_num - 1])
+            begin_value, end_value = get_begin_end_value(begin_value, trend)
+            this_focus[0] = begin_value
+            this_focus[ordinal_num - 1] = end_value
+        data_content.append(this_focus)
 
-        if need_complex_trend:
-            focus_id = [change_coordinate_to_id(coor, ordinal_num) for coor in focus_coor]
-            compare_id = []
-            sentences.append({'focus_id': focus_id, 'compare_id': compare_id, 'type': 'all_trend'})
-
-
-        if 2 * len(special_list) < category_num:
-            focus_id = [change_coordinate_to_id(coor, ordinal_num) for coor in focus_coor]
-            compare_id = [change_coordinate_to_id(coor, ordinal_num) for coor in compare_coor]
-            sentences.append({'focus_id': focus_id, 'compare_id': compare_id, 'type': 'compare_trend'})
-
-
-        data_full = interpolate_data(data_content)
-        diff_max = judge_big_diff(data_full, small_cat, big_cat)
-
-        sum_value = [sum([data_full[i][j] for i in range(category_num)]) for j in range(ordinal_num)]
-
-        index_special = extract_trend_special(sum_value)
-        focus_id = []
+    if need_complex_trend:
+        focus_id = [change_coordinate_to_id(coor, ordinal_num) for coor in focus_coor]
         compare_id = []
-        for i in range(category_num):
-            for j in range(ordinal_num):
-                if j in index_special:
-                    focus_id.append(change_coordinate_to_id([i,j], ordinal_num))
-
-        sentences.append({'focus_id': focus_id, 'compare_id': compare_id, 'type': 'sum_trend'})
-
-        for i in range(category_num):
-            average_percent = sum([data_full[i][j] / sum_value[j] for j in range(ordinal_num)])
+        sentences.append({'focus_id': focus_id, 'compare_id': compare_id, 'type': 'all_trend'})
 
 
-        data = generate_pack_data(data_full)
-        data = add_color(data)
-        data = add_small_value(data)
-        data['vis_type'] = vis_type
-        data['major_name'] = 'o0'
-        data['second_name'] = 'c0'
-        data['pre_gen_focus'] = sentences
+    if 2 * len(special_list) < category_num:
+        focus_id = [change_coordinate_to_id(coor, ordinal_num) for coor in focus_coor]
+        compare_id = [change_coordinate_to_id(coor, ordinal_num) for coor in compare_coor]
+        sentences.append({'focus_id': focus_id, 'compare_id': compare_id, 'type': 'compare_trend'})
 
-        return data
+
+    data_full = interpolate_data(data_content)
+    diff_max = judge_big_diff(data_full, small_cat, big_cat)
+
+    sum_value = [sum([data_full[i][j] for i in range(category_num)]) for j in range(ordinal_num)]
+
+    index_special = extract_trend_special(sum_value)
+    focus_id = []
+    compare_id = []
+    for i in range(category_num):
+        for j in range(ordinal_num):
+            if j in index_special:
+                focus_id.append(change_coordinate_to_id([i,j], ordinal_num))
+
+    sentences.append({'focus_id': focus_id, 'compare_id': compare_id, 'type': 'sum_trend'})
+
+    for i in range(category_num):
+        average_percent = sum([data_full[i][j] / sum_value[j] for j in range(ordinal_num)])
+
+
+    data = generate_pack_data(data_full)
+    data = add_color(data)
+    data = add_small_value(data)
+    data['vis_type'] = vis_type
+    data['major_name'] = 'o0'
+    data['second_name'] = 'c0'
+    data['pre_gen_focus'] = sentences
+
+    return data
 
 
 
@@ -384,6 +374,7 @@ def generate_ocq_stack_data(rule_type, vis_type = 'load_stack_bar_chart', ordina
         data['pre_gen_focus'] = sentences
 
         return data
+
 # 其中有一个地方有特殊值： stack 的
 def generate_single_special_stack_data(rule_type, vis_type = 'load_stack_bar_chart', ordinal_min = 3, ordinal_max = 10, category_min = 2, category_max = 6):
 
@@ -925,7 +916,127 @@ def generate_ocq_rule_data(vis_type, rule_type):
 
         return operations[numpy.random.randint(len(operations))](rule_type, vis_type = vis_type)
 
+def generate_pack_data(data_metrics):
+    cat_name_array = ['A', 'B', 'C', 'D', 'E', 'F']
+    random.shuffle(cat_name_array)
+    category_num, ordinal_num = data_metrics.shape
+    data = {}
+    data['title'] = 'The Value'
+    data['unit'] = ''
+    data['c0'] = cat_name_array[:category_num]
+    data['o0'] = [str(2010 + i) for i in range(ordinal_num)]
+    data['data_array'] = generate_data_array(data_metrics)
+    data = add_type(data)
+    # data = add_small_random(data)
+
+    return data
+
+# def get_value_array(feature):
+
+def interpolate_ordinal_array(steps = {0: 10, 10: 12}):
+    keys = [i for i in steps.keys()]
+    for i in range(len(keys) - 1):
+        current_key = keys[i]
+        next_key = keys[i + 1]
+
+        for i in range(current_key + 1, next_key):
+            steps[i] = ((i - current_key) * steps[next_key] + (next_key - i) * steps[current_key]) / (next_key - current_key) + numpy.random.normal(0, min(steps[current_key], steps[next_key]) * 0.01)
+
+    return steps
+
+
+def generate_data_by_setting(feature_setting):
+    # print(feature_setting)
+    cat_name = feature_setting["category_name"]
+    ord_name = feature_setting["ordinal_name"]
+    data = {}
+    data['title'] = random.choice(["The Value", "The GDP", "The Price"])
+    data["unit"] = ''
+    data['c0'] = cat_name
+    data['o0'] = ord_name
+    data['type'] = feature_setting["data_type"]
+    cat_num = len(cat_name)
+    ord_num = len(ord_name)
+
+    # get max value 
+    max_value = max([max([step["value"] for step in feature["step"]]) for feature in feature_setting["feature"]])
+    min_value = min([min([step["value"] for step in feature["step"]]) for feature in feature_setting["feature"]])
+
+    # print("max_value", max_value)
+    # print('min_value', min_value)
+
+    # 设定随机的范围
+    max_value = max_value * (random.random() + 1)
+    min_value = min_value * (random.random() / 2 + 0.5)
+
+    data_metrics = numpy.random.rand(cat_num, ord_num) * (max_value - min_value) + min_value
+
+    for feature in feature_setting["feature"]:
+        feature_type = feature["feature_type"]
+        if feature_type == "trend":
+
+            cat_idx = cat_name.index(feature["name"])
+            steps = {ord_name.index(step["position"]): step["value"] for step in feature["step"]}
+            ord_array = interpolate_ordinal_array(steps)
+            ord_keys = ord_array.keys() 
+
+            feature["focus"] = []
+
+            for i in range(ord_num):
+                if i in ord_keys:
+                    data_metrics[cat_idx][i] = ord_array[i]
+                    feature["focus"].append(cat_idx * ord_num + i)
+
+        else:
+            print("currently we can not handle this feature type")
+
+    # print(data_metrics)
+
+    data["data_array"] = generate_data_array(data_metrics)
+
+    # data = generate_pack_data(data_full)
+    
+    # data = add_color(data)
+    # data = add_small_value(data)
+    data = add_color(data)
+    data['vis_type'] = feature_setting['vis_type']
+    data['major_name'] = 'o0'
+    data['second_name'] = 'c0'
+    return data
+    # print(data)
+
 
 if __name__ == '__main__':
-    data = generate_rule_data('ocq', 'load_group_bar_chart','ocq_common')
+
+    def generate_rule_data_test():
+        data = generate_rule_data('ocq', 'load_group_bar_chart','ocq_common')
+        print(data)
+
+    setting = {
+        "data_type": "ocq",
+        "vis_type": "load_group_bar_chart",
+        "ordinal_name": ["2001", "2002", "2003", "2004", "2005"],
+        "category_name": ["Alice", "Bob", "Can"],
+        "feature": [
+            {
+                "feature_type": "trend",
+                "name": "Alice",
+                "step":[
+                    {
+                        "position": "2001",
+                        "value": 20
+                    },
+                    {
+                        "position": "2005",
+                        "value": 12
+                    }
+                ]
+            }
+        ]
+    }
+
+    data = generate_data_by_setting(setting)
     print(data)
+
+    with open("try.json", "w") as f:
+        json.dump(data, f, indent = 2)

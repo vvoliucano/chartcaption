@@ -23,18 +23,20 @@ global.document = document;
 /*
     chart drawing
 */
+
+
 let flag = true
-const marginRate = .1
-const spaceRatio = .3
-const fontRatio = .03
-const fontRatio2 = .04
-const legendHeightRatio = .06
-const paddingValue = 0.2
+let marginRate = .1
+let fontRatio = .03 // fontRatio：字号基本值，是myheight (一个指定的固定值）对应的比例；比如legend的字号是1.5*fontRatio*myheight；我翻看了一下，legend axis title的字号都和fontRatio有点*k关系，但是当时代码写的很恶心，k比较随意不能统一改 
+let legendHeightRatio = .06
+let paddingValue = 0.2  // paddingValue是对于分组条形图的pad的比率
 // let myheight = document.getElementById('visualization').clientWidth * 0.95
 // let mywidth = document.body.clientHeight * 0.8
 // const myheight = flag? 400: 660
-const myheight = 400
-const mywidth = 800
+let myheight = 400
+
+let aspect_ratio = 2
+let mywidth = myheight * aspect_ratio
 
 
 
@@ -71,8 +73,11 @@ function deal_with_data (d) {
     case 'qq':
       deal_with_qq(d)
       break;
-    default:
+    default:{
+      console.log(d["type"])
       console.log('I can not handle this kind of data!')
+    }
+      
   }
   d3.select(document.body).select('svg').attr('height', 500)
   d3.select(document.body).select('svg').select('g').attr('transform', 'translate(80,80)')
@@ -150,7 +155,7 @@ function deal_with_ocq(data) {
         //   load_stack_bar_chart_horizontal(data, 'o0', 'c0', 'q0')
         // }
         
-        load_stack_bar_chart_horizontal(data, 'o0', 'c0', 'q0')
+        load_group_bar_chart_horizontal(data, 'o0', 'c0', 'q0')
 
       }
       else {

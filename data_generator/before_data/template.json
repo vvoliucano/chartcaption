@@ -1,14 +1,14 @@
 {
 	"trend_inc":[
-		"{name} increase from {begin} to {end}, and reaches to {end_value}",
+		"{name} increase from {begin} to {end}",
 		"{name} have a increase trend from {begin} to {end}"
 	],
 	"trend_dec":[
-		"{name} decrease from {begin} to {end}, and reaches to {end_value}",
+		"{name} decrease from {begin} to {end}",
 		"{name} have a decrease trend from {begin} to {end}"
 	],
 	"trend_stable":[
-		"{name} keep stable around {end_value} from {begin} to {end}"
+		"{name} keep stable from {begin} to {end}"
 	],
 	"maximum": [
 		"{name} reaches its maximum value at {position}"
@@ -24,7 +24,7 @@
 		"There is an outlier around {position}"
 	],
 	"compare": [
-		"{name1} is {relation} than {name2} in {position}"
+		"{name1} is {relation} {name2} in {position}"
 	],
 	"intersection": [
 		"{name1} and {name2} has an intersection around {position}"
