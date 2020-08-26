@@ -101,7 +101,7 @@ def convert_to_karparthy(original_data):
 if __name__ == '__main__':
 
 	parser = argparse.ArgumentParser(description='generate dataset')
-	parser.add_argument('--number', '-n', type=int, default = 100, help='number')
+	parser.add_argument('--number', '-n', type=int, default = 10000, help='number')
 	parser.add_argument('--path', '-p', type=str, default = "try_dir", help='The path')
 	parser.add_argument('--period', '-i', type = int, default = 100, help = 'number of the iterater')
 	
@@ -118,7 +118,7 @@ if __name__ == '__main__':
 	os.mkdir(json_path)
 	os.mkdir(svg_path)
 
-	setting_array = generate_setting()
+	setting_array = generate_setting(number = args.number)
 
 	data_array = []
 	for setting in setting_array:
@@ -128,7 +128,7 @@ if __name__ == '__main__':
 		data["filename"] = setting["filename"]
 		data_array.append(data)
 
-	unit_size = args.number
+	unit_size = args.period
 
 	for i in range(int(len(data_array) / unit_size)):
 		current_json_path = os.path.join(json_path, f"{i * unit_size}-{(i + 1) * unit_size - 1}.json")

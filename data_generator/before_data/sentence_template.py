@@ -2,6 +2,7 @@ import json
 import platform
 import time
 import random
+import os
 
 from generate_data.generate_rule_data import generate_rule_data
 
@@ -38,7 +39,8 @@ def get_checked_sentence(text = "China's GDP increase from 2019 to 2020."):
 	return new_text
 
 
-f = open('template.json')
+f = open(os.path.join(os.path.dirname(__file__), 'template.json'))
+
 sentence_template = json.load(f)
 
 def get_trend_sentence_by_setting(feature_setting, slight_value = 0.03):
