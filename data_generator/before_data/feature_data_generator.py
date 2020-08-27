@@ -96,17 +96,29 @@ def convert_to_karparthy(original_data):
         cur_sentence_id += here_sentence_num
     return res
 
-
+def make_sure_dir(dir_name):
+	if not os.path.isdir(dir_name):
+		os.mkdir(dir_name)
+	return
 
 if __name__ == '__main__':
 
 	parser = argparse.ArgumentParser(description='generate dataset')
-	parser.add_argument('--number', '-n', type=int, default = 10000, help='number')
+	parser.add_argument('--number', '-n', type=int, default = 100, help='number')
 	parser.add_argument('--path', '-p', type=str, default = "try_dir", help='The path')
 	parser.add_argument('--period', '-i', type = int, default = 100, help = 'number of the iterater')
 	
 	args = parser.parse_args()
 	# 解析相应的数据
+
+	print(f"The size of the dataset is {args.number}")
+
+	if args.number < args.period:
+		args.period = args.number
+
+	args.number = int(args.number / args.period) * args.period
+
+
 	
 	general_path = args.path
 
@@ -114,9 +126,11 @@ if __name__ == '__main__':
 	svg_path = os.path.join(general_path, "svg")
 	karparthy_file = os.path.join(general_path, "karparthy_dataset.json")
 
-	os.mkdir(general_path)
-	os.mkdir(json_path)
-	os.mkdir(svg_path)
+	make_sure_dir(general_path)
+	make_sure_dir(json_path)
+	make_sure_dir(svg_path)
+	# os.mkdir(json_path)
+	# os.mkdir(svg_path)
 
 	setting_array = generate_setting(number = args.number)
 
@@ -132,7 +146,7 @@ if __name__ == '__main__':
 
 	for i in range(int(len(data_array) / unit_size)):
 		current_json_path = os.path.join(json_path, f"{i * unit_size}-{(i + 1) * unit_size - 1}.json")
-		print(current_json_path)
+		print(current_json_path, "generate svg")
 		with open(current_json_path, "w") as f:
 			json.dump(data_array[i * unit_size: (i + 1) * unit_size], f, indent = 2)
 		os.system(f"{node_name}gen_svg.js --input {current_json_path} --output_dir {svg_path}")  

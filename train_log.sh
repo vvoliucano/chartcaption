@@ -451,3 +451,6 @@ python create_input_files.py --dataset chart --karpathy_json_path data/20200826/
 
 python train.py --data_folder data/20200820_dataset_bar_20/deal --svg_element_number 100 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 3,2,4,3,1,1 --output_nc 5,5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text 
 
+./run.sh 20200827_20 20
+
+python feature_data_generator.py --path ../../data/20200827_24 --number 24

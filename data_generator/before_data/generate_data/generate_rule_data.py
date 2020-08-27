@@ -1,8 +1,9 @@
 import json
 import numpy
 import random
-from basic_change import add_color, add_type, get_data_type, del_long_name, add_vis_type
+from basic_change import add_type, get_data_type, del_long_name, add_vis_type
 from ocq_data_generator import add_small_value, add_small_random
+from color_setting import add_color
 
 def get_special_ratio():
     if numpy.random.random() > 0.5:
