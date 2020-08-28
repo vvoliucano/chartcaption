@@ -454,3 +454,7 @@ python train.py --data_folder data/20200820_dataset_bar_20/deal --svg_element_nu
 ./run.sh 20200827_20 20
 
 python feature_data_generator.py --path ../../data/20200827_24 --number 24
+
+python test_module.py --img data/20200424_dataset_bar/svg/000998.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-04-24-23-52/Best.pth.tar --word_map data/20200424_dataset_bar_new/deal/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg --need_text --max_element_number 100 --replace_token
+
+

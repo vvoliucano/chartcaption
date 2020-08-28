@@ -26,14 +26,27 @@ global.document = document;
 
 
 let flag = true
-let marginRate = .1
+let marginRate = .2
 let fontRatio = .03 // fontRatio：字号基本值，是myheight (一个指定的固定值）对应的比例；比如legend的字号是1.5*fontRatio*myheight；我翻看了一下，legend axis title的字号都和fontRatio有点*k关系，但是当时代码写的很恶心，k比较随意不能统一改 
 let legendHeightRatio = .06
-let paddingValue = 0.2  // paddingValue是对于分组条形图的pad的比率
+let paddingValue = 0.5  // paddingValue是对于分组条形图的pad的比率
+// let band_percentage = 0.5
 // let myheight = document.getElementById('visualization').clientWidth * 0.95
 // let mywidth = document.body.clientHeight * 0.8
 // const myheight = flag? 400: 660
 let myheight = 400
+
+
+let round_value = 0
+let tmp_value = Math.random()
+
+if (tmp_value < 0.3)
+  round_value = 1
+else if (tmp_value > 0.7)
+  round_value = 2
+
+
+
 
 let aspect_ratio = 2
 let mywidth = myheight * aspect_ratio
@@ -57,6 +70,16 @@ function deal_with_data (d) {
   // console.log('element initial',element_status)
   // console.log(d.type)
   // console.log(d.vis_type)
+
+  // consider the aspect ratio
+  if (d.hasOwnProperty("aspect_ratio")){
+    mywidth = myheight * d.aspect_ratio
+    // console.log("hhh, aspect_ratio", d.aspect_ratio)
+  }
+  if (d.hasOwnProperty("paddingValue")){
+    paddingValue = d.paddingValue
+  }
+
   switch (d['type']) {
     case 'ccq':
       deal_with_ccq(d)
@@ -204,9 +227,9 @@ function CQQ(data, cat_color, cat_x, cat_y, position = 'vertical', tag='scatter'
       // let windowHeight = document.body.clientHeight * 0.8
       this.svg = d3.select(document.body).append("svg")
                    .attr('id','mySvg')
-                   // .attr('viewBox', '0 0 ' + String(this.width) + ' ' + String(this.height))
-                   // .attr('preserveAspectRatio', 'xMidYMid meet')
-                   .attr('width', this.width + 100)
+                   .attr('viewBox', '0 0 ' + String(this.width) + ' ' + String(this.height))
+                   .attr('preserveAspectRatio', 'xMidYMid meet')
+                   .attr('width', this.width)
                    .attr('height', this.height)
 
       this.g = this.svg.append('g')
@@ -254,6 +277,7 @@ CQ.prototype.drawTitle = function (title) {
     let canvasHeight = this.height * (1 - 2 * marginRate)
     let canvasWidth = this.width * (1 - 2* marginRate)
     let fontSize = canvasHeight * fontRatio
+
     this.g.append('text')
           .attr('class', 'title')
           .attr('text-anchor', 'middle')
@@ -288,7 +312,7 @@ CQQ.prototype.drawAxis = function () {
   if(this.position === 'horizontal') {
     let axisLeft = d3.axisLeft(this.xScale)
     if(flag) {
-      let canvasWidth = this.width * (1 - 2 * marginRate)
+      let canvasWidth = this.width * (1 - 2 * marginRate - 0.1)
       axisLeft = d3.axisLeft(this.xScale).ticks(5).tickSize( - canvasWidth)
     }
     let yAxis = this.g.append('g')
@@ -457,7 +481,7 @@ CQQ.prototype.drawTitle = function(title) {
           .attr('x', canvasWidth / 2)
           .attr('y', - 2 * fontSize)
           .text(title)
-          .style('font-family', 'Oxygen')
+          // .style('font-family', 'Oxygen')
     }
     else {
       this.g.append('text')
@@ -932,7 +956,7 @@ CCQ.prototype.drawGroupBarChart = function() {
                         .attr('x', 0)
                         .attr('y', d => this.xScale(this.data[this.majorName][d[this.majorName]]) + innerScale(this.data[this.secondName][d[this.secondName]]) + 2)
                         .attr('width', d => this.yScale(d[this.quantity]))
-                        .attr('height', innerScale.bandwidth() - 4)
+                        .attr('height', innerScale.bandwidth() * 0.5)
             return this
       }
 
@@ -948,9 +972,10 @@ CCQ.prototype.drawGroupBarChart = function() {
                   .attr('x', d => innerScale(this.data[this.secondName][d[this.secondName]]) + this.xScale(this.data[this.majorName][d[this.majorName]]) + 2)
                   .attr('y', d => this.yScale(d[this.quantity]))
                   .attr('height', d => this.scaleHeight[0] - this.yScale(d[this.quantity]))
-                  .attr('width', innerScale.bandwidth() - 4)
-    rects.attr('rx', 2)
-      .attr('ry', 2)
+                  .attr('width', innerScale.bandwidth() * 0.9)
+
+    rects.attr('rx', round_value)
+      .attr('ry', round_value)
     return this
 }
 
@@ -1156,8 +1181,6 @@ function load_pie_chart (data, cat_position, cat_color, quantity) {
   chart.drawTitle(data.title)
 }
 
-data = {'title': 'The Value', 'unit': '', 'c0': ['C', 'F'], 'o0': ['2010', '2011', '2012', '2013', '2014'], 'data_array': [{'c0': 0, 'id': 0, 'o0': 0, 'q0': 1.0}, {'c0': 0, 'id': 1, 'o0': 1, 'q0': 1.0454179861291455}, {'c0': 0, 'id': 2, 'o0': 2, 'q0': 1.1002373473298923}, {'c0': 0, 'id': 3, 'o0': 3, 'q0': 1.2122889356905635}, {'c0': 0, 'id': 4, 'o0': 4, 'q0': 1.3980673993846262}, {'c0': 1, 'id': 5, 'o0': 0, 'q0': 0.5809178317006932}, {'c0': 1, 'id': 6, 'o0': 1, 'q0': 0.5549339797938349}, {'c0': 1, 'id': 7, 'o0': 2, 'q0': 0.14960374952432376}, {'c0': 1, 'id': 8, 'o0': 3, 'q0': 0.39322217933028175}, {'c0': 1, 'id': 9, 'o0': 4, 'q0': 0.37156174015085264}], 'type': 'ocq', 'color': ['#ffffb3', '#fb8072', '#ffed6f', '#80b1d3', '#bc80bd', '#8dd3c7', '#bebada', '#fdb462', '#b3de69', '#d9d9d9', '#ccebc5', '#fccde5'], 'vis_type': 'load_stack_bar_chart_horizontal', 'major_name': 'o0', 'second_name': 'c0', 'pre_gen_focus': [{'focus_id': [0, 4], 'compare_id': [5, 9], 'type': 'compare_trend'}, {'focus_id': [6, 7, 8], 'compare_id': [], 'type': 'local_trend'}, {'focus_id': [0, 2, 4, 5, 7, 9], 'compare_id': [], 'type': 'sum_trend'}], 'sentences': [{'type': 'compare_trend', 'sentence': 'The Value of C increase with steady steps from 2010 to 2014; while F decrease slightly during the same period.', 'compare_id': [5, 6, 7, 8, 9], 'focus_id': [0, 1, 2, 3, 4], 'sure': true}, {'type': 'local_trend', 'sentence': 'There is an unusual drop in 2012 of F.', 'compare_id': [], 'focus_id': [6, 7, 8], 'sure': true}, {'type': 'sum_trend', 'sentence': 'The sum of The Value C and F decrease from 2010 to 2012, then it increase greatly to 1.76 by 2014.', 'compare_id': [], 'focus_id': [0, 2, 4, 5, 7, 9], 'sure': true}]}
-
 
 // 读取整个配置文件，分别进行处理，
 
@@ -1200,7 +1223,6 @@ if (type === 'file2dir'){
   // console.log(document.body.innerHTML);
     fs.writeFile(directory + "/" + current_setting.filename, document.body.innerHTML, 'utf8', (err) => {
       if (err) throw err;})
-
   }
 }
 

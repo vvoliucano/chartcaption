@@ -10,21 +10,28 @@ import argparse
 import random
 from tqdm import tqdm
 import sys
+import numpy
 
 if sys.platform == "linux":
 	node_name = "./"
 else:
 	node_name = "node "
 
-	
+
+def add_aspect_ratio(setting):
+	aspect_ratio = 1 + abs(numpy.random.normal(0, 0.5))
+	if numpy.random.random() > 0.5:
+		aspect_ratio = 1 / aspect_ratio
+
+	aspect_ratio = aspect_ratio * 1.4
+	setting["aspect_ratio"] = aspect_ratio
+
+	padding_value = numpy.random.uniform(0.1, 0.4)
+	setting["paddingValue"] = padding_value
+	return setting
 
 def generate_single_trend_setting():
-	setting = {}
-	setting["data_type"] = "ocq"
-	setting['vis_type'] = random.choice(["load_group_bar_chart", "load_group_bar_chart_horizontal", "load_stack_bar_chart", "load_stack_bar_chart_horizontal"])
-	cat_num = random.randint(2, 5)
-	ord_num = random.randint(3, 7)
-
+	setting = basic_trend_setting()
 	setting["category_name"] = ["item" + str(i) for i in range(cat_num)]
 	setting["ordinal_name"] = ["ord" + str(i) for i in range(ord_num)]
 
@@ -32,6 +39,10 @@ def generate_single_trend_setting():
 	setting["feature"] = [feature]
 
 	return setting
+
+
+
+
 
 def get_trend(cat, ordinal_array):
 	value1 = random.randint(20, 100)
@@ -140,7 +151,9 @@ if __name__ == '__main__':
 		setting = generate_sentence_by_feature(setting)
 		data["feature"] = setting["feature"]
 		data["filename"] = setting["filename"]
+		add_aspect_ratio(data)
 		data_array.append(data)
+
 
 	unit_size = args.period
 
