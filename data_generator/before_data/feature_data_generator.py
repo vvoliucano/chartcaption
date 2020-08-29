@@ -46,7 +46,7 @@ def generate_couple_trend_setting():
 def basic_trend_setting():
 	setting = {}
 	setting["data_type"] = "ocq"
-	setting['vis_type'] = random.choice(["load_group_bar_chart", "load_group_bar_chart_horizontal"])
+	setting['vis_type'] = random.choice(["load_group_bar_chart", "load_group_bar_chart_horizontal", "load_stack_bar_chart", "load_stack_bar_chart_horizontal"])
 	cat_num = random.randint(2, 5)
 	ord_num = random.randint(3, 7)
 	setting["category_name"] = ["item" + str(i) for i in range(cat_num)]
