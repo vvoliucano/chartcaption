@@ -329,15 +329,25 @@ def run_model_file(image_path, encoder, decoder, word_map, rev_word_map, max_ele
     seqs, alphas, soup, scores = deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word_map)
     return seqs, alphas, scores, soup, replace_dict, element_number
 
-def get_word_seq_score(seq, rev_word_map, replace_dict, scores):
-    words = [rev_word_map[ind] for ind in seq]
-    rev_replace_dict = {v: k for k, v in replace_dict.items()}
-    for i, word in enumerate(words):
-        if word in rev_replace_dict:
-            words[i] = rev_replace_dict[word]
+def get_word_seq_score(seqs, rev_word_map, replace_dict, scores):
 
-    print("words: ", words)
+    sentences = []
+
+    for seq in seqs:
+        words = [rev_word_map[ind] for ind in seq]
+        rev_replace_dict = {v: k for k, v in replace_dict.items()}
+        for i, word in enumerate(words):
+            if word in rev_replace_dict:
+                words[i] = rev_replace_dict[word]
+
+        current_sentence = {}
+        current_sentence["sentence"] = words
+        sentences.append(current_sentence)
+
+    print("sentences: ", sentences)
     print("scores: ", scores)
+
+    return sentences
 
 
 
@@ -376,7 +386,7 @@ if __name__ == '__main__':
 
     seqs, alphas, scores, soup, replace_dict, element_number = run_model_file(image_path, encoder, decoder, word_map, rev_word_map, max_element_number = max_element_number, replace_token = args.replace_token)
 
-    get_word_seq_score(seq, rev_word_map, replace_dict, scores)
+    get_word_seq_score(seqs, rev_word_map, replace_dict, scores)
 
     # 可视化到相应的文件目录
     # seqs, alphas, scores, soup, element_number, rev_word_map, replace_dict = run_model_file(model_path, word_map_path, image_path, max_element_number = max_element_number, replace_token = args.replace_token)
