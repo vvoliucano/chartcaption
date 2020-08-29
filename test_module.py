@@ -333,7 +333,9 @@ def get_word_seq_score(seqs, rev_word_map, replace_dict, scores):
 
     sentences = []
 
-    for seq in seqs:
+    assert len(seqs) == len(scores), "the length of seqs is not equal to that of scores"
+
+    for i, seq in enumerate(seqs):
         words = [rev_word_map[ind] for ind in seq]
         rev_replace_dict = {v: k for k, v in replace_dict.items()}
         for i, word in enumerate(words):
@@ -342,10 +344,10 @@ def get_word_seq_score(seqs, rev_word_map, replace_dict, scores):
 
         current_sentence = {}
         current_sentence["sentence"] = words
+        current_sentence["score"] = float(scores[i])
         sentences.append(current_sentence)
 
     print("sentences: ", sentences)
-    print("scores: ", scores)
 
     return sentences
 
