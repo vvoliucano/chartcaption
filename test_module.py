@@ -47,54 +47,7 @@ def parse_svg_string(svg_string, need_text, wordmap, max_element_number, replace
     return pre_process_svg(img, soup, image_text, wordmap)
 
 
-def parse_svg_file(image_path, need_text, wordmap, max_element_number, replace_token = False, need_focus = False, focus = []):
-    # img = np.random.random_sample((20, 10))
-    # print("need_text or not ", need_text)
-
-    img, soup, image_text = svg_read(image_path, need_soup = True, need_text = True, svg_number = max_element_number)
-    # elements = soup.findAll(attrs = {"caption_sha", "5"})
-    # elements = soup.findAll(attrs = {"caption_id":  "2"})
-
-    # print(img.shape)
-
-    if need_focus:
-        img = add_image_focus(img, focus)
-
-    return pre_process_svg(img, soup, image_text, wordmap, replace_token = replace_token)
-
-
-def pre_process_svg(img, soup, image_text, wordmap, replace_token = False):
-    print("image_text", image_text)
-    replace_dict = {}
-    if replace_token:
-        for word in image_text:
-            if word != "" and word != "<pad>":
-                current_token = "<#" + str(len(replace_dict)) + ">"
-                replace_dict[word] = current_token
-            # else:
-
-        encoded_image_text = [word_map.get(replace_dict.get(word, ""), 0) for word in image_text]
-    else:
-        encoded_image_text = [wordmap.get(word, 0) for word in image_text]
-
-    print("encoded_image_text", encoded_image_text)
-    # image_text_try = torch.LongTensor(image_text)
-    # print("image text length ", len(image_text))
-    # elements = soup.findAll(attrs = {"caption_sha":  "5"})
-    # print("elements", elements)
-    element_number = sum([item != "<pad>" for item in image_text])
-    # print("element_number", element_number)
-    # element_number = len()
-    # print("element_number", element_number)
-    # print(soup.findAll(attrs = {"caption_id":  "2"}))
-    # print(soup)
-    # with open("1.html", "w") as file:
-    #     file.write(str(soup))
-    img = torch.FloatTensor(img).to(device)
-    encoded_image_text = torch.LongTensor(encoded_image_text).to(device)
-    return img, soup, element_number, encoded_image_text, replace_dict
-
-def deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word_map,  beam_size = 5):
+def deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word_map, beam_size = 5):
    
     k = beam_size
     vocab_size = len(word_map)
@@ -322,19 +275,51 @@ def init_model(model_path, word_map_path, max_ele_num = 100):
 
     return encoder, decoder, word_map, rev_word_map
 
-def process_image(image_path):
-    f = open(image_path)
-        # print("open file", filename)
-    svg_string = f.read()
-#  
-    seqs, alphas, scores, soup, element_number = process_svg_string(svg_string)
-    return seqs, alphas, scores, soup, element_number
+
+def pre_process_svg(img, soup, image_text, wordmap, replace_token = False):
+    print("image_text", image_text)
+    replace_dict = {}
+    if replace_token:
+        for word in image_text:
+            if word != "" and word != "<pad>":
+                current_token = "<#" + str(len(replace_dict)) + ">"
+                replace_dict[word] = current_token
+            # else:
+
+        encoded_image_text = [word_map.get(replace_dict.get(word, ""), 0) for word in image_text]
+    else:
+        encoded_image_text = [wordmap.get(word, 0) for word in image_text]
+
+    print("encoded_image_text", encoded_image_text)
+    element_number = sum([item != "<pad>" for item in image_text])
+    img = torch.FloatTensor(img).to(device)
+    encoded_image_text = torch.LongTensor(encoded_image_text).to(device)
+    return img, soup, element_number, encoded_image_text, replace_dict
 
 def process_svg_string(svg_string):
     print("svg_string, ", svg_string)
     image, soup, element_number, image_text, replace_dict = parse_svg_string(svg_string, need_text = True, wordmap = word_map, max_element_number = max_element_number)
     seqs, alphas, soup, scores = deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word_map)
     return seqs, alphas, scores, soup, element_number, replace_dict
+
+def process_image(image_path):
+    f = open(image_path)
+    svg_string = f.read()
+    seqs, alphas, scores, soup, element_number = process_svg_string(svg_string)
+    return seqs, alphas, scores, soup, element_number
+
+def parse_svg_file(image_path, need_text, wordmap, max_element_number, replace_token = False, need_focus = False, focus = []):
+    # img = np.random.random_sample((20, 10))
+    # print("need_text or not ", need_text)
+
+    img, soup, image_text = svg_read(image_path, need_soup = True, need_text = True, svg_number = max_element_number)
+    # elements = soup.findAll(attrs = {"caption_sha", "5"})
+    # elements = soup.findAll(attrs = {"caption_id":  "2"})
+
+    # print(img.shape)
+    if need_focus:
+        img = add_image_focus(img, focus)
+    return pre_process_svg(img, soup, image_text, wordmap, replace_token = replace_token)
 
 def run_model_file(image_path, encoder, decoder, word_map, rev_word_map, max_element_number = 100, replace_token = False):
 
