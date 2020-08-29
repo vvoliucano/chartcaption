@@ -455,6 +455,10 @@ python train.py --data_folder data/20200820_dataset_bar_20/deal --svg_element_nu
 
 python feature_data_generator.py --path ../../data/20200827_24 --number 24
 
-python test_module.py --img data/20200424_dataset_bar/svg/000998.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-04-24-23-52/Best.pth.tar --word_map data/20200424_dataset_bar_new/deal/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg --need_text --max_element_number 100 --replace_token
+python test_module.py --img data/20200424_dataset_bar/svg/000998.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-04-23-23-40/epoch_12.pth.tar --word_map data/20200424_dataset_bar_new/deal/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg --need_text --max_element_number 100 --replace_token
 
+
+# 20200829
+
+python test_module.py --img data/20200828/svg/1.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-08-28-14-49/Best.pth.tar --word_map data/20200828/deal/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg --need_text --max_element_number 100 --replace_token --need_focus --focus 0,1,2
 
