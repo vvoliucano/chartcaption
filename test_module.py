@@ -342,7 +342,7 @@ def run_model_file(image_path, encoder, decoder, word_map, rev_word_map, max_ele
 
     print(replace_dict)
     seqs, alphas, soup, scores = deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word_map)
-    return seqs, alphas, scores, soup, replace_dict
+    return seqs, alphas, scores, soup, replace_dict, element_number
 
 if __name__ == '__main__':
 
@@ -377,7 +377,7 @@ if __name__ == '__main__':
 
     encoder, decoder, word_map, rev_word_map = init_model(model_path, word_map_path, max_ele_num = max_element_number)
 
-    seqs, alphas, scores, soup, replace_dict = run_model_file(image_path, encoder, decoder, word_map, rev_word_map, max_element_number = max_element_number, replace_token = args.replace_token)
+    seqs, alphas, scores, soup, replace_dict, element_number = run_model_file(image_path, encoder, decoder, word_map, rev_word_map, max_element_number = max_element_number, replace_token = args.replace_token)
 
 
     # 可视化到相应的文件目录
