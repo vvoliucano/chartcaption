@@ -351,7 +351,7 @@ def get_word_seq_score(seqs, rev_word_map, replace_dict, scores):
 
         current_sentence = {}
         current_sentence["sentence"] = words
-        current_sentence["score"] = float(scores[i])
+        current_sentence["score"] = float(scores[seq_index])
         sentences.append(current_sentence)
 
     print("sentences: ", sentences)
