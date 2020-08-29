@@ -10,7 +10,7 @@ import argparse
 from skimage.io import imread
 from skimage.transform import resize as imresize
 from PIL import Image
-from utils import svg_read
+from utils import svg_read, add_image_focus
 import bs4
 import os
 import time
@@ -47,13 +47,18 @@ def parse_svg_string(svg_string, need_text, wordmap, max_element_number, replace
     return pre_process_svg(img, soup, image_text, wordmap)
 
 
-def parse_svg_file(image_path, need_text, wordmap, max_element_number, replace_token = False):
+def parse_svg_file(image_path, need_text, wordmap, max_element_number, replace_token = False, need_focus = False, focus = []):
     # img = np.random.random_sample((20, 10))
     # print("need_text or not ", need_text)
 
     img, soup, image_text = svg_read(image_path, need_soup = True, need_text = True, svg_number = max_element_number)
     # elements = soup.findAll(attrs = {"caption_sha", "5"})
     # elements = soup.findAll(attrs = {"caption_id":  "2"})
+
+    # print(img.shape)
+
+    if need_focus:
+        img = add_image_focus(img, focus)
 
     return pre_process_svg(img, soup, image_text, wordmap, replace_token = replace_token)
 
@@ -211,7 +216,6 @@ def deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word
     time_end=time.time()
     print('time cost',time_end-time_start,'s')
 
-
     return seqs, alphas_of_seqs, soup, sorted_seqs_scores
 
 
@@ -312,15 +316,11 @@ def read_word_map(wora_map_path):
     return word_map, rev_word_map
 
 def init_model(model_path, word_map_path, max_ele_num = 100):
-    global encoder
-    global decoder 
-    global word_map
-    global rev_word_map
-    global max_element_number
-
+    
     encoder, decoder = read_model(model_path = model_path)
     word_map, rev_word_map = read_word_map(word_map_path)
-    max_element_number = max_ele_num
+
+    return encoder, decoder, word_map, rev_word_map
 
 def process_image(image_path):
     f = open(image_path)
@@ -336,24 +336,13 @@ def process_svg_string(svg_string):
     seqs, alphas, soup, scores = deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word_map)
     return seqs, alphas, scores, soup, element_number, replace_dict
 
-def run_model_file(model_path, word_map_path, image_path, max_element_number = 100, replace_token = False):
-    init_model(model_path, word_map_path, max_ele_num = max_element_number)
+def run_model_file(image_path, encoder, decoder, word_map, rev_word_map, max_element_number = 100, replace_token = False):
 
     image, soup, element_number, image_text, replace_dict = parse_svg_file(image_path, need_text = True, wordmap = word_map, max_element_number = max_element_number, replace_token = replace_token)
+
     print(replace_dict)
     seqs, alphas, soup, scores = deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word_map)
-    return seqs, alphas,scores, soup, element_number, rev_word_map, replace_dict
-
-
-# 这个仅仅是调试用的
-
-def run_model_svg_string(model_path, word_map_path, image_path, max_element_number = 100):
-    init_model(model_path, word_map_path, max_ele_num = max_element_number)
-    svg_string = '<svg id="mySvg" width="800" height="350" xmlns="http://www.w3.org/2000/svg"><g transform="translate(80,35)" class="main_canvas"><g class="axis" transform="translate(0,280)" fill="none" font-size="10" font-family="sans-serif" text-anchor="middle"><g class="tick" opacity="1" transform="translate(56.5,0)"><text fill="currentColor" y="9" dy="0.71em" style="font-family: Oxygen; fill: #253039;">2010</text></g><g class="tick" opacity="1" transform="translate(144.5,0)"><text fill="currentColor" y="9" dy="0.71em" style="font-family: Oxygen; fill: #253039;">2011</text></g><g class="tick" opacity="1" transform="translate(232.5,0)"><text fill="currentColor" y="9" dy="0.71em" style="font-family: Oxygen; fill: #253039;">2012</text></g><g class="tick" opacity="1" transform="translate(320.5,0)"><text fill="currentColor" y="9" dy="0.71em" style="font-family: Oxygen; fill: #253039;">2013</text></g><g class="tick" opacity="1" transform="translate(408.5,0)"><text fill="currentColor" y="9" dy="0.71em" style="font-family: Oxygen; fill: #253039;">2014</text></g><g class="tick" opacity="1" transform="translate(496.5,0)"><text fill="currentColor" y="9" dy="0.71em" style="font-family: Oxygen; fill: #253039;">2015</text></g><g class="tick" opacity="1" transform="translate(584.5,0)"><text fill="currentColor" y="9" dy="0.71em" style="font-family: Oxygen; fill: #253039;">2016</text></g></g><g class="axis" fill="none" font-size="10" font-family="sans-serif" text-anchor="end"><g class="tick" opacity="1" transform="translate(0,280.5)"><line stroke="currentColor" x2="640"></line><text fill="currentColor" x="-3" dy="0.32em" style="font-family: Oxygen; fill: #253039;">0.0</text></g><g class="tick" opacity="1" transform="translate(0,204.5)"><line stroke="currentColor" x2="640" style="stroke-opacity: 0.3;"></line><text fill="currentColor" x="-3" dy="0.32em" style="font-family: Oxygen; fill: #253039;">0.5</text></g><g class="tick" opacity="1" transform="translate(0,129.5)"><line stroke="currentColor" x2="640" style="stroke-opacity: 0.3;"></line><text fill="currentColor" x="-3" dy="0.32em" style="font-family: Oxygen; fill: #253039;">1.0</text></g><g class="tick" opacity="1" transform="translate(0,53.5)"><line stroke="currentColor" x2="640" style="stroke-opacity: 0.3;"></line><text fill="currentColor" x="-3" dy="0.32em" style="font-family: Oxygen; fill: #253039;">1.5</text></g></g><text transform="translate(-35, 175) rotate(-90)" text-anchor="start" font-size="20px"></text><g><g fill="#fb8072"><rect class="element_0" id="0" o0="2010" c0="F" q0="0.5916307422726574" x="21" y="210" height="70" width="70"></rect><rect class="element_1" id="1" o0="2011" c0="F" q0="0.499292187816756" x="109" y="221" height="59" width="70"></rect><rect class="element_2" id="2" o0="2012" c0="F" q0="0.5833698942964443" x="197" y="211" height="69" width="70"></rect><rect class="element_3" id="3" o0="2013" c0="F" q0="0.580821550862816" x="285" y="211" height="69" width="70"></rect><rect class="element_4" id="4" o0="2014" c0="F" q0="0.5778160391056617" x="373" y="212" height="68" width="70"></rect><rect class="element_5" id="5" o0="2015" c0="F" q0="0.5374138350916083" x="461" y="216" height="64" width="70"></rect><rect class="element_6" id="6" o0="2016" c0="F" q0="0.5190015788311658" x="549" y="219" height="61" width="70"></rect></g><g fill="#d9d9d9"><rect class="element_7" id="7" o0="2010" c0="B" q0="1" x="21" y="92" height="118" width="70"></rect><rect class="element_8" id="8" o0="2011" c0="B" q0="1.0735472169341573" x="109" y="94" height="127" width="70"></rect><rect class="element_9" id="9" o0="2012" c0="B" q0="1.1706944287796168" x="197" y="73" height="138" width="70"></rect><rect class="element_10" id="10" o0="2013" c0="B" q0="1.2575450048813972" x="285" y="63" height="148" width="70"></rect><rect class="element_11" id="11" o0="2014" c0="B" q0="1.3372426823618313" x="373" y="53" height="159" width="70"></rect><rect class="element_12" id="12" o0="2015" c0="B" q0="1.7954980378161547" x="461" y="4" height="212" width="70"></rect><rect class="element_13" id="13" o0="2016" c0="B" q0="1.848192767898499" x="549" y="0" height="219" width="70"></rect></g></g><g transform="translate(640,0)" class="legend-wrap"><g transform="translate(0,0)"><rect width="15.120000000000001" height="15.120000000000001" fill="#fb8072" id="color-0" color-data="#fb8072" custom-id="0" data-toggle="popover" data-container="body" data-placement="right" onclick="addColorPicker(this)"></rect><text x="17.64" y="12.600000000000001" text-anchor="start" font-size="12.600000000000001">F</text></g><g transform="translate(0,16.8)"><rect width="15.120000000000001" height="15.120000000000001" fill="#d9d9d9" id="color-1" color-data="#d9d9d9" custom-id="1" data-toggle="popover" data-container="body" data-placement="right" onclick="addColorPicker(this)"></rect><text x="17.64" y="12.600000000000001" text-anchor="start" font-size="12.600000000000001">B</text></g></g><text class="title" text-anchor="middle" font-size="33.6" x="320" y="-44.8" style="font-family: Oxygen; font-weight: bold; fill: #253039;">THE VALUE</text></g></svg>'
-    seqs, alphas, scores, soup, element_number, replace_dict = process_svg_string(svg_string)
-    return seqs, alphas, scores, soup, element_number
-
-
+    return seqs, alphas, scores, soup, replace_dict
 
 if __name__ == '__main__':
 
@@ -386,13 +375,13 @@ if __name__ == '__main__':
     word_map_path = args.word_map
     image_path = args.img 
 
-    # seqs, alphas, scores, soup, element_number =  run_model_svg_string(model_path, word_map_path, image_path, max_element_number)
-    
-    # print(seqs)
+    encoder, decoder, word_map, rev_word_map = init_model(model_path, word_map_path, max_ele_num = max_element_number)
+
+    seqs, alphas, scores, soup, replace_dict = run_model_file(image_path, encoder, decoder, word_map, rev_word_map, max_element_number = max_element_number, replace_token = args.replace_token)
 
 
     # 可视化到相应的文件目录
-    seqs, alphas, scores, soup, element_number, rev_word_map, replace_dict = run_model_file(model_path, word_map_path, image_path, max_element_number = max_element_number, replace_token = args.replace_token)
+    # seqs, alphas, scores, soup, element_number, rev_word_map, replace_dict = run_model_file(model_path, word_map_path, image_path, max_element_number = max_element_number, replace_token = args.replace_token)
     alphas = [torch.FloatTensor(alpha) for alpha in alphas]
 
 
