@@ -380,7 +380,7 @@ if __name__ == '__main__':
     parser.add_argument('--max_element_number', '-e', default=100, type=int, help='maximum element number')
     parser.add_argument('--port', '-p', default=9999, type=int, help='maximum element number')
     parser.add_argument('--replace_token', action = "store_true", help="replace token")
-    parser.add_argument('--tmp_file', default = "tmp.json", help = "temperal file to store the results")
+    parser.add_argument('--result_file', default = "tmp.json", help = "temperal file to store the results")
 
     args = parser.parse_args()
     args.need_text = True
@@ -401,8 +401,8 @@ if __name__ == '__main__':
 
     sentences = get_word_seq_score(seqs, rev_word_map, replace_dict, scores)
 
-    with open(args.tmp_file, "w") as f:
-        json.dump(f, sentences, indent = 2)
+    with open(args.result_file, "w") as f:
+        json.dump(sentences, f, indent = 2)
 
     # 可视化到相应的文件目录
     # seqs, alphas, scores, soup, element_number, rev_word_map, replace_dict = run_model_file(model_path, word_map_path, image_path, max_element_number = max_element_number, replace_token = args.replace_token)
