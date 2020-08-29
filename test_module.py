@@ -318,12 +318,12 @@ def parse_svg_file(image_path, need_text, wordmap, max_element_number, replace_t
 
     # print(img.shape)
     if need_focus:
+        print("Currently, the result needs focus!")
         img = add_image_focus(img, focus)
     return pre_process_svg(img, soup, image_text, wordmap, replace_token = replace_token)
 
-def run_model_file(image_path, encoder, decoder, word_map, rev_word_map, max_element_number = 100, replace_token = False):
-
-    image, soup, element_number, image_text, replace_dict = parse_svg_file(image_path, need_text = True, wordmap = word_map, max_element_number = max_element_number, replace_token = replace_token)
+def run_model_file(image_path, encoder, decoder, word_map, rev_word_map, max_element_number = 100, replace_token = False, need_focus = False, focus = []):
+    image, soup, element_number, image_text, replace_dict = parse_svg_file(image_path, need_text = True, wordmap = word_map, max_element_number = max_element_number, replace_token = replace_token, need_focus = need_focus, focus = focus)
 
     print(replace_dict)
     seqs, alphas, soup, scores = deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word_map)
@@ -358,7 +358,9 @@ def get_word_seq_score(seqs, rev_word_map, replace_dict, scores):
 
     return sentences
 
+def run_model_with_focus():
 
+    return 
 
 
 
@@ -381,9 +383,13 @@ if __name__ == '__main__':
     parser.add_argument('--port', '-p', default=9999, type=int, help='maximum element number')
     parser.add_argument('--replace_token', action = "store_true", help="replace token")
     parser.add_argument('--result_file', default = "tmp.json", help = "temperal file to store the results")
+    parser.add_argument('--need_focus', action = "store_true", help = "Using focus as input")
+    parser.add_argument('--focus', default = '0,1,2', help = "The array of focused id of the chart")
 
     args = parser.parse_args()
     args.need_text = True
+
+    args.focus = [int(i) for i in args.focus.split(",")]
 
     output_file = "data/" + args.model.split('/')[-2] + "/result_of_" +  args.img.split("/")[-1] + "/"
     print(output_file)
@@ -397,7 +403,7 @@ if __name__ == '__main__':
 
     encoder, decoder, word_map, rev_word_map = init_model(model_path, word_map_path, max_ele_num = max_element_number)
 
-    seqs, alphas, scores, soup, replace_dict, element_number = run_model_file(image_path, encoder, decoder, word_map, rev_word_map, max_element_number = max_element_number, replace_token = args.replace_token)
+    seqs, alphas, scores, soup, replace_dict, element_number = run_model_file(image_path, encoder, decoder, word_map, rev_word_map, max_element_number = max_element_number, replace_token = args.replace_token, need_focus = args.need_focus, focus = args.focus)
 
     sentences = get_word_seq_score(seqs, rev_word_map, replace_dict, scores)
 
