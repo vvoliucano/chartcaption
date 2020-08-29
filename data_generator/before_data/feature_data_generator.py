@@ -40,7 +40,9 @@ def generate_single_trend_setting():
 
 def generate_couple_trend_setting():
 	setting = basic_trend_setting()
-	setting["feature"] = [random.choice([get_sim_trend, get_comp_trend])(random.choice(setting["category_name"]), setting["ordinal_name"]) for i in range(2)]
+	cat_chosen_num = 2
+	cat_choice = random.sample(setting["category_name"], cat_chosen_num)
+	setting["feature"] = [random.choice([get_sim_trend, get_comp_trend])(cat_choice[i], setting["ordinal_name"]) for i in range(cat_chosen_num)]
 	return setting
 
 def basic_trend_setting():
