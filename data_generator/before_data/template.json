@@ -11,10 +11,14 @@
 		"{name} keep stable from {begin} to {end}"
 	],
 	"maximum": [
-		"{name} reaches its maximum value at {position}"
+		"{name} reaches its maximum value at {position}",
+		"the value in {position} is the the maximum of {name}",
+		"{name} have a maximum value in {position}"
 	],
 	"minimum": [
-		"{name} reaches its minimum value at {position}"
+		"{name} reaches its minimum value at {position}",
+		"the value in {position} is the the minimum of {name}",
+		"{name} have a minimum value in {position}"
 	],
 	"cluster": [
 		"{name} has a cluster around {position}"
@@ -24,13 +28,14 @@
 		"There is an outlier around {position}"
 	],
 	"compare": [
-		"{name1} is {relation} {name2} in {position}"
-	],
-	"intersection": [
-		"{name1} and {name2} has an intersection around {position}"
+		"the value of {name1} is {relation} {name2} {position}",
+		"{position}, {name1} is {relation} {name2}"		
 	],
 	"surpass": [
+		"{name1} and {name2} has an intersection around {position}",
+		"{name2} and {name1} has an intersection around {position}",
 		"{name1} catch up with {name2} in {position}",
+		"{name1} surpass {name1} in {position}",
 		"{name2} is surpassed by {name1} in {position}"
 	]
 }

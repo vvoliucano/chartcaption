@@ -43,13 +43,12 @@ f = open(os.path.join(os.path.dirname(__file__), 'template.json'))
 
 sentence_template = json.load(f)
 
-def get_trend_sentence_by_setting(feature_setting, slight_value = 0.03):
-	name = feature_setting["name"]
-	steps = feature_setting["step"]
-	begin = steps[0]["position"]
-	begin_value = steps[0]["value"]
-	end = steps[1]["position"]
-	end_value = steps[1]["value"]
+
+def get_single_sentence_piece(step_0, step_1, slight_value = 0.03):
+	begin = step_0["position"]
+	begin_value = step_0["value"]
+	end = step_1["position"]
+	end_value = step_1["value"]
 	if begin_value > end_value * (1 + slight_value):
 		cap_type = "trend_dec"
 
@@ -59,9 +58,25 @@ def get_trend_sentence_by_setting(feature_setting, slight_value = 0.03):
 	else:
 		cap_type = "trend_stable"
 
-	return get_trend_sentence(name, begin, end, begin_value, end_value, cap_type)
+	return get_trend_sentence("{name}", begin, end, begin_value, end_value, cap_type)
 
+def combine_sentence_piece(name, sentence_piece_array):
+	sentence = sentence_piece_array[0].format(name = name)
 
+	# 第一个部分就是原型，而后的部分就是 it，and 呗
+	for piece in sentence_piece_array[1:]: 
+		sentence = sentence + ", and " + piece.format(name = "it")
+
+	return sentence
+
+def get_extreme_sentence_by_setting(feature_setting):
+	name = feature_setting["name"]
+	position = feature_setting["position"]
+	cap_type = feature_setting["feature_type"]
+	template_choice = sentence_template[cap_type]
+	current_template = random.choice(template_choice)
+	sentence = current_template.format(name = name, position = position)
+	return sentence
 
 
 def get_trend_sentence(name, begin, end, begin_value, end_value, cap_type = "trend_inc"):
@@ -69,13 +84,31 @@ def get_trend_sentence(name, begin, end, begin_value, end_value, cap_type = "tre
 	# sen2 = sen1.format(name = "this value")
 	# print(sen1)
 	# print(sen2)
-
 	template_choice = sentence_template[cap_type]
 	current_template = random.choice(template_choice)
-
 	sentence = current_template.format(name = name, begin = begin, end = end, end_value = end_value)
-
 	return sentence
+
+
+
+
+def get_trend_sentence_by_setting(feature_setting, slight_value = 0.03):
+	name = feature_setting["name"]
+	steps = feature_setting["step"]
+	piece_array = []
+
+	for i in range(len(steps) - 1):
+		current_steps = steps[i: i + 2]
+		current_sentence_piece = get_single_sentence_piece(current_steps[0], current_steps[1], slight_value)
+		piece_array.append(current_sentence_piece)
+
+	return combine_sentence_piece(name, piece_array )
+
+	# return get_trend_sentence(name, begin, end, begin_value, end_value, cap_type)
+
+
+
+
 
 def get_compare_sentence(name1, name2, value1, value2, position):
 
@@ -92,6 +125,29 @@ def get_compare_sentence(name1, name2, value1, value2, position):
 	current_template = random.choice(template_choice)
 	sentence = current_template.format(name1 = name1, name2 = name2, relation = relation, position = position)
 	return sentence
+
+def get_compare_sentence_by_setting(feature_setting):
+	name1 = feature_setting["name1"]
+	name2 = feature_setting["name2"]
+	position = feature_setting['position']
+	relation = feature_setting['relation']
+
+	template_choice = sentence_template["compare"]
+	current_template = random.choice(template_choice)
+	sentence = current_template.format(name1 = name1, name2 = name2, relation = relation, position = position)
+	return sentence
+
+def get_surpass_sentence_by_setting(feature_setting):
+	name1 = feature_setting['name1']
+	name2 = feature_setting["name2"]
+	position = feature_setting['position']
+
+	template_choice = sentence_template["surpass"]
+	current_template = random.choice(template_choice)
+	sentence = current_template.format(name1 = name1, name2 = name2, position = position)
+	return sentence
+
+
 
 def get_entity(name = "", owner = "", color = "", shape = "" ):
 	# name is the object
@@ -117,16 +173,24 @@ def get_entity(name = "", owner = "", color = "", shape = "" ):
 
 
 def generate_sentence_by_feature(setting):
+	# print('setting_generate_sentence', setting)
 	features = setting["feature"]
 	for feature in features:
 		feature_type = feature["feature_type"]
 		if feature_type == "trend":
 			feature["sentence"] = get_trend_sentence_by_setting(feature)
+		elif feature_type == "maximum" or feature_type == "minimum":
+			feature['sentence'] = get_extreme_sentence_by_setting(feature)
+		elif feature_type == "surpass":
+			feature['sentence'] = get_surpass_sentence_by_setting(feature)
+		elif feature_type == "compare":
+			feature['sentence'] = get_compare_sentence_by_setting(feature)
 		else:
 			print('currently we can not handle this feature type', feature_type)
 			feature["sentence"] = ""
 
 	return setting
+
 
 
 

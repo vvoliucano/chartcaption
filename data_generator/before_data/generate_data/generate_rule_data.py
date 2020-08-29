@@ -967,8 +967,13 @@ def generate_data_by_setting(feature_setting):
     # print('min_value', min_value)
 
     # 设定随机的范围
-    max_value = max_value * (random.random() + 1)
+    max_value = max_value * (random.random() + 0.8)
     min_value = min_value * (random.random() / 2 + 0.5)
+
+    if max_value < min_value:
+        tmp = max_value
+        max_value = min_value 
+        min_value = tmp
 
     data_metrics = numpy.random.rand(cat_num, ord_num) * (max_value - min_value) + min_value
 
@@ -1035,8 +1040,10 @@ if __name__ == '__main__':
             }
         ]
     }
-
     data = generate_data_by_setting(setting)
+
+
+    
     print(data)
 
     with open("try.json", "w") as f:
