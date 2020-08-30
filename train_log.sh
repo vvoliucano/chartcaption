@@ -464,3 +464,4 @@ python test_module.py --img data/20200424_dataset_bar/svg/000998.svg  --model ch
 python test_module.py --img data/20200828/svg/1.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-08-28-14-49/Best.pth.tar --word_map data/20200828/deal/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg --need_text --max_element_number 100 --replace_token --need_focus --focus 0,1,2
 
 # remote
+python test_module.py --img data/20200829_20000/svg/0.svg  --model checkpoint/chart_5_cap_5_min_wf-2020-08-29-11-02/Best.pth.tar --word_map data/20200829_20000/deal/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg --need_text --max_element_number 100 --replace_token --need_focus --focus 6,7,8,9,10,11
