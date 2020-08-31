@@ -343,7 +343,7 @@ def run_model_file(image_path, encoder, decoder, word_map, rev_word_map, max_ele
     # seqs, alphas, soup, scores = deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word_map)
     # return seqs, alphas, scores, soup, replace_dict, element_number
 
-def run_model_with_svg_string(svg_string, encoder, decoder, word_map, rev_word_map, max_element_number = 100, replace_token = False, need_focus = False, focus = [])
+def run_model_with_svg_string(svg_string, encoder, decoder, word_map, rev_word_map, max_element_number = 100, replace_token = False, need_focus = False, focus = []):
 
     image, soup, element_number, image_text, replace_dict = parse_svg_string(svg_string, need_text = True, wordmap = word_map, max_element_number = max_element_number, replace_token = replace_token, need_focus = need_focus, focus = focus)
 
