@@ -40,13 +40,6 @@ def get_pixel_image_from_file(image_path):
     image = transform(img)  # (3, 256, 256)
     return image
 
-def parse_svg_string(svg_string, need_text, wordmap, max_element_number, replace_token = False):
-    # img = np.random.random_sample((20, 10))
-    # print("need_text or not ", need_text)
-    img, soup, image_text = svg_read(svg_string = svg_string, need_soup = True, need_text = True, svg_number = max_element_number, use_svg_string = True)
-    return pre_process_svg(img, soup, image_text, wordmap)
-
-
 def deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word_map, beam_size = 5):
    
     k = beam_size
@@ -308,11 +301,21 @@ def process_image(image_path):
     seqs, alphas, scores, soup, element_number = process_svg_string(svg_string)
     return seqs, alphas, scores, soup, element_number
 
-def parse_svg_file(image_path, need_text, wordmap, max_element_number, replace_token = False, need_focus = False, focus = []):
+# This is the old code.
+
+# def parse_svg_string(svg_string, need_text, wordmap, max_element_number, replace_token = False):
+#     # img = np.random.random_sample((20, 10))
+#     # print("need_text or not ", need_text)
+#     img, soup, image_text = svg_read(svg_string = svg_string, need_soup = True, need_text = True, svg_number = max_element_number, use_svg_string = True)
+#     return pre_process_svg(img, soup, image_text, wordmap)
+
+
+
+def parse_svg_string(svg_string, need_text, wordmap, max_element_number, replace_token = False, need_focus = False, focus = []):
     # img = np.random.random_sample((20, 10))
     # print("need_text or not ", need_text)
 
-    img, soup, image_text = svg_read(image_path, need_soup = True, need_text = True, svg_number = max_element_number)
+    img, soup, image_text = svg_read(svg_string = svg_string, need_soup = True, need_text = True, svg_number = max_element_number, use_svg_string = True)
     # elements = soup.findAll(attrs = {"caption_sha", "5"})
     # elements = soup.findAll(attrs = {"caption_id":  "2"})
 
@@ -320,10 +323,29 @@ def parse_svg_file(image_path, need_text, wordmap, max_element_number, replace_t
     if need_focus:
         print("Currently, the result needs focus!")
         img = add_image_focus(img, focus)
+
     return pre_process_svg(img, soup, image_text, wordmap, replace_token = replace_token)
 
+def get_svg_string_from_file(image_path):
+    f = open(filename)
+    # print("open file", filename)
+    svg_string = f.read()
+    return svg_string
+
 def run_model_file(image_path, encoder, decoder, word_map, rev_word_map, max_element_number = 100, replace_token = False, need_focus = False, focus = []):
-    image, soup, element_number, image_text, replace_dict = parse_svg_file(image_path, need_text = True, wordmap = word_map, max_element_number = max_element_number, replace_token = replace_token, need_focus = need_focus, focus = focus)
+    svg_string = get_svg_string_from_file(image_path)
+
+    return run_model_with_svg_string(svg_string, encoder, decoder, word_map, rev_word_map, max_element_number = max_element_number, replace_token = args.replace_token, need_focus = args.need_focus, focus = args.focus)
+
+    # image, soup, element_number, image_text, replace_dict = parse_svg_string(svg_string, need_text = True, wordmap = word_map, max_element_number = max_element_number, replace_token = replace_token, need_focus = need_focus, focus = focus)
+
+    # print(replace_dict)
+    # seqs, alphas, soup, scores = deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word_map)
+    # return seqs, alphas, scores, soup, replace_dict, element_number
+
+def run_model_with_svg_string(svg_string, encoder, decoder, word_map, rev_word_map, max_element_number = 100, replace_token = False, need_focus = False, focus = [])
+
+    image, soup, element_number, image_text, replace_dict = parse_svg_string(svg_string, need_text = True, wordmap = word_map, max_element_number = max_element_number, replace_token = replace_token, need_focus = need_focus, focus = focus)
 
     print(replace_dict)
     seqs, alphas, soup, scores = deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word_map)
@@ -358,11 +380,9 @@ def get_word_seq_score(seqs, rev_word_map, replace_dict, scores):
 
     return sentences
 
-def run_model_with_focus():
 
-    return 
-
-
+def parse_svg():
+    svg_string = '<svg xmlns="http://www.w3.org/2000/svg" id="mySvg" width="544.9756153216193" height="500"><g transform="translate(80,80)" class="main_canvas"><g class="axis" transform="translate(0,240)" fill="none" font-size="10" font-family="sans-serif" text-anchor="middle"><g class="tick" opacity="1" transform="translate(67.5,0)"><text fill="currentColor" y="9" dy="0.71em" style="font-family: Oxygen; fill: #253039;">ord0</text></g><g class="tick" opacity="1" transform="translate(163.5,0)"><text fill="currentColor" y="9" dy="0.71em" style="font-family: Oxygen; fill: #253039;">ord1</text></g><g class="tick" opacity="1" transform="translate(259.5,0)"><text fill="currentColor" y="9" dy="0.71em" style="font-family: Oxygen; fill: #253039;">ord2</text></g></g><g class="axis" fill="none" font-size="10" font-family="sans-serif" text-anchor="end"><g class="tick" opacity="1" transform="translate(0,240.5)"><line stroke="currentColor" x2="326.9853691929716"/><text fill="currentColor" x="-3" dy="0.32em" style="font-family: Oxygen; fill: #253039;">0</text></g><g class="tick" opacity="1" transform="translate(0,197.5)"><line stroke="currentColor" x2="326.9853691929716" style="stroke-opacity: 0.3;"/><text fill="currentColor" x="-3" dy="0.32em" style="font-family: Oxygen; fill: #253039;">20</text></g><g class="tick" opacity="1" transform="translate(0,155.5)"><line stroke="currentColor" x2="326.9853691929716" style="stroke-opacity: 0.3;"/><text fill="currentColor" x="-3" dy="0.32em" style="font-family: Oxygen; fill: #253039;">40</text></g><g class="tick" opacity="1" transform="translate(0,112.5)"><line stroke="currentColor" x2="326.9853691929716" style="stroke-opacity: 0.3;"/><text fill="currentColor" x="-3" dy="0.32em" style="font-family: Oxygen; fill: #253039;">60</text></g><g class="tick" opacity="1" transform="translate(0,69.5)"><line stroke="currentColor" x2="326.9853691929716" style="stroke-opacity: 0.3;"/><text fill="currentColor" x="-3" dy="0.32em" style="font-family: Oxygen; fill: #253039;">80</text></g><g class="tick" opacity="1" transform="translate(0,26.5)"><line stroke="currentColor" x2="326.9853691929716" style="stroke-opacity: 0.3;"/><text fill="currentColor" x="-3" dy="0.32em" style="font-family: Oxygen; fill: #253039;">100</text></g></g><text transform="translate(-35, 200) rotate(-90)" text-anchor="start" font-size="20px"/><g class="bars"><rect fill="#ffff99" id="0" class="element_0 elements ordinary" x="41" y="41" height="199" width="17.1" rx="0" ry="0"/><rect fill="#ffff99" id="1" class="element_1 elements ordinary" x="137" y="161" height="79" width="17.1" rx="0" ry="0"/><rect fill="#ffff99" id="2" class="element_2 elements ordinary" x="233" y="78" height="162" width="17.1" rx="0" ry="0"/><rect fill="#7fc97f" id="3" class="element_3 elements ordinary" x="60" y="18" height="222" width="17.1" rx="0" ry="0"/><rect fill="#7fc97f" id="4" class="element_4 elements ordinary" x="156" y="0" height="240" width="17.1" rx="0" ry="0"/><rect fill="#7fc97f" id="5" class="element_5 elements ordinary" x="252" y="56" height="184" width="17.1" rx="0" ry="0"/><rect fill="#beaed4" id="6" class="element_6 elements ordinary" x="79" y="65" height="175" width="17.1" rx="0" ry="0"/><rect fill="#beaed4" id="7" class="element_7 elements ordinary" x="175" y="177" height="63" width="17.1" rx="0" ry="0"/><rect fill="#beaed4" id="8" class="element_8 elements ordinary" x="271" y="4" height="236" width="17.1" rx="0" ry="0"/></g><g transform="translate(326.9853691929716,0)" class="legend-wrap"><g transform="translate(0,0)"><rect width="12.959999999999999" height="12.959999999999999" fill="#ffff99" id="color-0" color-data="#ffff99" custom-id="0" data-toggle="popover" data-container="body" data-placement="right" onclick="addColorPicker(this)"/><text x="15.12" y="10.799999999999999" text-anchor="start" font-size="10.799999999999999">item0</text></g><g transform="translate(0,14.399999999999999)"><rect width="12.959999999999999" height="12.959999999999999" fill="#7fc97f" id="color-1" color-data="#7fc97f" custom-id="1" data-toggle="popover" data-container="body" data-placement="right" onclick="addColorPicker(this)"/><text x="15.12" y="10.799999999999999" text-anchor="start" font-size="10.799999999999999">item1</text></g><g transform="translate(0,28.799999999999997)"><rect width="12.959999999999999" height="12.959999999999999" fill="#beaed4" id="color-2" color-data="#beaed4" custom-id="2" data-toggle="popover" data-container="body" data-placement="right" onclick="addColorPicker(this)"/><text x="15.12" y="10.799999999999999" text-anchor="start" font-size="10.799999999999999">item2</text></g></g><text class="title" text-anchor="middle" font-size="28.799999999999997" x="163.4926845964858" y="-38.4" style="font-family: Oxygen; font-weight: bold; fill: #253039;">THE GDP</text></g></svg>'
 
 
 
