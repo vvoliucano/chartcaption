@@ -327,7 +327,7 @@ def parse_svg_string(svg_string, need_text, wordmap, max_element_number, replace
     return pre_process_svg(img, soup, image_text, wordmap, replace_token = replace_token)
 
 def get_svg_string_from_file(image_path):
-    f = open(filename)
+    f = open(image_path)
     # print("open file", filename)
     svg_string = f.read()
     return svg_string
