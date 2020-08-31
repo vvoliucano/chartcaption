@@ -67,11 +67,7 @@ class getMachineAnswer(tornado.web.RequestHandler):
         self.finish()
 
     def post(self):
-        # logger.info(self.request.body)
-        # param = self.request.body.decode('utf-8')
-        # param = json.loads(param)
-        # logger.info(param)
-        # data = tornado.escape.json_decode(self.request.body)
+        
         logger.info(url_unescape(self.request.body))
         svg_string = self.get_body_argument('content')
         logger.info(svg_string)
@@ -93,20 +89,6 @@ class Application(tornado.web.Application):
             'debug': True
             }
         tornado.web.Application.__init__(self, handlers, **settings)
-
-# def run_server(port, model, is_show = False):
-#     global machine_model
-#     global client_file_root_path
-#     machine_model = model
-#     if is_show:
-#         client_file_root_path = show_file_root_path
-#     print(f'Root path: {client_file_root_path}')
-#     app = Application()
-#     print('server running at 127.0.0.1:%d ...'%(port))
-#     http_server = tornado.httpserver.HTTPServer(app)
-#     http_server.listen(port)
-#     tornado.ioloop.IOLoop.instance().start()
-
 
 if __name__ == '__main__':
 
