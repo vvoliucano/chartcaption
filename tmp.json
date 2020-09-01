@@ -1,0 +1,70 @@
+[
+  {
+    "sentence": [
+      "<start>",
+      "item2",
+      "decrease",
+      "from",
+      "ord0",
+      "to",
+      "<end>"
+    ],
+    "score": -5.630709648132324
+  },
+  {
+    "sentence": [
+      "<start>",
+      "item2",
+      "decrease",
+      "from",
+      "ord0",
+      "to",
+      "0",
+      "<end>"
+    ],
+    "score": -6.212068557739258
+  },
+  {
+    "sentence": [
+      "<start>",
+      "item2",
+      "decrease",
+      "from",
+      "ord0",
+      "to",
+      "ord2",
+      "<end>"
+    ],
+    "score": -6.245183944702148
+  },
+  {
+    "sentence": [
+      "<start>",
+      "<#13>",
+      "have",
+      "a",
+      "increase",
+      "trend",
+      "from",
+      "ord0",
+      "to",
+      "<end>"
+    ],
+    "score": -7.586181640625
+  },
+  {
+    "sentence": [
+      "<start>",
+      "item2",
+      "have",
+      "a",
+      "decrease",
+      "trend",
+      "from",
+      "ord0",
+      "to",
+      "<end>"
+    ],
+    "score": -7.586546897888184
+  }
+]

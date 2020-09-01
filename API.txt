@@ -1,0 +1,24 @@
+
+# send value
+{
+	"svg_string": "<svg>...</svg>"
+}
+
+
+# return value
+{
+	"sentences": [
+		{
+			"content": "A increase from 2001 to 2020",
+			"confidence": 1
+		},
+		{
+			"content": "A increase from 2001 to 2020",
+			"confidence": 1
+		},
+		{
+			"content": "A increase from 2001 to 2020",
+			"confidence": 1
+		}
+	]
+}
