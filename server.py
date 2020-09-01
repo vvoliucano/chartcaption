@@ -80,7 +80,7 @@ class getMachineAnswer(tornado.web.RequestHandler):
 class Application(tornado.web.Application):
     def __init__ (self):
         handlers = [
-            (r'/autocaption/get_machine_answer', getMachineAnswer),
+            (r'/get_caption', getMachineAnswer),
             (r'/(.*)', tornado.web.StaticFileHandler, {'path': client_file_root_path, 'default_filename': 'index.html'}), # fetch client file
             (r'/autocaption/(.*)', tornado.web.StaticFileHandler, {'path': client_file_root_path, 'default_filename': 'index.html'}), # fetch client file
             ]

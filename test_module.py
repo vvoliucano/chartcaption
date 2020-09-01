@@ -48,7 +48,7 @@ def deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word
     # encoded_image_text = [word_map.get(word, 0) for word in img_text]
     # 注意，此时的image text 还是原始的文字
     # 此时需要将文字转化成为相应的对象
-    print("image_size", image.shape)
+    # print("image_size", image.shape)
 
     time_start=time.time()
 
@@ -269,8 +269,8 @@ def init_model(model_path, word_map_path, max_ele_num = 100):
     return encoder, decoder, word_map, rev_word_map
 
 
-def pre_process_svg(img, soup, image_text, wordmap, replace_token = False):
-    print("image_text", image_text)
+def pre_process_svg(img, soup, image_text, word_map, replace_token = False):
+    # print("image_text", image_text)
     replace_dict = {}
     if replace_token:
         for word in image_text:
@@ -281,17 +281,17 @@ def pre_process_svg(img, soup, image_text, wordmap, replace_token = False):
 
         encoded_image_text = [word_map.get(replace_dict.get(word, ""), 0) for word in image_text]
     else:
-        encoded_image_text = [wordmap.get(word, 0) for word in image_text]
+        encoded_image_text = [word_map.get(word, 0) for word in image_text]
 
-    print("encoded_image_text", encoded_image_text)
+    # print("encoded_image_text", encoded_image_text)
     element_number = sum([item != "<pad>" for item in image_text])
     img = torch.FloatTensor(img).to(device)
     encoded_image_text = torch.LongTensor(encoded_image_text).to(device)
     return img, soup, element_number, encoded_image_text, replace_dict
 
 def process_svg_string(svg_string):
-    print("svg_string, ", svg_string)
-    image, soup, element_number, image_text, replace_dict = parse_svg_string(svg_string, need_text = True, wordmap = word_map, max_element_number = max_element_number)
+    # print("svg_string, ", svg_string)
+    image, soup, element_number, image_text, replace_dict = parse_svg_string(svg_string, need_text = True, word_map = word_map, max_element_number = max_element_number)
     seqs, alphas, soup, scores = deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word_map)
     return seqs, alphas, scores, soup, element_number, replace_dict
 
@@ -303,15 +303,15 @@ def process_image(image_path):
 
 # This is the old code.
 
-# def parse_svg_string(svg_string, need_text, wordmap, max_element_number, replace_token = False):
+# def parse_svg_string(svg_string, need_text, word_map, max_element_number, replace_token = False):
 #     # img = np.random.random_sample((20, 10))
 #     # print("need_text or not ", need_text)
 #     img, soup, image_text = svg_read(svg_string = svg_string, need_soup = True, need_text = True, svg_number = max_element_number, use_svg_string = True)
-#     return pre_process_svg(img, soup, image_text, wordmap)
+#     return pre_process_svg(img, soup, image_text, word_map)
 
 
 
-def parse_svg_string(svg_string, need_text, wordmap, max_element_number, replace_token = False, need_focus = False, focus = []):
+def parse_svg_string(svg_string, need_text, word_map, max_element_number, replace_token = False, need_focus = False, focus = []):
     # img = np.random.random_sample((20, 10))
     # print("need_text or not ", need_text)
 
@@ -324,7 +324,7 @@ def parse_svg_string(svg_string, need_text, wordmap, max_element_number, replace
         print("Currently, the result needs focus!")
         img = add_image_focus(img, focus)
 
-    return pre_process_svg(img, soup, image_text, wordmap, replace_token = replace_token)
+    return pre_process_svg(img, soup, image_text, word_map, replace_token = replace_token)
 
 def get_svg_string_from_file(image_path):
     f = open(image_path)
@@ -337,7 +337,7 @@ def run_model_file(image_path, encoder, decoder, word_map, rev_word_map, max_ele
 
     return run_model_with_svg_string(svg_string, encoder, decoder, word_map, rev_word_map, max_element_number = max_element_number, replace_token = args.replace_token, need_focus = args.need_focus, focus = args.focus)
 
-    # image, soup, element_number, image_text, replace_dict = parse_svg_string(svg_string, need_text = True, wordmap = word_map, max_element_number = max_element_number, replace_token = replace_token, need_focus = need_focus, focus = focus)
+    # image, soup, element_number, image_text, replace_dict = parse_svg_string(svg_string, need_text = True, word_map = word_map, max_element_number = max_element_number, replace_token = replace_token, need_focus = need_focus, focus = focus)
 
     # print(replace_dict)
     # seqs, alphas, soup, scores = deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word_map)
@@ -345,9 +345,9 @@ def run_model_file(image_path, encoder, decoder, word_map, rev_word_map, max_ele
 
 def run_model_with_svg_string(svg_string, encoder, decoder, word_map, rev_word_map, max_element_number = 100, replace_token = False, need_focus = False, focus = []):
 
-    image, soup, element_number, image_text, replace_dict = parse_svg_string(svg_string, need_text = True, wordmap = word_map, max_element_number = max_element_number, replace_token = replace_token, need_focus = need_focus, focus = focus)
+    image, soup, element_number, image_text, replace_dict = parse_svg_string(svg_string, need_text = True, word_map = word_map, max_element_number = max_element_number, replace_token = replace_token, need_focus = need_focus, focus = focus)
 
-    print(replace_dict)
+    # print(replace_dict)
     seqs, alphas, soup, scores = deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word_map)
     return seqs, alphas, scores, soup, replace_dict, element_number
 
@@ -357,7 +357,7 @@ def get_word_seq_score(seqs, rev_word_map, replace_dict, scores):
 
     assert len(seqs) == len(scores), "the length of seqs is not equal to that of scores"
 
-    print("length", len(seqs), len(scores))
+    # print("length", len(seqs), len(scores))
 
     for seq_index, seq in enumerate(seqs):
 
@@ -367,16 +367,16 @@ def get_word_seq_score(seqs, rev_word_map, replace_dict, scores):
             if word in rev_replace_dict:
                 words[i] = rev_replace_dict[word]
 
-        print("index", seq_index)
-        print("sentence", words)
-        print("scores", scores[seq_index])
+        # print("index", seq_index)
+        # print("sentence", words)
+        # print("scores", scores[seq_index])
 
         current_sentence = {}
         current_sentence["sentence"] = " ".join(words)
         current_sentence["score"] = float(scores[seq_index])
         sentences.append(current_sentence)
 
-    print("sentences: ", sentences)
+    # print("sentences: ", sentences)
 
     return sentences
 
