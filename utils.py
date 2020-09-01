@@ -23,43 +23,36 @@ def make_sure_dir(dirname):
 
 
 
-def svg_read(filename = "", need_soup = False, need_text = False, svg_number = 40, svg_string = "", use_svg_string = False ):
-    # a = []
-    # img = np.random.random_sample((20, 10))
-
+def svg_read(filename = "", need_soup = False, need_text = False, svg_number = 40, svg_string = "", use_svg_string = False, need_focus = False):
     if use_svg_string:
         svg_string = svg_string
     else:
         f = open(filename)
-        # print("open file", filename)
         svg_string = f.read()
-    # 
-    # print(svg_string)
+   
     if need_text:
-        a_numpy, id_array, soup, text = parse_svg_string(svg_string, min_element_num=svg_number, simple = True, need_text = need_text)
+        a_numpy, id_array, soup, text, focus_array = parse_svg_string(svg_string, min_element_num=svg_number, simple = True, need_text = need_text, need_focus = True)
     else:
-        a_numpy, id_array, soup = parse_svg_string(svg_string, min_element_num=svg_number, simple = True, need_text = need_text)
-    # print(a_numpy[0])
-
-    # 需要考虑用 sentence 中的句子替换一下
-    # print(text)
+        a_numpy, id_array, soup, focus_array = parse_svg_string(svg_string, min_element_num=svg_number, simple = True, need_text = need_text, need_focus = True)
+ 
     img = np.transpose(a_numpy)
     img = img - 0.5
-    # 查看图像的大小
-    # print("img size", img.shape)
-    # for i in img:
-    #     print(i[0])
-    # for i in img[0]:
-    #     print(i)
+
+    return_list = [img]
+
 
     if need_soup:
-        if need_text:
-            return img, soup, text
-        else:
-            return img, soup
+        return_list.append(soup)
     if need_text:
-        return img, text
-    return img
+        return_list.append(text)
+    if need_focus:
+        return_list.append(focus_array)
+
+    return_value = tuple(return_list)
+    if len(return_value) == 1:
+        return_value = return_value[0]
+
+    return return_value
 
 def add_image_focus(image, focus):
     # print("before", image.shape)

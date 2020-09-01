@@ -507,5 +507,3 @@ python train.py --data_folder data/20200830_30000/deal_no_focus --svg_element_nu
 python server.py  --model checkpoint/chart_5_cap_5_min_wf-2020-09-01-10-35/Best.pth.tar --word_map data/20200901_global_and_focus_100/deal_no_focus/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg --need_text --max_element_number 100 --replace_token
 
 
-
-

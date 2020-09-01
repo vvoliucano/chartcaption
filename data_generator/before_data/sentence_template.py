@@ -147,8 +147,6 @@ def get_surpass_sentence_by_setting(feature_setting):
 	sentence = current_template.format(name1 = name1, name2 = name2, position = position)
 	return sentence
 
-
-
 def get_entity(name = "", owner = "", color = "", shape = "" ):
 	# name is the object
 	# owner is the owner

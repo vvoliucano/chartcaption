@@ -15,13 +15,15 @@ import bs4
 import os
 import time
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cpu")
 
-encoder = "undefine"
-decoder = "undefine"
-word_map = []
-rev_word_map = []
-max_element_number = 0
+# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+# encoder = "undefine"
+# decoder = "undefine"
+# word_map = []
+# rev_word_map = []
+# max_element_number = 0
 
 
 def get_pixel_image_from_file(image_path):
@@ -289,17 +291,17 @@ def pre_process_svg(img, soup, image_text, word_map, replace_token = False):
     encoded_image_text = torch.LongTensor(encoded_image_text).to(device)
     return img, soup, element_number, encoded_image_text, replace_dict
 
-def process_svg_string(svg_string):
-    # print("svg_string, ", svg_string)
-    image, soup, element_number, image_text, replace_dict = parse_svg_string(svg_string, need_text = True, word_map = word_map, max_element_number = max_element_number)
-    seqs, alphas, soup, scores = deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word_map)
-    return seqs, alphas, scores, soup, element_number, replace_dict
+# def process_svg_string(svg_string):
+#     # print("svg_string, ", svg_string)
+#     image, soup, element_number, image_text, replace_dict = parse_svg_string(svg_string, need_text = True, word_map = word_map, max_element_number = max_element_number)
+#     seqs, alphas, soup, scores = deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word_map)
+#     return seqs, alphas, scores, soup, element_number, replace_dict
 
-def process_image(image_path):
-    f = open(image_path)
-    svg_string = f.read()
-    seqs, alphas, scores, soup, element_number = process_svg_string(svg_string)
-    return seqs, alphas, scores, soup, element_number
+# def process_image(image_path):
+#     f = open(image_path)
+#     svg_string = f.read()
+#     seqs, alphas, scores, soup, element_number = process_svg_string(svg_string)
+#     return seqs, alphas, scores, soup, element_number
 
 # This is the old code.
 
@@ -311,18 +313,21 @@ def process_image(image_path):
 
 
 
-def parse_svg_string(svg_string, need_text, word_map, max_element_number, replace_token = False, need_focus = False, focus = []):
+def parse_svg_string(svg_string, need_text, word_map, max_element_number, replace_token = False, need_focus = False, focus = [], focus_mode = "direct"):
     # img = np.random.random_sample((20, 10))
     # print("need_text or not ", need_text)
 
-    img, soup, image_text = svg_read(svg_string = svg_string, need_soup = True, need_text = True, svg_number = max_element_number, use_svg_string = True)
-    # elements = soup.findAll(attrs = {"caption_sha", "5"})
-    # elements = soup.findAll(attrs = {"caption_id":  "2"})
+    img, soup, image_text, focus_array = svg_read(svg_string = svg_string, need_soup = True, need_text = True, svg_number = max_element_number, use_svg_string = True, need_focus = True)
 
-    # print(img.shape)
+    print("focus_array_parsed", focus_array)
+    print("focus_array_sended", focus)
+
     if need_focus:
         print("Currently, the result needs focus!")
-        img = add_image_focus(img, focus)
+        if focus_mode == "parsed":
+            img = add_image_focus(img, focus_array)
+        else:
+            img = add_image_focus(img, fucus)
 
     return pre_process_svg(img, soup, image_text, word_map, replace_token = replace_token)
 
@@ -332,21 +337,13 @@ def get_svg_string_from_file(image_path):
     svg_string = f.read()
     return svg_string
 
-def run_model_file(image_path, encoder, decoder, word_map, rev_word_map, max_element_number = 100, replace_token = False, need_focus = False, focus = []):
+def run_model_file(image_path, encoder, decoder, word_map, rev_word_map, max_element_number = 100, replace_token = False, need_focus = False, focus = [], focus_mode = "direct"):
     svg_string = get_svg_string_from_file(image_path)
+    return run_model_with_svg_string(svg_string, encoder, decoder, word_map, rev_word_map, max_element_number = max_element_number, replace_token = args.replace_token, need_focus = args.need_focus, focus = args.focus, focus_mode = focus_mode)
 
-    return run_model_with_svg_string(svg_string, encoder, decoder, word_map, rev_word_map, max_element_number = max_element_number, replace_token = args.replace_token, need_focus = args.need_focus, focus = args.focus)
+def run_model_with_svg_string(svg_string, encoder, decoder, word_map, rev_word_map, max_element_number = 100, replace_token = False, need_focus = False, focus = [], focus_mode = "direct"):
 
-    # image, soup, element_number, image_text, replace_dict = parse_svg_string(svg_string, need_text = True, word_map = word_map, max_element_number = max_element_number, replace_token = replace_token, need_focus = need_focus, focus = focus)
-
-    # print(replace_dict)
-    # seqs, alphas, soup, scores = deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word_map)
-    # return seqs, alphas, scores, soup, replace_dict, element_number
-
-def run_model_with_svg_string(svg_string, encoder, decoder, word_map, rev_word_map, max_element_number = 100, replace_token = False, need_focus = False, focus = []):
-
-    image, soup, element_number, image_text, replace_dict = parse_svg_string(svg_string, need_text = True, word_map = word_map, max_element_number = max_element_number, replace_token = replace_token, need_focus = need_focus, focus = focus)
-
+    image, soup, element_number, image_text, replace_dict = parse_svg_string(svg_string, need_text = True, word_map = word_map, max_element_number = max_element_number, replace_token = replace_token, need_focus = need_focus, focus = focus, focus_mode = focus_mode)
     # print(replace_dict)
     seqs, alphas, soup, scores = deal_with_soup(soup, image, image_text, encoder, decoder, word_map, rev_word_map)
     return seqs, alphas, scores, soup, replace_dict, element_number
@@ -366,6 +363,8 @@ def get_word_seq_score(seqs, rev_word_map, replace_dict, scores):
         for i, word in enumerate(words):
             if word in rev_replace_dict:
                 words[i] = rev_replace_dict[word]
+
+
 
         # print("index", seq_index)
         # print("sentence", words)
@@ -405,11 +404,22 @@ if __name__ == '__main__':
     parser.add_argument('--result_file', default = "tmp.json", help = "temperal file to store the results")
     parser.add_argument('--need_focus', action = "store_true", help = "Using focus as input")
     parser.add_argument('--focus', default = '0,1,2', help = "The array of focused id of the chart")
+    parser.add_argument('--focus_mode', default = 'direct', help = "Using parsed or direct focus_array")
+
+    parser.add_argument('--setting_json', default = 'setting/20200831_setting.json', help = "The path to store the setting")
 
     args = parser.parse_args()
     args.need_text = True
 
     args.focus = [int(i) for i in args.focus.split(",")]
+
+
+    with open(args.setting_json, "w") as f:
+        setting_json = json.load(f)
+
+
+
+    # print("args.focus", args.focus)
 
     output_file = "data/" + args.model.split('/')[-2] + "/result_of_" +  args.img.split("/")[-1] + "/"
     print(output_file)
@@ -423,9 +433,11 @@ if __name__ == '__main__':
 
     encoder, decoder, word_map, rev_word_map = init_model(model_path, word_map_path, max_ele_num = max_element_number)
 
-    seqs, alphas, scores, soup, replace_dict, element_number = run_model_file(image_path, encoder, decoder, word_map, rev_word_map, max_element_number = max_element_number, replace_token = args.replace_token, need_focus = args.need_focus, focus = args.focus)
+    seqs, alphas, scores, soup, replace_dict, element_number = run_model_file(image_path, encoder, decoder, word_map, rev_word_map, max_element_number = max_element_number, replace_token = args.replace_token, need_focus = args.need_focus, focus = args.focus, focus_mode = args.focus_mode)
 
     sentences = get_word_seq_score(seqs, rev_word_map, replace_dict, scores)
+    print(sentences)
+
 
     with open(args.result_file, "w") as f:
         json.dump(sentences, f, indent = 2)
