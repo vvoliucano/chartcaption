@@ -929,14 +929,14 @@ def parse_svg_string(svg_string, min_element_num = 7, simple = False, need_text 
     else:
         important_rects, data, soup = parse_unknown_svg(svg_string)
 
-    print("important_rects:", important_rects[0])
+    # print("important_rects:", important_rects[0])
 
     is_focus = [get_attr(important_rects[i]["origin"], "focusid", "no") for i in range(len(important_rects))]
-    print("is_focused: ", is_focus)
+    # print("is_focused: ", is_focus)
 
     focus_array = [i for i in range(len(is_focus)) if is_focus[i] == "yes"]
 
-    print("focus_array", focus_array)
+    # print("focus_array", focus_array)
 
     if 'vis_type' in data and data['vis_type']=="load_scatter_line_plot":
         elements = [getDataPointList(dp) for dp in important_rects]

@@ -82,13 +82,15 @@ class getMachineAnswer(tornado.web.RequestHandler):
 
         focus_type = False
         try:
-            focus_type = self.get_body_argument('focus')
-            print("from server", self.get_body_argument('focus'))
+            focus_content = self.get_body_argument('focus')
+            if focus_content == "false":
+                focus_type = False
+            else:
+                focus_type = True
+            print("from server", focus_content, focus_type)
+
         finally:
             sentences = get_sentences_from_svg(svg_string, focus_type = focus_type)
-
-        
-
 
 
         self.set_header('Content-Type', 'application/json; charset=UTF-8')
