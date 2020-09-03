@@ -30,8 +30,16 @@ def add_aspect_ratio(setting):
 	setting["paddingValue"] = padding_value
 	return setting
 
+
+def generate_cq_setting():
+	setting = basic_trend_setting(data_type = "oq")
+	feature = random.choice([get_sim_trend, get_comp_trend])("the value", setting["ordinal_name"])
+	setting["feature"] = [feature]
+
+	return setting
+
 def generate_single_trend_setting():
-	setting = basic_trend_setting()
+	setting = basic_trend_setting(data_type = "ocq")
 	
 	feature = random.choice([get_sim_trend, get_comp_trend])(random.choice(setting["category_name"]), setting["ordinal_name"])
 	setting["feature"] = [feature]
@@ -39,21 +47,32 @@ def generate_single_trend_setting():
 	return setting
 
 def generate_couple_trend_setting():
-	setting = basic_trend_setting()
+	setting = basic_trend_setting(data_type = "ocq")
 	cat_chosen_num = 2
 	cat_choice = random.sample(setting["category_name"], cat_chosen_num)
 	setting["feature"] = [random.choice([get_sim_trend, get_comp_trend])(cat_choice[i], setting["ordinal_name"]) for i in range(cat_chosen_num)]
 	return setting
 
-def basic_trend_setting():
-	setting = {}
-	setting["data_type"] = "ocq"
-	setting['vis_type'] = random.choice(["load_group_bar_chart", "load_group_bar_chart_horizontal", "load_stack_bar_chart", "load_stack_bar_chart_horizontal"])
-	cat_num = random.randint(2, 5)
-	ord_num = random.randint(3, 7)
-	setting["category_name"] = ["item" + str(i) for i in range(cat_num)]
-	setting["ordinal_name"] = ["ord" + str(i) for i in range(ord_num)]
 
+
+def basic_trend_setting(data_type = "ocq"):
+	if data_type == "ocq":
+		vis_type_choice = ["load_group_bar_chart", "load_group_bar_chart_horizontal", "load_stack_bar_chart", "load_stack_bar_chart_horizontal"] # , "load_scatter_line_plot"
+	elif data_type == "oq":
+		vis_type_choice = ["load_bar_chart_1d", "load_bar_chart_1d_horizontal"]
+
+	# vis_type_choice = ["load_scatter_line_plot"]
+	setting = {}
+	setting["data_type"] = data_type
+	setting['vis_type'] = random.choice(vis_type_choice)
+	if data_type == "ocq":
+		cat_num = random.randint(2, 5)
+		ord_num = random.randint(3, 9)
+		setting["category_name"] = ["item" + str(i) for i in range(cat_num)]
+		setting["ordinal_name"] = ["ord" + str(i) for i in range(ord_num)]
+	if data_type == "oq":
+		ord_num = random.randint(3,20)
+		setting["ordinal_name"] = ["ord" + str(i) for i in range(ord_num)]
 	return setting
 
 
@@ -110,12 +129,20 @@ def get_comp_trend(cat, ordinal_array):
 	# feature["step"] = [{"position": ordinal_array[0], "value": value[0]}, {"position": ordinal_array[-1], "value": value[2]}]
 	return feature
 
+# setting 
+
 def generate_setting(number = 1000):
 	setting_array = []
 	for i in range(number):
 		if i % 100 == 0:
 			print(f"current is the {i}-th 100-number")
-		current_setting = random.choice([generate_single_trend_setting, generate_couple_trend_setting])()
+		vis_type = random.choice(["ocq", "oq"])
+		if vis_type == "ocq":
+			current_setting = random.choice([generate_single_trend_setting, generate_couple_trend_setting])()
+		elif vis_type == "oq":
+			current_setting = random.choice([generate_cq_setting])()
+		else:
+			print("currently, we can not handle this data type ", vis_type)
 
 		current_setting["filename"] = str(i) + ".svg"
 		setting_array.append(current_setting)
@@ -124,6 +151,24 @@ def generate_setting(number = 1000):
 
 def get_extreme_feature(setting, data):
 	# print("setting", setting)
+	if (data["type"] == "oq"):
+		data_array = data["data_array"]
+		max_or_min = [max, min]
+		extreme_function = random.choice(max_or_min)
+		extreme_value = extreme_function([item["q0"] for item in data_array])
+		extreme_index = [item["id"] for item in data_array if item['q0'] == extreme_value]
+		extreme_item = data_array[extreme_index[0]]
+
+		feature = {}
+		feature["feature_type"] = "maximum" if extreme_function == max else "minimum"
+		feature["name"] = data["title"]
+		feature["position"] = data["o0"][extreme_item['o0']] # position of the value
+		feature['value'] = extreme_item['q0']
+		feature['focus'] = [extreme_item["id"]]
+		setting["feature"].append(feature)
+		# print("setting after", setting)
+
+
 	if (data["type"] == "ocq"):
 		data_array = data["data_array"]
 		cat_num = len(data["c0"])
@@ -145,6 +190,8 @@ def get_extreme_feature(setting, data):
 		feature['focus'] = [extreme_item["id"]]
 		setting["feature"].append(feature)
 		# print("setting after", setting)
+
+
 	
 	return
 
@@ -246,8 +293,10 @@ def get_compare_feature(name1, name2, position, relation, focus):
 	return feature
 
 def extract_feature_from_data(setting, data):
+
 	get_extreme_feature(setting, data)
-	get_compare_trend(setting, data)
+	if data["type"] == "ocq":
+		get_compare_trend(setting, data)
 	return setting
 
 def gen_tvt(train, val, test):
@@ -330,8 +379,14 @@ if __name__ == '__main__':
 
 	setting_array = generate_setting(number = args.number)
 
+	# Get a basic setting
+
 	data_array = []
+
+
 	for setting in setting_array:
+		# print("feature: ", setting["feature"] )
+		# print("feature_types: ", [feature["feature_type"] for feature in setting["feature"]])
 		data = generate_data_by_setting(setting)
 		setting = extract_feature_from_data(setting, data)
 		setting = generate_sentence_by_feature(setting)
@@ -348,6 +403,7 @@ if __name__ == '__main__':
 		print(current_json_path, "generate svg")
 		with open(current_json_path, "w") as f:
 			json.dump(data_array[i * unit_size: (i + 1) * unit_size], f, indent = 2)
+		print(f"{node_name}gen_svg.js --input {current_json_path} --output_dir {svg_path}")
 		os.system(f"{node_name}gen_svg.js --input {current_json_path} --output_dir {svg_path}")  
 
 

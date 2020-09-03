@@ -948,66 +948,105 @@ def interpolate_ordinal_array(steps = {0: 10, 10: 12}):
 
 def generate_data_by_setting(feature_setting):
     # print(feature_setting)
-    cat_name = feature_setting["category_name"]
-    ord_name = feature_setting["ordinal_name"]
-    data = {}
-    data['title'] = random.choice(["The Value", "The GDP", "The Price"])
-    data["unit"] = ''
-    data['c0'] = cat_name
-    data['o0'] = ord_name
-    data['type'] = feature_setting["data_type"]
-    cat_num = len(cat_name)
-    ord_num = len(ord_name)
+    if feature_setting["data_type"] == "oq":
+        ord_name = feature_setting["ordinal_name"]
+        data = {}
+        data["title"] = random.choice(["The Value", "The GDP", "The Price"])
+        data["unit"] = ""
+        data["o0"] = ord_name
+        data["type"] = feature_setting['data_type']
+        ord_num = len(ord_name)
 
-    # get max value 
-    max_value = max([max([step["value"] for step in feature["step"]]) for feature in feature_setting["feature"]])
-    min_value = min([min([step["value"] for step in feature["step"]]) for feature in feature_setting["feature"]])
+        # print("feature setting", feature_setting["feature"])
 
-    # print("max_value", max_value)
-    # print('min_value', min_value)
+        max_value = max([max([step["value"] for step in feature["step"]]) for feature in feature_setting["feature"]])
+        min_value = min([min([step["value"] for step in feature["step"]]) for feature in feature_setting["feature"]])
 
-    # 设定随机的范围
-    max_value = max_value * (random.random() + 0.8)
-    min_value = min_value * (random.random() / 2 + 0.5)
+        data_array = []
+        for feature in feature_setting["feature"]:
+            feature_type = feature["feature_type"]
+            if feature_type == "trend":
+                steps = {ord_name.index(step["position"]): step["value"] for step in feature["step"]}
+                ord_array = interpolate_ordinal_array(steps)
+                ord_keys = ord_array.keys() 
+                feature["focus"] = []
 
-    if max_value < min_value:
-        tmp = max_value
-        max_value = min_value 
-        min_value = tmp
+                for i in range(ord_num):
+                    if i in ord_keys:
+                        data_array.append({"o0": i, "q0": ord_array[i], "id": i})
+                        feature["focus"].append(i)
+            else:
+                print("currently we can not handle this feature type")
 
-    data_metrics = numpy.random.rand(cat_num, ord_num) * (max_value - min_value) + min_value
+        data["data_array"] = data_array
+        data = add_color(data, number = 8)
+        data['vis_type'] = feature_setting['vis_type']
+        data['major_name'] = 'o0'
 
-    for feature in feature_setting["feature"]:
-        feature_type = feature["feature_type"]
-        if feature_type == "trend":
 
-            cat_idx = cat_name.index(feature["name"])
-            steps = {ord_name.index(step["position"]): step["value"] for step in feature["step"]}
-            ord_array = interpolate_ordinal_array(steps)
-            ord_keys = ord_array.keys() 
 
-            feature["focus"] = []
 
-            for i in range(ord_num):
-                if i in ord_keys:
-                    data_metrics[cat_idx][i] = ord_array[i]
-                    feature["focus"].append(cat_idx * ord_num + i)
+    elif feature_setting['data_type'] == "ocq":
+        cat_name = feature_setting["category_name"]
+        ord_name = feature_setting["ordinal_name"]
+        data = {}
+        data['title'] = random.choice(["The Value", "The GDP", "The Price"])
+        data["unit"] = ''
+        data['c0'] = cat_name
+        data['o0'] = ord_name
+        data['type'] = feature_setting["data_type"]
+        cat_num = len(cat_name)
+        ord_num = len(ord_name)
 
-        else:
-            print("currently we can not handle this feature type")
+        # get max value \
+        # print("feature_setting: ", feature_setting)
+        # print("feature: ", feature_setting["feature"])
+        # print("feature step: ", feature_setting["feature"][0]["step"])
+        max_value = max([max([step["value"] for step in feature["step"]]) for feature in feature_setting["feature"]])
+        min_value = min([min([step["value"] for step in feature["step"]]) for feature in feature_setting["feature"]])
 
-    # print(data_metrics)
+        # print("max_value", max_value)
+        # print('min_value', min_value)
 
-    data["data_array"] = generate_data_array(data_metrics)
+        # 设定随机的范围
+        max_value = max_value * (random.random() + 0.8)
+        min_value = min_value * (random.random() / 2 + 0.5)
 
-    # data = generate_pack_data(data_full)
-    
-    # data = add_color(data)
-    # data = add_small_value(data)
-    data = add_color(data)
-    data['vis_type'] = feature_setting['vis_type']
-    data['major_name'] = 'o0'
-    data['second_name'] = 'c0'
+        if max_value < min_value:
+            tmp = max_value
+            max_value = min_value 
+            min_value = tmp
+
+        data_metrics = numpy.random.rand(cat_num, ord_num) * (max_value - min_value) + min_value
+
+        for feature in feature_setting["feature"]:
+            feature_type = feature["feature_type"]
+            if feature_type == "trend":
+                cat_idx = cat_name.index(feature["name"])
+                steps = {ord_name.index(step["position"]): step["value"] for step in feature["step"]}
+                ord_array = interpolate_ordinal_array(steps)
+                ord_keys = ord_array.keys() 
+                feature["focus"] = []
+                for i in range(ord_num):
+                    if i in ord_keys:
+                        data_metrics[cat_idx][i] = ord_array[i]
+                        feature["focus"].append(cat_idx * ord_num + i)
+            else:
+                print("currently we can not handle this feature type")
+
+        # print(data_metrics)
+
+        data["data_array"] = generate_data_array(data_metrics)
+
+        # data = generate_pack_data(data_full)
+        
+        # data = add_color(data)
+        # data = add_small_value(data)
+        data = add_color(data)
+        data['vis_type'] = feature_setting['vis_type']
+        data['major_name'] = 'o0'
+        data['second_name'] = 'c0'
+
     return data
     # print(data)
 
