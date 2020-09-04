@@ -13,8 +13,8 @@ current_system = "linux"
 if platform.system() == "Darwin":
 	current_system = "macos"
 
-if current_system == "linux":
-	import language_check
+# if current_system == "linux":
+# 	import language_check
 
 
 # a = f'sdf{sdf}'
@@ -212,5 +212,7 @@ if __name__ == '__main__':
 	data = generate_rule_data('ocq', 'load_group_bar_chart','ocq_common')
 	print(data)
 	if current_system == "linux":
-		new_sentence = get_checked_sentence(sentence)
-		print("New-sentence", new_sentence)
+		try:
+			import language_check
+			new_sentence = get_checked_sentence(sentence)
+			print("New-sentence", new_sentence)
