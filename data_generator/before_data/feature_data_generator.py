@@ -17,6 +17,7 @@ if sys.platform == "linux":
 else:
 	node_name = "node "
 
+node_name = "node "
 
 def add_aspect_ratio(setting):
 	aspect_ratio = 1 + abs(numpy.random.normal(0, 0.5))
