@@ -1,4 +1,5 @@
 user_collected_data
 node_modules/
+/node_modules
 *svg
 try_dir/
