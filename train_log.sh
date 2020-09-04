@@ -507,3 +507,22 @@ python train.py --data_folder data/20200830_30000/deal_no_focus --svg_element_nu
 python server.py  --model checkpoint/chart_5_cap_5_min_wf-2020-09-01-10-35/Best.pth.tar --word_map data/20200901_global_and_focus_100/deal_no_focus/WORDMAP_chart_5_cap_5_min_wf.json  --image_type svg --need_text --max_element_number 100 --replace_token
 
 
+# 20200903 - 20200904
+
+# Remote, 30000, Simple bar chart and group bar chart.  
+# global: chart_5_cap_5_min_wf-2020-09-04-11-09,
+# focus:  chart_5_cap_5_min_wf-2020-09-04-00-30, 
+# dataset: 20200903_30000,
+
+
+
+# chart_5_cap_5_min_wf-2020-09-04-00-30
+
+
+python create_input_files.py --dataset chart --karpathy_json_path data/20200903_30000/karparthy_dataset.json --image_folder data/20200903_30000/svg --output_folder data/20200903_30000/deal_no_focus --image_type svg --need_text --max_element_number 100 
+
+python train.py --data_folder data/20200903_30000/deal_no_focus --svg_element_number 100 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 3,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text 
+
+
+
+
