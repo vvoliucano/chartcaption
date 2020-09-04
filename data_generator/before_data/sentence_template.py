@@ -216,3 +216,5 @@ if __name__ == '__main__':
 			import language_check
 			new_sentence = get_checked_sentence(sentence)
 			print("New-sentence", new_sentence)
+		finally:
+			print("end")
