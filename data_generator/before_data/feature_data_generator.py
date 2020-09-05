@@ -34,7 +34,7 @@ def add_aspect_ratio(setting):
 
 def generate_cq_setting():
 	setting = basic_trend_setting(data_type = "oq")
-	feature = random.choice([get_sim_trend, get_comp_trend])("the value", setting["ordinal_name"])
+	feature = random.choice([get_sim_trend, get_comp_trend, get_comp_trend])("the value", setting["ordinal_name"])
 	setting["feature"] = [feature]
 
 	return setting
@@ -42,7 +42,7 @@ def generate_cq_setting():
 def generate_single_trend_setting():
 	setting = basic_trend_setting(data_type = "ocq")
 	
-	feature = random.choice([get_sim_trend, get_comp_trend])(random.choice(setting["category_name"]), setting["ordinal_name"])
+	feature = random.choice([get_sim_trend, get_comp_trend, get_comp_trend])(random.choice(setting["category_name"]), setting["ordinal_name"])
 	setting["feature"] = [feature]
 
 	return setting
@@ -76,11 +76,16 @@ def basic_trend_setting(data_type = "ocq"):
 		setting["ordinal_name"] = ["ord" + str(i) for i in range(ord_num)]
 	return setting
 
+def get_similar_value(value, similar_rate = 0.05):
+	return int((random.random() * similar_rate * 2 - similar_rate) * value) + value
 
-
-def get_sim_trend(cat, ordinal_array):
+def get_sim_trend(cat, ordinal_array, similar_rate = 0.2):
 	value1 = random.randint(20, 100)
-	value2 = random.randint(20, 100)
+	if numpy.random.random() < similar_rate:
+		value2 = get_similar_value(value1)
+	else:
+		value2 = random.randint(20, 100)
+
 	feature = {}
 	feature["feature_type"] = "trend"
 	feature["name"] = cat
@@ -107,6 +112,8 @@ def get_comp_trend(cat, ordinal_array):
 		value_3 = value_array[v3_index]
 		value_final = [value_1, value_2, value_3]
 
+
+
 	# 中间的值是较大的值
 	else:
 		v1_index = random.choice([0,1])
@@ -115,6 +122,12 @@ def get_comp_trend(cat, ordinal_array):
 		value_1 = value_array[v1_index]
 		value_3 = value_array[v3_index]
 		value_final = [value_1, value_2, value_3]
+
+	# 平缓的部分太少
+
+	if numpy.random.random() < 0.3:
+		change_idx = random.choice([0, 2])
+		value_final[change_idx] = get_similar_value(value_final[1])
 
 	value_final = [int(v) for v in value_final]
 

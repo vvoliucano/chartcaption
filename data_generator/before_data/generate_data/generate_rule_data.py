@@ -934,14 +934,39 @@ def generate_pack_data(data_metrics):
 
 # def get_value_array(feature):
 
+def get_single_inter_array(key1, value1, key2, value2):
+    number = key2 - key1 - 1
+    range_array = numpy.random.random(number)
+    range_array.sort()
+
+    number_array = [value1 + (value2 - value1) * i for i in range_array]
+    # print(number_array)
+    return number_array
+
+def get_single_inter_array_linear(key1, value1, key2, value2):
+    number = key2 - key1 - 1
+    number_array = [((i + 1) * value2 + (key2 - key1 - 1 - i) * value1) / (key2 - key1) + numpy.random.normal(0, min(value1, value2) * 0.01) for i in range(number)]
+
+    return number_array
+
+def get_single_inter_array_combine(key1, value1, key2, value2, mix_rate = 0.5):
+    number_array_1 = get_single_inter_array(key1, value1, key2, value2)
+    number_array_2 = get_single_inter_array_linear(key1, value1, key2, value2)
+    number_array = [number_array_1[i] * mix_rate + number_array_2[i] * (1 - mix_rate) for i in range(key2 - key1 - 1)]
+    return number_array
+
+
 def interpolate_ordinal_array(steps = {0: 10, 10: 12}):
     keys = [i for i in steps.keys()]
     for i in range(len(keys) - 1):
         current_key = keys[i]
         next_key = keys[i + 1]
-
+        number_array = get_single_inter_array_combine(current_key, steps[current_key], next_key, steps[next_key])
         for i in range(current_key + 1, next_key):
-            steps[i] = ((i - current_key) * steps[next_key] + (next_key - i) * steps[current_key]) / (next_key - current_key) + numpy.random.normal(0, min(steps[current_key], steps[next_key]) * 0.01)
+            steps[i] = number_array[i - current_key - 1]
+
+        # for i in range(current_key + 1, next_key):
+        #     steps[i] = ((i - current_key) * steps[next_key] + (next_key - i) * steps[current_key]) / (next_key - current_key) + numpy.random.normal(0, min(steps[current_key], steps[next_key]) * 0.01)
 
     return steps
 
