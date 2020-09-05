@@ -988,6 +988,7 @@ def generate_data_by_setting(feature_setting):
         min_value = min([min([step["value"] for step in feature["step"]]) for feature in feature_setting["feature"]])
 
         data_array = []
+
         for feature in feature_setting["feature"]:
             feature_type = feature["feature_type"]
             if feature_type == "trend":
@@ -998,7 +999,8 @@ def generate_data_by_setting(feature_setting):
 
                 for i in range(ord_num):
                     if i in ord_keys:
-                        data_array.append({"o0": i, "q0": ord_array[i], "id": i})
+                        if not feature["derivation"]:
+                            data_array.append({"o0": i, "q0": ord_array[i], "id": i})
                         feature["focus"].append(i)
             else:
                 print("currently we can not handle this feature type")
@@ -1054,7 +1056,9 @@ def generate_data_by_setting(feature_setting):
                 feature["focus"] = []
                 for i in range(ord_num):
                     if i in ord_keys:
-                        data_metrics[cat_idx][i] = ord_array[i]
+                        if not feature["derivation"]:
+                            data_metrics[cat_idx][i] = ord_array[i]
+                            
                         feature["focus"].append(cat_idx * ord_num + i)
             else:
                 print("currently we can not handle this feature type")

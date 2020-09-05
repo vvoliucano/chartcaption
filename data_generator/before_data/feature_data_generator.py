@@ -35,7 +35,9 @@ def add_aspect_ratio(setting):
 def generate_cq_setting():
 	setting = basic_trend_setting(data_type = "oq")
 	feature = random.choice([get_sim_trend, get_comp_trend, get_comp_trend])("the value", setting["ordinal_name"])
+
 	setting["feature"] = [feature]
+	get_derivation_trend(setting)
 
 	return setting
 
@@ -44,6 +46,8 @@ def generate_single_trend_setting():
 	
 	feature = random.choice([get_sim_trend, get_comp_trend, get_comp_trend])(random.choice(setting["category_name"]), setting["ordinal_name"])
 	setting["feature"] = [feature]
+	get_derivation_trend(setting)
+
 
 	return setting
 
@@ -52,6 +56,8 @@ def generate_couple_trend_setting():
 	cat_chosen_num = 2
 	cat_choice = random.sample(setting["category_name"], cat_chosen_num)
 	setting["feature"] = [random.choice([get_sim_trend, get_comp_trend])(cat_choice[i], setting["ordinal_name"]) for i in range(cat_chosen_num)]
+	get_derivation_trend(setting)
+	
 	return setting
 
 
@@ -90,6 +96,7 @@ def get_sim_trend(cat, ordinal_array, similar_rate = 0.2):
 	feature["feature_type"] = "trend"
 	feature["name"] = cat
 	feature["step"] = [{"position": ordinal_array[0], "value": value1}, {"position": ordinal_array[-1], "value": value2}]
+	feature["derivation"] = False
 	return feature
 
 def get_comp_trend(cat, ordinal_array):
@@ -133,12 +140,12 @@ def get_comp_trend(cat, ordinal_array):
 
 	feature = {}
 	feature["feature_type"] = "trend"
-	feature["feature"] = "trend"
 	feature["name"] = cat
 
 	step_index = [0, numpy.random.randint(1, ordinal_array_num - 1), ordinal_array_num - 1]
 
 	feature["step"] = [{"position": ordinal_array[step_index[i]], "value": value_final[i]} for i in range(3)]
+	feature["derivation"] = False
 
 	# feature["step"] = [{"position": ordinal_array[0], "value": value[0]}, {"position": ordinal_array[-1], "value": value[2]}]
 	return feature
@@ -204,10 +211,41 @@ def get_extreme_feature(setting, data):
 		feature['focus'] = [extreme_item["id"]]
 		setting["feature"].append(feature)
 		# print("setting after", setting)
-
-
-	
 	return
+
+def get_simple_trend(setting, data):
+	trend_features = [feature for feature in setting["feature"] if feature["feature_type"] == "trend"]
+
+
+
+# 衍生出部分的趋势
+def get_derivation_trend(setting):
+	trend_features = [feature for feature in setting["feature"] if feature["feature_type"] == "trend"]
+	complex_trend_features = [feature for feature in trend_features if len(feature["step"]) > 2]
+
+	if (len(complex_trend_features) == 0):
+		return
+
+	current_trend_feature = random.choice(complex_trend_features)
+	current_steps = current_trend_feature["step"]
+	# print(current_steps)
+	step_idx = numpy.random.randint(0, len(current_steps) - 1)
+
+	# print("choose step idx: ", step_idx)
+
+	new_steps = current_steps[step_idx: step_idx + 2]
+	feature = {}
+	feature["feature_type"] = "trend"
+	feature["name"] = current_trend_feature["name"]
+	feature["step"] = new_steps
+	feature["derivation"] = True
+
+	# print("derive, ", feature)
+
+	setting["feature"].append(feature)
+
+
+
 
 def get_compare_trend(setting, data):
 	if (data["type"] != "ocq"):
