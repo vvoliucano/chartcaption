@@ -1,0 +1,7 @@
+{
+	"model_path_global": "checkpoint/chart_5_cap_5_min_wf-2020-09-05-05-44/Best.pth.tar",
+	"model_path_focus": "checkpoint/chart_5_cap_5_min_wf-2020-09-05-07-14/Best.pth.tar",
+	"word_map_path_global": "data/20200905_50000/deal_no_focus/WORDMAP_chart_5_cap_5_min_wf.json",
+	"word_map_path_focus": "data/20200905_50000/deal/WORDMAP_chart_5_cap_5_min_wf.json",
+	"max_element_number": 100
+}
