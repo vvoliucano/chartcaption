@@ -11,6 +11,9 @@ import random
 from tqdm import tqdm
 import sys
 import numpy
+import time
+import bs4
+
 
 if sys.platform == "linux":
 	node_name = "./"
@@ -170,6 +173,28 @@ def generate_setting(number = 1000):
 
 	return setting_array
 
+def get_absolute_feature(setting, data):
+	data_array = data["data_array"]
+	chosen_datum = random.choice(data_array)
+	chosen_value = chosen_datum["q0"]
+	chosen_ord = chosen_datum["o0"]
+	chosen_position = data['o0'][chosen_ord]
+	if data["type"] == "ocq":
+		chosen_name = "the value of " + data["c0"][chosen_datum["c0"]]
+
+	if data["type"] == "oq":
+		chosen_name = "the value"
+
+	feature = {}
+	feature["feature_type"] = "absolute"
+	feature["name"] = chosen_name
+	feature["value"] = int(chosen_value)
+	feature["position"] = chosen_position
+	feature["focus"] = [chosen_datum["id"]]
+	# print(feature)
+	setting["feature"].append(feature)
+
+
 def get_extreme_feature(setting, data):
 	# print("setting", setting)
 	if (data["type"] == "oq"):
@@ -215,8 +240,6 @@ def get_extreme_feature(setting, data):
 
 def get_simple_trend(setting, data):
 	trend_features = [feature for feature in setting["feature"] if feature["feature_type"] == "trend"]
-
-
 
 # 衍生出部分的趋势
 def get_derivation_trend(setting):
@@ -347,56 +370,113 @@ def get_compare_feature(name1, name2, position, relation, focus):
 def extract_feature_from_data(setting, data):
 
 	get_extreme_feature(setting, data)
+	get_absolute_feature(setting, data)
 	if data["type"] == "ocq":
 		get_compare_trend(setting, data)
+
 	return setting
 
 def gen_tvt(train, val, test):
-    def ret_func():
-        rv = random.random()
-        if rv < train:
-            return "train"
-        if rv < train + val:
-            return "val"
-        return "test"
-    return ret_func
+	def ret_func():
+		rv = random.random()
+		if rv < train:
+			return "train"
+		if rv < train + val:
+			return "val"
+		return "test"
+	return ret_func
 
 def convert_to_karparthy(original_data):
-    res = {"dataset": "weak", "images": []}
-    cur_sentence_id = 0
-    gen_split = gen_tvt(0.8, 0.1, 0.1)
-    for pindex, item in enumerate(original_data):
-        # print(item)
-        sentences = item["feature"]
-        here_sentence_num = len(sentences)
-        image = {
-            "sentids": [],
-            "imgid": pindex,
-            "sentences": [],
-            "split": gen_split(),
-            "filename": item["filename"]
-        }
-        for sen_index, sentence_item in enumerate(sentences):
-            sentid = cur_sentence_id + sen_index
-            sen = sentence_item["sentence"].replace(",", " ,").replace(".", " .")
-            # print(sen)
-            sentence = {
-                "tokens": [item.lower() for item in sen.split(" ")],
-                "raw": sen,
-                "imgid": pindex,
-                "sentid": sentid,
-                "focus_id": sentence_item["focus"]
-            }
-            image["sentids"].append(sentid)
-            image["sentences"].append(sentence)
-        res["images"].append(image)
-        cur_sentence_id += here_sentence_num
-    return res
+	res = {"dataset": "weak", "images": []}
+	cur_sentence_id = 0
+	gen_split = gen_tvt(0.8, 0.1, 0.1)
+	for pindex, item in enumerate(original_data):
+		# print(item)
+		sentences = item["feature"]
+		here_sentence_num = len(sentences)
+		image = {
+			"sentids": [],
+			"imgid": pindex,
+			"sentences": [],
+			"split": gen_split(),
+			"filename": item["filename"]
+		}
+		for sen_index, sentence_item in enumerate(sentences):
+			sentid = cur_sentence_id + sen_index
+			sen = sentence_item["sentence"].replace(",", " ,").replace(".", " .")
+			# if sentence_item["feature_type"] == "absolute":
+			# 	print("karparthy: ", sen)
+			sentence = {
+				"tokens": [item.lower() for item in sen.split(" ")],
+				"raw": sen,
+				"imgid": pindex,
+				"sentid": sentid,
+				"focus_id": sentence_item["focus"],
+				"feature_type": sentence_item["feature_type"]
+			}
+			image["sentids"].append(sentid)
+			image["sentences"].append(sentence)
+		res["images"].append(image)
+		cur_sentence_id += here_sentence_num
+	return res
 
 def make_sure_dir(dir_name):
 	if not os.path.isdir(dir_name):
 		os.mkdir(dir_name)
 	return
+
+def get_svg_text(svg_file_path):
+	f = open(svg_file_path)
+	svg_string = f.read()
+	soup = bs4.BeautifulSoup(svg_string, "html5lib")
+	texts = soup.select("text")
+	text_content = []
+	for text in texts:
+		if text.string == None:
+			continue
+		content = text.string.replace("\n", "").strip().lower()
+		if content.isdigit():
+			content = int(content)
+			text_content.append(content)
+
+	# print(text_content)
+
+	return text_content
+
+
+def replace_number_with_token(datum, svg_path):
+	svg_file_path = os.path.join(svg_path, datum["filename"])
+	# begin_time = time.time()
+	number =  numpy.asarray(get_svg_text(svg_file_path))
+	# print(number)
+	for feature in datum['feature']:
+		if feature["feature_type"] != "absolute":
+			continue
+		current_value = feature["value"]
+
+		closest_index = abs(number - current_value).argmin()
+		closest_number = number[closest_index]
+		# print("closest number", closest_number)
+		# print("current value", current_value)
+
+		replace_value = str(closest_number)
+		if current_value < closest_number:
+			replace_value = f"smller than {closest_number}"
+		elif current_value > closest_number:
+			replace_value = f"higher than {closest_number}"
+		# print("replace value", replace_value)
+
+		# print("Before", feature["sentence"])
+		feature["sentence"] = feature["sentence"].replace(str(current_value), replace_value)
+		# print("After", feature["sentence"])
+		
+
+	# end_time = time.time()
+	# print("Cost: ", end_time - begin_time)
+	# print(texts)
+	return number
+
+
 
 if __name__ == '__main__':
 
@@ -415,8 +495,6 @@ if __name__ == '__main__':
 
 	args.number = int(args.number / args.period) * args.period
 
-
-	
 	general_path = args.path
 
 	json_path = os.path.join(general_path, "json")
@@ -453,14 +531,33 @@ if __name__ == '__main__':
 	for i in range(int(len(data_array) / unit_size)):
 		current_json_path = os.path.join(json_path, f"{i * unit_size}-{(i + 1) * unit_size - 1}.json")
 		print(current_json_path, "generate svg")
+		current_data_array = data_array[i * unit_size: (i + 1) * unit_size]
 		with open(current_json_path, "w") as f:
-			json.dump(data_array[i * unit_size: (i + 1) * unit_size], f, indent = 2)
+			json.dump(current_data_array, f, indent = 2)
 		print(f"{node_name}gen_svg.js --input {current_json_path} --output_dir {svg_path}")
-		os.system(f"{node_name}gen_svg.js --input {current_json_path} --output_dir {svg_path}")  
+		os.system(f"{node_name}gen_svg.js --input {current_json_path} --output_dir {svg_path}")
+
+		# for datum in current_data_array:
+		# 	replace_number_with_token(datum, svg_path)
+		# print("current_value", current_data_array[0])
 
 
+	begin_time = time.time()
+
+	for datum in data_array:
+		replace_number_with_token(datum, svg_path)
+		# print([feature["sentence"] for feature in datum["feature"] if feature["feature_type"] == "absolute"])
+
+	# print("Heiren wenhao")
+	# print([feature["sentence"] for feature in data_array[0]["feature"] if feature["feature_type"] == "absolute"])
+
+	end_time = time.time()
+	print("Replace number cost ", end_time - begin_time)
+
+	# print("current", data_array[0])
 	karparthy_dataset = convert_to_karparthy(data_array)
-	print("save to karparthy file")
+
+	print("Saving to karparthy file")
 	with open(karparthy_file, "w") as f:
 		json.dump(karparthy_dataset, f, indent = 2)
 

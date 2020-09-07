@@ -79,6 +79,9 @@ def create_input_files_with_focus(dataset, karpathy_json_path, image_folder, cap
     :param max_len: don't sample captions longer than this length
     """
 
+    print('This is focus, change captions per image as 1')
+    captions_per_image = 1
+
     print("min_freq", min_word_freq)
 
     make_sure_dir(output_folder)
@@ -225,6 +228,7 @@ def create_input_files_with_focus(dataset, karpathy_json_path, image_folder, cap
                 new_captions = []
 
                 for j, caption in enumerate(captions):
+                    # print("before: ", caption)
                     caption = " " + caption + " "
                     caption = caption.lower()
                     caption = caption.replace(",", " ,").replace('.', " .").replace(';', " ;").replace("  ", " ")
@@ -232,8 +236,14 @@ def create_input_files_with_focus(dataset, karpathy_json_path, image_folder, cap
                         caption = caption.replace(" " + word + " ", " " + replace_token[word] + " ")
 
                     caption = caption.strip()
+
+                    # print("after: ", caption)
+
+
                     current_captions = [caption]
                     current_captions = [c.strip().split(" ") for c in current_captions]
+
+
                     new_captions.extend(current_captions)
                     # captions[j] = caption.split(" ")
 
@@ -349,7 +359,7 @@ def create_input_files_replace_token(dataset, karpathy_json_path, image_folder, 
         for c in img['sentences']:
             # Update word frequency
             word_freq.update(c['tokens'])
-            if len(c['tokens']) <= max_len:
+            if len(c['tokens']) <= max_len and c["feature_type"] != "absolute":
                 captions.append(c['raw'])
 
         if len(captions) == 0:

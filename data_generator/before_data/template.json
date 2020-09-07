@@ -37,5 +37,9 @@
 		"{name1} catch up with {name2} in {position}",
 		"{name1} surpass {name1} in {position}",
 		"{name2} is surpassed by {name1} in {position}"
+	],
+	"absolute": [
+		"{name} of {position} is {value}",
+		"In {position}, {name} is {value}"
 	]
 }

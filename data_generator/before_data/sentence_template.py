@@ -69,6 +69,17 @@ def combine_sentence_piece(name, sentence_piece_array):
 
 	return sentence
 
+def get_absolute_sentence_by_setting(feature_setting):
+	name = feature_setting["name"]
+	position = feature_setting["position"]
+	value = feature_setting["value"]
+	cap_type = feature_setting["feature_type"]
+	template_choice = sentence_template[cap_type]
+	current_template = random.choice(template_choice)
+	sentence = current_template.format(name = name, position = position, value = value)
+	# print(sentence)
+	return sentence 
+
 def get_extreme_sentence_by_setting(feature_setting):
 	name = feature_setting["name"]
 	position = feature_setting["position"]
@@ -183,6 +194,8 @@ def generate_sentence_by_feature(setting):
 			feature['sentence'] = get_surpass_sentence_by_setting(feature)
 		elif feature_type == "compare":
 			feature['sentence'] = get_compare_sentence_by_setting(feature)
+		elif feature_type == "absolute":
+			feature["sentence"] = get_absolute_sentence_by_setting(feature)
 		else:
 			print('currently we can not handle this feature type', feature_type)
 			feature["sentence"] = ""
