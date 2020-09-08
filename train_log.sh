@@ -566,7 +566,8 @@ python train.py --data_folder data/20200905_50000/deal --svg_element_number 100 
 python train.py --data_folder data/20200907_50000/deal --svg_element_number 100 --data_name chart_1_cap_5_min_wf --image_type svg --input_nc 3,2,4,3,1,1 --output_nc 5,5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text 
 python train.py --data_folder data/20200907_50000/deal_no_focus --svg_element_number 100 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 3,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text 
 
-
+# 发现对识别单一的图形的效果不佳，考虑再增加绝对 feature 的内容。
+# 
 
 
 

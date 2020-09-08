@@ -175,25 +175,26 @@ def generate_setting(number = 1000):
 
 def get_absolute_feature(setting, data):
 	data_array = data["data_array"]
-	chosen_datum = random.choice(data_array)
-	chosen_value = chosen_datum["q0"]
-	chosen_ord = chosen_datum["o0"]
-	chosen_position = data['o0'][chosen_ord]
-	if data["type"] == "ocq":
-		chosen_name = "the value of " + data["c0"][chosen_datum["c0"]]
+	chosen_data_size = int(len(data_array) / 2)
+	chosen_data = random.sample(data_array, chosen_data_size)
 
-	if data["type"] == "oq":
-		chosen_name = "the value"
+	for chosen_datum in chosen_data:
+		chosen_value = chosen_datum["q0"]
+		chosen_ord = chosen_datum["o0"]
+		chosen_position = data['o0'][chosen_ord]
+		if data["type"] == "ocq":
+			chosen_name = "the value of " + data["c0"][chosen_datum["c0"]]
 
-	feature = {}
-	feature["feature_type"] = "absolute"
-	feature["name"] = chosen_name
-	feature["value"] = int(chosen_value)
-	feature["position"] = chosen_position
-	feature["focus"] = [chosen_datum["id"]]
-	# print(feature)
-	setting["feature"].append(feature)
-
+		if data["type"] == "oq":
+			chosen_name = "the value"
+		feature = {}
+		feature["feature_type"] = "absolute"
+		feature["name"] = chosen_name
+		feature["value"] = int(chosen_value)
+		feature["position"] = chosen_position
+		feature["focus"] = [chosen_datum["id"]]
+		# print(feature)
+		setting["feature"].append(feature)
 
 def get_extreme_feature(setting, data):
 	# print("setting", setting)
@@ -368,12 +369,10 @@ def get_compare_feature(name1, name2, position, relation, focus):
 	return feature
 
 def extract_feature_from_data(setting, data):
-
 	get_extreme_feature(setting, data)
-	get_absolute_feature(setting, data)
 	if data["type"] == "ocq":
 		get_compare_trend(setting, data)
-
+	get_absolute_feature(setting, data)
 	return setting
 
 def gen_tvt(train, val, test):
@@ -459,10 +458,10 @@ def replace_number_with_token(datum, svg_path):
 		# print("closest number", closest_number)
 		# print("current value", current_value)
 
-		replace_value = str(closest_number)
-		if current_value < closest_number:
+		replace_value = "around " + str(closest_number)
+		if current_value < closest_number - 2:
 			replace_value = f"smller than {closest_number}"
-		elif current_value > closest_number:
+		elif current_value > closest_number + 2:
 			replace_value = f"higher than {closest_number}"
 		# print("replace value", replace_value)
 
