@@ -569,8 +569,23 @@ python train.py --data_folder data/20200907_50000/deal_no_focus --svg_element_nu
 # 发现对识别单一的图形的效果不佳，考虑再增加绝对 feature 的内容。
 # 
 
+# 20200908
 
+# 创建生成新的数据, 增加了更多的absollute的内容
+# 
 
+./run.sh 20200908_50000 50000
+
+python create_input_files.py --dataset chart --karpathy_json_path data/20200908_50000/karparthy_dataset.json --image_folder data/20200908_50000/svg --output_folder data/20200908_50000/deal --image_type svg --need_text --max_element_number 100 --with_focus
+
+python train.py --data_folder data/20200908_50000/deal_no_focus --svg_element_number 100 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 3,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text 
+
+python train.py --data_folder data/20200908_50000/deal --svg_element_number 100 --data_name chart_1_cap_5_min_wf --image_type svg --input_nc 3,2,4,3,1,1 --output_nc 5,5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text 
+
+# remote bigdata
+# global: chart_5_cap_5_min_wf-2020-09-08-10-35
+# local: chart_1_cap_5_min_wf-2020-09-08-12-16
+# dataset: 20200908_50000
 
 
 
