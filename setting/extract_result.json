@@ -1,0 +1,60 @@
+{
+    "type": "rectangle",
+    "color": "rgb(1, 157, 146)",
+    "size": {
+        "width": 15,
+        "height": 70,
+    },
+    "position": {
+        "left": 125,
+        "top": 65,
+        "right": 140,
+        "bottom": 135
+    },
+    "text": "",
+    "opacity": 1
+}
+
+{
+    type 0.000 
+    		0.000 
+    		0.000 
+    		1.000
+    color0.004, 
+    	0.616, 
+    	0.573
+    ],
+    "size": [
+    	0.097, 
+    	0.452
+    ],
+    "position":	[
+    	0.806, 
+    	0.419, 
+    	0.903, 
+    	0.871
+    ],
+    "opacity": 	[
+    	1.000
+    ],
+    "text": ""
+}
+
+{
+    "type": "text",
+    "color": "rgb(0, 0, 0)",
+    "size": {
+        "width": 90,
+        "height": 10,
+    },
+    "position": {
+        "left": 40,
+        "top": 5,
+        "right": 130,
+        "bottom": 15
+    },
+    "text": "Number of Visitors",
+    "opacity": 1
+}
+
+
