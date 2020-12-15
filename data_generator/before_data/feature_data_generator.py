@@ -14,8 +14,10 @@ import numpy
 import time
 import bs4
 
+print("Current platform: ", sys.platform)
 
 if sys.platform == "linux":
+
 	node_name = "./"
 else:
 	node_name = "node "

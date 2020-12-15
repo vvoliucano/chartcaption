@@ -8,6 +8,7 @@ var fs = require('fs');
 const {
   JSDOM
 } = jsdom;
+
 const {
   document
 } = (new JSDOM('')).window;
