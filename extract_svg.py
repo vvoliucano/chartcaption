@@ -5,7 +5,7 @@ import numpy
 import re
 # from svgpathtools import parse_path, Line, disvg
 import copy
-import svgpathtools
+
 
 from svg.path import parse_path
 from svg.path.path import Line
