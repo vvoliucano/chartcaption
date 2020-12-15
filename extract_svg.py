@@ -5,6 +5,10 @@ import numpy
 import re
 # from svgpathtools import parse_path, Line, disvg
 import copy
+import svgpathtools
+
+from svg.path import parse_path
+from svg.path.path import Line
 # def get_attr_by_style(element):
     #
 def is_number(s):
@@ -64,8 +68,11 @@ def get_attr(element, attr, default_value = ""):
             return parse_fill(element[attr])
 
     if attr == "text-anchor":
+        # print(element)
+        # print("元素有这个吗？", element.has_attr(attr))
         if element.has_attr(attr):
             return element[attr]
+        else:
             for node in element.parents:
                 if node.name == "g":
                     if node.has_attr(attr):
@@ -87,6 +94,7 @@ def get_attr(element, attr, default_value = ""):
                 return relative_value
             # print(font_size_value)
             return font_size_value
+
         return element[attr]
     else:
         return default_value
@@ -135,6 +143,13 @@ def get_position(element, is_bbox = False):
         elif element.name == "text":
             x = float(get_attr(element, "x", 0))
             y = float(get_attr(element, "y", 0))
+        elif element.name == "path":
+            x, y = parse_transform(element)
+        elif element.name == "line":
+            x = 0
+            y = 0
+        else:
+            print("can not handle current element type: ", element.name)
     else:
         x = float(get_attr(element, "bbox_x", 0))
         y = float(get_attr(element, "bbox_y", 0))
@@ -158,26 +173,37 @@ def get_rectangles(soup):
     rects = soup.select("rect")
     return rects
 
-def judge_vertical(rects):
-    width_array = {}
-    height_array = {}
-    for rect in rects:
-        # print(f"width: {rect["width"]}, height {rect["height"]}")
-        if rect["width"] in width_array.keys():
-            width_array[rect["width"]] = width_array[rect["width"]] + 1
-        else:
-            width_array[rect["width"]] = 1
+def path_a_line_seg():
+    width = float(get_attr(rect, "width", 0))
+    height = float(get_attr(rect, "height", 0))
+    opacity = float(get_attr(rect, "opacity", 1))
+    color  = parse_fill(get_attr(rect, "fill", "#000"))
 
-        if rect["height"] in height_array.keys():
-            height_array[rect["height"]] = height_array[rect["height"]] + 1
-        else:
-            height_array[rect["height"]] = 1
 
-    if len(width_array) > len(height_array):
-        is_vertical =  False
-    else:
-        is_vertical = True
-    return is_vertical, width_array, height_array
+    # print(get_attr(rect, "fill", "#000"))
+    # for debug
+    value = float(get_attr(rect, "q0", 0))
+    x, y = get_position(rect)
+    left = x
+    right = x + width
+    up = y
+    down = y + height
+    rect_attr = {
+        "type": "rect",
+        "origin": rect,
+        "width": width,
+        "height": height,
+        "left": left,
+        "right": right,
+        "value": value,
+        "fill": color,
+        "opacity": opacity,
+        "x": x,
+        "y": y,
+        "up": up,
+        "down": down,
+        "text": ""}
+    return rect_attr
 
 def get_important_rects(rects, dim, array):
     important_rects = []
@@ -294,16 +320,18 @@ def parse_a_text_visual(text):
     height = font_size
     width = font_size * len(content)
     text_anchor = get_attr(text, "text-anchor", "start")
+    # print(text_anchor)
     if text_anchor == "start":
         x = x;
     elif text_anchor == "middle":
         x = x - width/2 
     else:
         x = x - width
+
     left = x
     right = x + width
-    up = y
-    down = y + height
+    up = y - height
+    down = y
     rect_attr = {
         "type": "text",
         "origin": text,
@@ -333,245 +361,6 @@ def parse_a_text_visual(text):
     # # print("text content", return_content)
     # return return_content
 
-def parse_a_text(text):
-    # 这是在假装有bounding box 的情况下，
-    x, y = get_position(text)
-    bbox_x, bbox_y = get_position(text, is_bbox = True)
-    font_size = get_font_size(text)
-    # print("text", text)
-    # print("text string", text.string)
-    if text.string == None:
-        content = ""
-    else:
-        content = text.string.replace("\n", "").replace(" ", "")
-    text_anchor = get_attr(text, "text-anchor", "start")
-    # bbox_x = float(get_attr(text, "box_x"))
-    # bbox_y = float(get_attr(text, "box_y"))
-    # print("debug", text)
-    # print(get_attr(text, "bbox_w"))
-    bbox_w = float(get_attr(text, "bbox_w", 0))
-    bbox_h = float(get_attr(text, "bbox_h", 0))
-
-    # print("bbox content", bbox_x, bbox_y, bbox_w, bbox_h)
-    
-    # print(content)
-    return_content = {"x": x, "y": y, "content": content, "orgin":text, "font_size": font_size, "text_anchor": text_anchor, "bbox_x": bbox_x, "bbox_y": bbox_y, "bbox_w": bbox_w, "bbox_h": bbox_h}
-    # print("text content", return_content)
-    return return_content
-
-
-def extract_group(x_array, y_array, texts):
-
-    x_array = sorted(x_array.items(), key = lambda item:item[1], reverse = True)
-    y_array = sorted(y_array.items(), key = lambda item:item[1], reverse = True)
-    # only for those larger than 1.
-    x_important_array = [x for x in x_array if x[1] > 1]
-    y_important_array = [y for y in y_array if y[1] > 1]
-
-    # print('DEBUG', x_array, y_array);
-
-    x_groups = [{"x": x_set[0], "y": [{"position": text["y"], "content": text["content"].replace("\n", "").replace(" ", ""), "text_id": text["text_id"]} for text in texts if text["x"] == x_set[0]]} for x_set in x_important_array]
-    y_groups = [{"y": y_set[0], "x": [{"position": text["x"], "content": text["content"].replace("\n", "").replace(" ", ""), "text_id": text["text_id"]} for text in texts if text["y"] == y_set[0]]} for y_set in y_important_array]
-    for x_group in x_groups:
-        x_group["distance"] = max([item["position"] for item in x_group["y"]]) - min([item["position"] for item in x_group["y"]])
-    for y_group in y_groups:
-        y_group["distance"] = max([item["position"] for item in y_group["x"]]) - min([item["position"] for item in y_group["x"]])
-    return x_groups, y_groups
-
-
-# 计算各种text的位置，
-def count_text(texts):
-    x_array = {}
-    y_array = {}
-    # calculate the x and y count number.
-    for text in texts:
-        if text["x"] in x_array.keys():
-            x_array[text["x"]] = x_array[text["x"]] + 1
-        else:
-            x_array[text["x"]] = 1
-        if text["y"] in y_array.keys():
-            y_array[text["y"]] = y_array[text["y"]] + 1
-        else:
-            y_array[text["y"]] = 1
-    return x_array, y_array
-
-
-def calculate_axis(texts, force=1):
-    # print("text_original_information", texts)
-    x_array, y_array = count_text(texts)
-    x_groups, y_groups = extract_group(x_array, y_array, texts)
-    # print("y_groups\n", y_groups)
-    max_distance = max([y_group["distance"] for y_group in y_groups])
-    def get_distance(item):
-        item["distance"]
-    y_group_order = sorted(y_groups, key = get_distance, reverse = True)
-    X_axis = {}
-    Y_axis = {}
-    legend = {"type": "none", "x": []}
-    for y_group in y_groups:
-        if y_group["distance"] > max_distance * 0.5:
-            X_axis = y_group
-            max_distance = y_group["distance"]
-            break
-    if len(y_groups) > 1:
-        for y_group in y_groups:
-            if y_group["distance"] != max_distance:
-                legend = y_group
-                legend["type"] = "horizontal"
-                break
-
-    max_distance = max([x_group["distance"] for x_group in x_groups])
-    for x_group in x_groups:
-        if x_group["distance"] > max_distance * 0.5:
-            Y_axis = x_group
-            max_distance = x_group["distance"]
-            break
-
-    if len(x_groups) > 1:
-        for x_group in x_groups:
-            if x_group["distance"] != max_distance and len(legend["x"]) < len(x_group["y"]):
-                legend = x_group
-                legend["type"] = "vertical"
-                break
-    # for tmp in x_groups:
-    #     print(":-(", tmp, "\n")
-    if force==0:
-        legend = x_groups[-1]
-        legend["type"] = "vertical"
-        return X_axis, Y_axis, legend
-    return X_axis, Y_axis, legend
-
-def parse_quantity_array(axis, vertical):
-    if vertical == "vertical":
-        num_array = axis["y"]
-    else:
-        num_array = axis["x"]
-    value = [float(num_array[0]["content"].replace(",", "")), float(num_array[-1]["content"].replace(",", ""))]
-    position = [float(num_array[0]["position"]), float(num_array[-1]["position"])]
-    # print(vertical, "v-p", value, position)
-    b = 1
-    def calculate_value_by_position(p):
-        return (p - position[0]) * (value[1] - value[0]) / (position[1] - position[0]) + value[0]
-
-    # for item in num_array:
-        # print(f"the value we calculate is {calculate_value_by_position(item["position"])} and the original value is {item["content"]}")
-    return calculate_value_by_position
-
-# def add_value_to_rect(calculate_value, rects):
-
-# def get_rects_important(rects):
-
-def cal_distance(item1, item2):
-    return numpy.sqrt(numpy.square(item1["x"] - item2["x"]) + numpy.square(item1["y"] - item2["y"]))
-
-def parse_legend(legend, other_rects):
-    if legend["type"] == "none":
-        return []
-    other_rects = [{"x": rect["left"] + rect["width"]/2, "y": rect["up"] + rect["height"]/2, "fill": rect["fill"]} for rect in other_rects]
-    # print(f"other_rects: {other_rects}")
-    if legend["type"] == "vertical":
-        legend = [{"x": legend["x"], "y": item["position"], "content": item["content"]} for item in legend["y"]]
-    elif legend["type"] == "horizontal":
-        legend = [{"x": item["position"], "y": legend["y"], "content": item["content"]} for item in legend["x"]]
-    for i, item in enumerate(legend):
-        distances = [cal_distance(item, rect) for rect in other_rects]
-        # print(f"distances: {distances}")
-        rect_index = distances.index(min(distances))
-        # print(f"the smallest index is {rect_index}")
-        legend[i]["fill"] = other_rects[rect_index]["fill"]
-    return legend
-
-## TODO:  when have the legend, what can we do.
-
-def cal_color_distance(fill_0, fill_1):
-    diff = sum([numpy.square(fill_0[i] - fill_1[i]) for i in range(3)])
-    return diff
-
-
-def parse_color_legend(important_rects, legend):
-    if len(legend) == 0:
-        return important_rects
-    for i, rect in enumerate(important_rects):
-        diff_array = [cal_color_distance(item["fill"], rect["fill"]) for item in legend]
-        # print(rect["fill"])
-        # print(diff_array)
-        match_index = diff_array.index(min(diff_array))
-        important_rects[i]["second"] = match_index
-        important_rects[i]["legend_index"] = match_index
-    return important_rects
-
-def get_main_second(main_dimension_list, second_dimension_list):
-    if is_number(main_dimension_list[0]):
-        main_dim = "o0"
-        second_dim = "c0"
-        data_type = "ocq"
-    elif is_number(second_dimension_list[0]):
-        main_dim = "c0"
-        second_dim = "o0"
-        data_type = "ocq"
-    else:
-        main_dim = "c0"
-        second_dim = "c1"
-        data_type = "ccq"
-
-    return main_dim, second_dim, data_type
-
-def get_elements(important_rects, main_dimension_list, second_dimension_list):
-    elements_list = []
-    # print("important_rects: ", important_rects)
-    for rect in important_rects:
-        element = {}
-        element['type'] = "rect"
-        element["x"] = rect["x"]
-        element['y'] = rect['y']
-        element['w'] = rect['width']
-        element['h'] = rect['height']
-        element['legend_id'] = rect['legend_index']
-        element['value'] = rect["value"]
-        element['major'] = main_dimension_list[rect["major"]]
-        element['second'] = second_dimension_list[rect["second"]]
-        element['id'] = rect["id"]
-        if 'x_axis' in rect.keys():
-            element["x_axis_id"] = rect['x_axis']
-        if 'y_axis' in rect.keys():
-            element["y_axis_id"] = rect['y_axis']
-        elements_list.append(element)
-
-    return elements_list
-
-
-def pack_data(important_rects, main_dimension_list, second_dimension_list):
-
-    # for rect in important_rects:
-    #     print(f"major: {rect["major"]}, second: {rect["second"]}, value: {rect["value"]}")
-    for i in range(len(important_rects)):
-        important_rects[i]["id"] = i
-
-
-
-    main_dim, second_dim, data_type = get_main_second(main_dimension_list, second_dimension_list)
-
-
-    data = {}
-    data["data_type"] = data_type
-    data_array = [{"id": rect["id"], main_dim: rect["major"], second_dim: rect["second"], "q0": int(rect["value"] * 100)/100.0} for rect in important_rects]
-    data["data_array"] = data_array
-    data[main_dim] = main_dimension_list
-    data[second_dim] = second_dimension_list
-    data["major"] = main_dim
-    data["second"] = second_dim
-    data["major_name"] = main_dim
-    data["second_name"] = second_dim
-    data["type"] = data_type
-    data["unit"] = ""
-    data["title"] = "Active user percentage"
-
-    elements_list = get_elements(important_rects, main_dimension_list, second_dimension_list)
-    # print("elements_list: ", elements_list)
-    # 获取元素列表
-    # data['elements'] = elements_list
-    return data
-
 def uniform_important_circle(data):
     q0 = [x['q0'] for x in data['data_array']]
     q1 = [x['q1'] for x in data['data_array']]
@@ -600,20 +389,11 @@ def uniform_important_datapoint(data):
     return dps
 
 def uniform_important_elements(important_rects):
-    top_most = 99999
-    bottom_most = 0
-    left_most = 99999
-    right_most = 0
-    for rect in important_rects:
-        if rect["left"] < left_most:
-            left_most = rect["left"]
-        if rect["right"] > right_most:
-            right_most = rect["right"]
-        if rect["up"] < top_most:
-            top_most = rect["up"]
-        if rect["down"] > bottom_most:
-            bottom_most = rect["down"]
-    # print(f"top: {top_most}, bottom: {bottom_most}, left: {left_most}, right: {right_most}")
+    top_most = min([rect['up'] for rect in important_rects])
+    bottom_most = max([rect['down'] for rect in important_rects])
+    left_most = min([rect['left'] for rect in important_rects])
+    right_most = max([rect['right'] for rect in important_rects])
+
     total_width = right_most - left_most
     total_height = bottom_most - top_most
     max_value = max([rect["value"] for rect in important_rects])
@@ -690,6 +470,84 @@ def get_text_information(X_axis, Y_axis, legend, texts_attr):
 
     return text_collection
 
+def parse_line_seg(soup):
+    paths = soup.select('path')
+    lines = soup.select("line")
+
+    line_segs = []
+    # print(paths)
+    for path in paths:
+        path_string = path["d"]
+        relative_position = get_position(path)
+        # print("position", relative_position)
+        color = parse_fill(path["stroke"])
+        # print("color", color)
+
+        # print(path_string)
+        segs = parse_path(path_string)
+        for seg in segs:
+            if isinstance(seg, Line):
+                x0 = seg.start.real + relative_position[0]
+                y0 = seg.start.imag + relative_position[1]
+                x1 = seg.end.real + relative_position[0]
+                y1 = seg.end.imag + relative_position[1]
+                parsed_line_seg = packed_formated_line_seg(color, x0, x1, y0, y1, path)
+                line_segs.append(parsed_line_seg)
+
+                # x0 = seg.start.real
+                # y0 = seg.start.imag
+                # x1 = seg.end.real
+                # y1 = seg.end.imag
+    for line in lines:
+        color = parse_fill(line["stroke"])
+        x, y = get_position(line)
+        # print("the position: ", x, y)
+        # print( get_attr(line, "y1", 0))
+        x0 = float(get_attr(line, "x1", 0)) + x
+        x1 = float(get_attr(line, "x2", 0)) + x
+        y0 = float(get_attr(line, "y1", 0)) + y
+        y1 = float(get_attr(line, "y2", 0)) + y
+
+        parsed_line_seg = packed_formated_line_seg(color, x0, x1, y0, y1, line)
+        line_segs.append(parsed_line_seg)
+
+
+
+
+                # print("(%.2f, %.2f) - (%.2f, %.2f)" % (x0, y0, x1, y1))
+        # print(segs)
+    return line_segs
+    # print(line_segs)
+
+def packed_formated_line_seg(color, x0, x1, y0, y1, path):
+    
+    width = abs(x0 - x1)
+    height = abs(y0 - y1)
+    opacity = 1
+    value = 0
+    left = x0 
+    right = x1
+    up = y0
+    down = y1
+    line_seg_attr = {
+        "type": "line",
+        "origin": path,
+        "width": width,
+        "height": height,
+        "left": left,
+        "right": right,
+        "value": value,
+        "fill": color,
+        "opacity": opacity,
+        "x": min(x0, x1),
+        "y": min(y0, y1),
+        "up": up,
+        "down": down,
+        "text": ""
+        }
+    return line_seg_attr
+
+
 def parse_unknown_svg_visual_elements(svg_string, need_data_soup = False, need_text = False):
     # need_text = True
     # print("this need_text is ", need_text)
@@ -698,6 +556,8 @@ def parse_unknown_svg_visual_elements(svg_string, need_data_soup = False, need_t
     rects = soup.select("rect")
     rects_attr = [parse_a_rect(rect) for rect in rects]
 
+    line_segments = parse_line_seg(soup)
+
     texts = soup.select("text")
     newtexts = []
     for text in texts:
@@ -705,18 +565,24 @@ def parse_unknown_svg_visual_elements(svg_string, need_data_soup = False, need_t
             continue
         else:
             newtexts.append(text)
+
     texts = newtexts
     # print("texts length", len(texts))
     # print("text", texts)
     texts_attr = [parse_a_text_visual(text) for text in texts]
     # print("texts_attr", texts_attr)
+
+    # Add text
     if need_text:
         rects_attr.extend(texts_attr)
+
+    # Add line
+    rects_attr.extend(line_segments)
+
 
     for i, rect in enumerate(rects_attr):
         rect["origin"]["caption_id"] = str(i)
 
-    # 添加相应的id
 
     # print("texts_attr", texts_attr)
 
@@ -730,163 +596,6 @@ def parse_unknown_svg_visual_elements(svg_string, need_data_soup = False, need_t
         return important_rects, data, soup, text_information
 
     return important_rects, data, soup
-
-def parse_unknown_svg(svg_string, need_data_soup = False):
-    soup = bs4.BeautifulSoup(svg_string, "html5lib")
-    svg = soup.select("svg")
-    for defs in soup.find_all("defs"):
-        defs.decompose()
-    rects = soup.select("rect")
-    # print('debug!!', svg_string, svg, rects)
-    for i in range(len(rects)):
-        rects[i]["my_class_liucan"] = str(i)
-
-    # print("rect", len(rects))
-    rects_attr = [parse_a_rect(rect) for rect in rects]
-    texts = soup.select("text")
-    newtexts = []
-    for text in texts:
-        if text.has_attr("transform") and "-90" in text["transform"]:
-            continue
-        else:
-            newtexts.append(text)
-    texts = newtexts
-    # print("texts length", len(texts))
-    # print("text", texts)
-    texts_attr = [parse_a_text(text) for text in texts]
-    # add id, we need id
-    for i in range(len(texts_attr)):
-        texts_attr[i]["text_id"] = i
-
-    # print(f"the length of texts_attr is {len(texts_attr)}")
-    # for i in rects_attr:
-    #     print(f"width is {i["width"]}, and height is {i["height"]}")
-    # for i in texts_attr:
-    #     print(f"the x is {i["x"]}, and the y is {i["y"]}")
-    circles = soup.select("circle")
-    # print("circle", len(circles))
-    circles_attr = [parse_a_circle(circle) for circle in circles]
-    num_rect = len(rects_attr)
-    num_circle = len(circles_attr)
-    paths = soup.select("path")[2:-1] # TODO  NAIVE!!!!!!!!!!!!!!!!!!!!!!!!!
-    num_path = len(paths)
-    # print(num_path, "number of paths")
-    paths_attr = [parse_a_path(path) for path in paths]
-    if num_path > 0:
-        # print("parse_pie_chart no reason")
-        # return parse_pie_chart(soup, paths_attr, texts_attr, rects_attr, need_data_soup = need_data_soup)
-        # print("parse_line_chart")
-        return parse_line_chart(soup, paths_attr, texts_attr, rects_attr, need_data_soup = need_data_soup)
-    elif num_circle > num_rect:
-        # print("parse_scatter_plot")
-        return parse_scatter_plot(soup, circles_attr, texts_attr, need_data_soup = need_data_soup)
-
-    # print("parse_barchart")
-    X_axis, Y_axis, legend = calculate_axis(texts_attr)
-    is_vertical, width_array, height_array = judge_vertical(rects_attr)
-    # print(f"X-axis: {X_axis} and Y-axis: {Y_axis}")
-
-    # print("legend_what", legend)
-
-    text_information = get_text_information(X_axis, Y_axis, legend, texts_attr)
-
-    # print("formal_x_axis_array", get_text_group(X_axis, texts_attr))
-    # print("formal_y_axis_array", get_text_group(Y_axis, texts_attr))
-    # print("formal_legend_axis_array", get_text_group(legend, texts_attr))
-    # todo get the axis
-
-    # print("text_information", text_information) 
-
-    if is_vertical:
-        calculate_value = parse_quantity_array(Y_axis, "vertical")
-        important_rects, other_rects = get_important_rects(rects_attr, "width", width_array)
-        for i, rect in enumerate(important_rects):
-            cal_value = calculate_value(rect["up"]) - calculate_value(rect["down"])
-            important_rects[i]["value"] = cal_value
-            # print(f"There value is {rect["value"]} and calculated is {cal_value}")
-
-        legend = parse_legend(legend, other_rects)
-        x_pair = X_axis["x"]
-        def get_position(item):
-            return item["position"]
-        x_pair = sorted(x_pair, key = get_position)
-        # print(x_pair)
-        main_dimension_list = [x["content"] for x in x_pair]
-
-
-        for i, rect in enumerate(important_rects):
-            center_x = rect["left"] + rect["width"]/2
-            diff_array = [abs(x["position"] - center_x) for x in x_pair]
-            main_index = diff_array.index(min(diff_array))
-            important_rects[i]["major"] = main_index
-            important_rects[i]["x_axis"] = main_index
-        important_rects = parse_color_legend(important_rects, legend)
-        second_dimension_list = [item["content"] for item in legend]
-    else:
-        calculate_value = parse_quantity_array(X_axis, "horizontal")
-        important_rects, other_rects = get_important_rects(rects_attr, "height", height_array)
-        for i, rect in enumerate(important_rects):
-            # TODO: Here in fact we direct using the up - down, left - right it"s not right
-            cal_value = calculate_value(rect["right"]) - calculate_value(rect["left"])
-            important_rects[i]["value"] = cal_value
-            # print(f"Ther value is {rect["value"]} and calculated is {cal_value}")
-
-        legend = parse_legend(legend, other_rects)
-        y_pair = Y_axis["y"]
-        def get_position(item):
-            return item["position"]
-        y_pair = sorted(y_pair, key = get_position)
-        # print(y_pair)
-        main_dimension_list = [y["content"] for y in y_pair]
-        # print(main_dimension_list)
-
-        for i, rect in enumerate(important_rects):
-            center_y = rect["up"] + rect["height"]/2
-            diff_array = [abs(y["position"] - center_y) for y in y_pair]
-            main_index = diff_array.index(min(diff_array))
-            important_rects[i]["major"] = main_index
-            important_rects[i]["y_axis"] = main_index
-        important_rects = parse_color_legend(important_rects, legend)
-
-        second_dimension_list = [item["content"] for item in legend]
-
-    # print("legend_parsed", legend)
-    main_dim, second_dim, data_type = get_main_second(main_dimension_list, second_dimension_list)
-    if data_type == "ocq":
-        if main_dim == "o0" and float(main_dimension_list[0]) > float(main_dimension_list[-1]):
-            main_dimension_list.reverse()
-            for i in range(len(important_rects)):
-                important_rects[i]["major"] = len(main_dimension_list) - 1 - important_rects[i]["major"]
-        elif second_dim == "o0" and float(second_dimension_list[0]) > float(second_dimension_list[-1]):
-            second_dimension_list.reverse()
-            for i in range(len(important_rects)):
-                important_rects[i]["second"] = len(second_dimension_list) - 1 - important_rects[i]["second"]
-
-
-    def get_order_value(item):
-        return item["major"] * 100 + item["second"]
-
-    important_rects = sorted(important_rects, key = get_order_value)
-    # print("important_rects", important_rects)
-    data = pack_data(important_rects, main_dimension_list, second_dimension_list)
-    data_string = json.dumps(data, indent = 2)
-    uniform_elements = uniform_important_elements(important_rects)
-    main_dim, second_dim, data_type = get_main_second(main_dimension_list, second_dimension_list)
-
-    for i, element in enumerate(uniform_elements):
-        uniform_elements[i][main_dim] = uniform_elements[i]["major"]
-        uniform_elements[i][second_dim] = uniform_elements[i]["second"]
-        uniform_elements[i]["q0"] = uniform_elements[i]["value"]
-        uniform_elements[i]["id"] = i
-
-    data['text_collection'] = text_information
-    data['is_vertical'] = is_vertical
-
-    # print("uniform elements:", uniform_elements)
-
-    if need_data_soup:
-        return uniform_elements, data, soup
-    return uniform_elements, data, soup
 
 def getCircleList(data):
     cate_choice_number = 15
@@ -919,60 +628,41 @@ def getDataPointList(data):
     return list
 
 def parse_svg_string(svg_string, min_element_num = 7, simple = False, need_text = False, need_focus = False):
-    if (simple):
-        if need_text:
-            important_rects, data, soup, text = parse_unknown_svg_visual_elements(svg_string, need_text = need_text)
-        else:
-            important_rects, data, soup = parse_unknown_svg_visual_elements(svg_string, need_text)
-
-        # print(important_rects)
+    
+    if need_text:
+        important_rects, data, soup, text = parse_unknown_svg_visual_elements(svg_string, need_text = need_text)
     else:
-        important_rects, data, soup = parse_unknown_svg(svg_string)
+        important_rects, data, soup = parse_unknown_svg_visual_elements(svg_string, need_text)
 
-    # print("important_rects:", important_rects[0])
+    # print(important_rects)
+    # verify_parsed_results(important_rects)
 
     is_focus = [get_attr(important_rects[i]["origin"], "focusid", "no") for i in range(len(important_rects))]
     # print("is_focused: ", is_focus)
 
     focus_array = [i for i in range(len(is_focus)) if is_focus[i] == "yes"]
 
-    # print("focus_array", focus_array)
+    elements = []
 
-    if 'vis_type' in data and data['vis_type']=="load_scatter_line_plot":
-        elements = [getDataPointList(dp) for dp in important_rects]
-        id_array = [i for i in range(len(important_rects))]
-    elif 'vis_type' in data and data['vis_type']=="load_scatter_plot":
-        elements = [getCircleList(c) for c in important_rects]
-        id_array = [i for i in range(len(important_rects))]
-    else:
-        elements = []
-
-
-        for rect in important_rects:
-            if (simple):
-                list = get_rect_list_visual(rect)
-            else:
-                list = get_rect_list(rect)
-            elements.append(list)
-        if len(important_rects) < min_element_num:
-            for i in range(len(important_rects), min_element_num):
-                elements.append([0 for i in range(len(elements[0]))])
-            if need_text:
-                text.extend(["<pad>" for i in range(min_element_num - len(text))])
-                # print("text after uniform", text)
-        # print("I want to see the important rects")
-        # print("element number", len(elements[0]))
-        # print(important_rects)
-        # for i, rect in enumerate(important_rects):
-        #     rect["id"] = i
-        if (simple):
-            id_array = [i for i in range(len(important_rects))]
-        else:
-            id_array = [rect['id'] for rect in important_rects]
-        # print(id_array)
-        if sum(id_array) == - len(id_array):
-            id_array = [i for i in range(len(id_array))]
-        # print(f"The id array is {id_array}")
+    for rect in important_rects:
+        list = get_rect_list_visual(rect)
+        elements.append(list)
+    if len(important_rects) < min_element_num:
+        for i in range(len(important_rects), min_element_num):
+            elements.append([0 for i in range(len(elements[0]))])
+        if need_text:
+            text.extend(["<pad>" for i in range(min_element_num - len(text))])
+            # print("text after uniform", text)
+    # print("I want to see the important rects")
+    # print("element number", len(elements[0]))
+    # print(important_rects)
+    # for i, rect in enumerate(important_rects):
+    #     rect["id"] = i
+    id_array = [i for i in range(len(important_rects))]
+    # print(id_array)
+    if sum(id_array) == - len(id_array):
+        id_array = [i for i in range(len(id_array))]
+    # print(f"The id array is {id_array}")
 
     return_list = [numpy.asarray(elements), id_array, soup]
 
@@ -984,36 +674,16 @@ def parse_svg_string(svg_string, min_element_num = 7, simple = False, need_text 
 
     return tuple(return_list)
 
-def get_rect_list(rect):
-    cate_choice_number = 15
-    type = [1, 0, 0]
-    position = [rect['width'], rect['height'], rect['left'], rect['right'], rect['up'], rect['down']]
-    color = rect['fill']
-    opacity = [rect['opacity']]
-    quantity = [get_rect_attr(rect, 'q0', 0), get_rect_attr(rect, 'q1', 0)]
-    cate0_array = [0 for i in range(cate_choice_number)]
-    cate1_array = [0 for i in range(cate_choice_number)]
-    ordi0_array = [0 for i in range(cate_choice_number)]
-    ordi1_array = [0 for i in range(cate_choice_number)]
-    cate0_choice = get_rect_attr(rect, 'c0', 0)
-    cate1_choice = get_rect_attr(rect, 'c1', 0)
-    ordi0_choice = get_rect_attr(rect, 'o0', 0)
-    ordi1_choice = get_rect_attr(rect, 'o1', 0)
-    cate0_array[cate0_choice] = 1
-    cate1_array[cate1_choice] = 1
-    ordi0_array[ordi0_choice] = 1
-    ordi1_array[ordi1_choice] = 1
-
-    list = type + position + color + opacity + quantity + cate0_array + cate1_array + ordi0_array + ordi1_array
-    # print(f'The attribute of each rectangle is {len(list)}')
-    return list
 
 def get_rect_list_visual(rect):
-    this_type = [1, 0, 0]
+    this_type = [1, 0, 0, 0]
     if rect["type"] == "rect":
-        this_type = [1, 0, 0]
+        this_type = [1, 0, 0, 0]
     elif rect["type"] == "text":
-        this_type = [0, 0, 1]
+        this_type = [0, 0, 0, 1]
+    elif rect["type"] == "line":
+        this_type = [0, 1, 0, 0]
+
     position = [rect['width'], rect['height'], rect['left'], rect['right'], rect['up'], rect['down']]
     color = rect['fill']
     opacity = [rect['opacity']]
@@ -1023,128 +693,52 @@ def get_rect_list_visual(rect):
     # print(f'The attribute of each rectangle is {len(list)}')
     return list
 
+def verify_parsed_results(important_rects):
+    from PIL import Image, ImageDraw 
 
-def parse_scatter_plot(soup, circles_attr, texts_attr, need_data_soup = False):
-    X_axis, Y_axis, legend = calculate_axis(texts_attr)
-    Y_value_function = parse_quantity_array(Y_axis, "vertical")
-    X_value_function = parse_quantity_array(X_axis, "horizontal")
-    dataList = []
-    data = {}
-    for i, circle in enumerate(circles_attr):
-        x_value = X_value_function(circle["x"])
-        y_value = Y_value_function(circle["y"])
-        circles_attr[i]["x_value"] = x_value
-        circles_attr[i]["y_value"] = y_value
-        dataList.append({"id": i, "q0": x_value, "q1": y_value, 'c0': 0, 'r': circle['r'], 'left':circle['left'], 'up': circle['up']})
-    data["major_name"] = "q0"
-    data["second_name"] = "q1"
-    data["type"] = "cqq"
-    data["vis_type"] = "load_scatter_plot"
-    data['data_array'] = dataList
-    return uniform_important_circle(data), data, soup
+    width = 300
+    height = 300
 
-def parse_pie_chart(soup, paths_attr, texts_attr, rects_attr, need_data_soup=False):
-    for path in paths_attr:
-        print(path["pathObj"])
-    areas = [path["pathObj"].area() for path in paths_attr]
-    print(areas)
-    return uniform_important_datapoint(data), data, soup
+    im = Image.new("RGBA", (width, height), (255,255,255,255))
+    draw = ImageDraw.Draw(im)
 
-def parse_line_chart(soup, paths_attr, texts_attr, rects_attr, need_data_soup=False):
-    eps = 1e-7
-    data = {}
-    height = float(soup.select("svg")[0]["height"])
-    X_axis, Y_axis, legend= calculate_axis(texts_attr, 0)
-    # x_array, y_array = count_text(texts_attr)
-    # legend, tmp = extract_group(x_array, y_array, texts_attr)
-    is_vertical, width_array, height_array = judge_vertical(rects_attr)
-    legend = parse_legend(legend, rects_attr)
-    # print("x_axis", X_axis)
-    Y_value_function = parse_quantity_array(Y_axis, "vertical")
-    X_value_function = parse_quantity_array(X_axis, "horizontal")
-    points = [item["position"] for item in X_axis["x"]]
-    dataList = []
-    o0 = [0 for i in points]
-    data["color"] = [line["origin"]["stroke"] for line in paths_attr]
-    c0 = [0 for i in paths_attr]
-    for lid, line in enumerate(paths_attr):
-        # print("\nLINE", lid, parse_fill(line["origin"]["stroke"]), ":")
-        line_color = parse_fill(line["origin"]["stroke"])
-        dis = [numpy.linalg.norm(numpy.array(line_color) - numpy.array(l["fill"])) for l in legend]
-        category = numpy.argmin(dis)
-        c0[lid] = legend[category]["content"]
-        for idx, x in enumerate(points):
-            o0[idx] = X_value_function(x);
-        for idx, x in enumerate(points):
-            # print(x, end=": ")
-            xtick = min(x-line["rx"], line["ex"]-eps)
-            tmpLine = Line(xtick, complex(xtick, height))
-            ratio = line["pathObj"].intersect(tmpLine)[0][0][0]
-            coor = line["pathObj"].point(ratio)
-            # o0[idx] = int(X_value_function(x) + float(X_axis["x"][0]["content"]))
-            o0[idx] = int(X_value_function(x))
-            y_value = Y_value_function(coor.imag+line["ry"])
-            # + float(Y_axis["y"][0]["content"])
-            # print(f"({coor.real+line["rx"]}, {coor.imag+line["ry"]}), ({o0[idx]}, {y_value})")
-            dataList.append({"id": lid*len(points)+idx, "o0": idx, "q0": y_value, "c0": lid, "color": line_color})
-    data["o0"] = o0
-    data["c0"] = c0
-    data["major_name"] = "o0"
-    data["second_name"] = "c0"
-    data["quantity"] = "q0"
-    data["data_array"] = dataList
-    data["type"] = "cqq"
-    data["vis_type"] = "load_scatter_line_plot"
-    data["unit"] = ""
-    data["unit1"] = ""
-    data["unit2"] = ""
-    data_string = json.dumps(data, indent = 2)
-    return uniform_important_datapoint(data), data, soup
 
-def get_modified_svg_data(svg_string):
-    # print('extract_svg.py 660', svg_string)
-    uniform_elements, data, soup = parse_unknown_svg(svg_string, need_data_soup = True)
-    if data["type"]== "cqq":
-        data["major"] = "c0"
-        data["second"] = "c0"
-        return soup.prettify(), data
+    for rect in important_rects:
+        if rect["type"] == "rect" or rect["type"] == "text":
+            draw.rectangle(((rect["left"] * width, rect["up"] * width), (rect["right"] * height, rect["down"] * height)), fill="black")
+            draw.text((rect["left"] * width, rect["up"] * width), rect["text"], fill="white")
+        else:
+            print(rect)
+            color = (int(255 * rect["fill"][0]), int(255 * rect["fill"][1]), int(255 * rect["fill"][2]))
+            draw.line(((rect["left"] * width, rect["up"] * width), (rect["right"] * height, rect["down"] * height)), fill=color )
 
-    for i, rect in enumerate(uniform_elements):
-        this_class = get_attr(rect["origin"], "class", default_value = [])
-        for class_name in this_class:
-            if class_name.startswith("element_"):
-                this_class.remove(class_name)
-        this_class.append("element_" + str(i))
-        rect["origin"]["class"] = this_class
-        rect["origin"]["id"] = str(i)
-        #rect.pop('origin', None)
-    # print('prettify', soup.prettify())
-    # print(uniform_important_elements)
-    return soup.prettify(), data
 
-def open_json_file(input_file, output_name = "../data/svg_try/2.svg"):
-    with open(input_file) as i_f:
-        data = json.load(i_f)
-        o_f = open(output_name, "w")
-        o_f.write(data["svg_string"])
-        # print(data["svg_string"])
 
-def modify_format():
-    path_dir = "/Users/tsunmac/vis/projects/autocaption/AutoCaption/user_data/20180918_full_ocq_rule"
-    json_list = os.listdir(path_dir) #"/Users/tsunmac/vis/projects/autocaption/AutoCaption/user_data/20180918_full_ocq_rule")
-    for json_file in json_list:
-        if json_file.endswith(".json"):
-            file_name = os.path.join(path_dir, json_file)
-
+    # draw.line((0, 0) + im.size, fill=128)
+    # draw.line((0, im.size[1], im.size[0], 0), fill=128)
+    im.show()
 
 if __name__ == "__main__":
     # with open("../user_data/cq_liucan_20180827/cq_liucan_2018_08_27_22_26_43_53308.json") as f:
     #     svg_string = json.load(f)["svg_string"]
     # print(svg_string)
 
-    open_json_file("/Users/tsunmac/vis/projects/autocaption/AutoCaption/user_data/20180918_full_ocq_rule/ocq_super_rule_ocq_web_2018_09_18_12_29_28_1473584.json")
-    svg_string = "<svg id='mySvg' viewBox='0 0 800 660' preserveAspectRatio='xMidYMid meet' height='736.8000000000001' width='681.15'><g transform='translate(80,66)'><g class='brush'></g><g class='axis axis--x' transform='translate(0,528)' fill='none' font-size='10' font-family='sans-serif' text-anchor='middle'><path class='domain' stroke='#000' d='M0.5,6V0.5H640.5V6'></path><g class='tick' opacity='1' transform='translate(23.5,0)'><line stroke='#000' y2='6'></line><text fill='#000' y='9' dy='0.71em'>2.5</text></g><g class='tick' opacity='1' transform='translate(74.5,0)'><line stroke='#000' y2='6'></line><text fill='#000' y='9' dy='0.71em'>3.0</text></g><g class='tick' opacity='1' transform='translate(126.5,0)'><line stroke='#000' y2='6'></line><text fill='#000' y='9' dy='0.71em'>3.5</text></g><g class='tick' opacity='1' transform='translate(178.5,0)'><line stroke='#000' y2='6'></line><text fill='#000' y='9' dy='0.71em'>4.0</text></g><g class='tick' opacity='1' transform='translate(229.5,0)'><line stroke='#000' y2='6'></line><text fill='#000' y='9' dy='0.71em'>4.5</text></g><g class='tick' opacity='1' transform='translate(281.5,0)'><line stroke='#000' y2='6'></line><text fill='#000' y='9' dy='0.71em'>5.0</text></g><g class='tick' opacity='1' transform='translate(332.5,0)'><line stroke='#000' y2='6'></line><text fill='#000' y='9' dy='0.71em'>5.5</text></g><g class='tick' opacity='1' transform='translate(384.5,0)'><line stroke='#000' y2='6'></line><text fill='#000' y='9' dy='0.71em'>6.0</text></g><g class='tick' opacity='1' transform='translate(435.5,0)'><line stroke='#000' y2='6'></line><text fill='#000' y='9' dy='0.71em'>6.5</text></g><g class='tick' opacity='1' transform='translate(487.5,0)'><line stroke='#000' y2='6'></line><text fill='#000' y='9' dy='0.71em'>7.0</text></g><g class='tick' opacity='1' transform='translate(539.5,0)'><line stroke='#000' y2='6'></line><text fill='#000' y='9' dy='0.71em'>7.5</text></g><g class='tick' opacity='1' transform='translate(590.5,0)'><line stroke='#000' y2='6'></line><text fill='#000' y='9' dy='0.71em'>8.0</text></g><text transform='translate(640,0)' dy='-0.2rem' text-anchor='end' class='text-truncate' font-size='12px' style='stroke: black;'></text></g><g class='axis axis--y' fill='none' font-size='10' font-family='sans-serif' text-anchor='end'><path class='domain' stroke='#000' d='M-6,528.5H0.5V0.5H-6'></path><g class='tick' opacity='1' transform='translate(0,491.5)'><line stroke='#000' x2='-6'></line><text fill='#000' x='-9' dy='0.32em'>4.5</text></g><g class='tick' opacity='1' transform='translate(0,444.5)'><line stroke='#000' x2='-6'></line><text fill='#000' x='-9' dy='0.32em'>5.0</text></g><g class='tick' opacity='1' transform='translate(0,398.5)'><line stroke='#000' x2='-6'></line><text fill='#000' x='-9' dy='0.32em'>5.5</text></g><g class='tick' opacity='1' transform='translate(0,351.5)'><line stroke='#000' x2='-6'></line><text fill='#000' x='-9' dy='0.32em'>6.0</text></g><g class='tick' opacity='1' transform='translate(0,304.5)'><line stroke='#000' x2='-6'></line><text fill='#000' x='-9' dy='0.32em'>6.5</text></g><g class='tick' opacity='1' transform='translate(0,257.5)'><line stroke='#000' x2='-6'></line><text fill='#000' x='-9' dy='0.32em'>7.0</text></g><g class='tick' opacity='1' transform='translate(0,211.5)'><line stroke='#000' x2='-6'></line><text fill='#000' x='-9' dy='0.32em'>7.5</text></g><g class='tick' opacity='1' transform='translate(0,164.5)'><line stroke='#000' x2='-6'></line><text fill='#000' x='-9' dy='0.32em'>8.0</text></g><g class='tick' opacity='1' transform='translate(0,117.5)'><line stroke='#000' x2='-6'></line><text fill='#000' x='-9' dy='0.32em'>8.5</text></g><g class='tick' opacity='1' transform='translate(0,70.5)'><line stroke='#000' x2='-6'></line><text fill='#000' x='-9' dy='0.32em'>9.0</text></g><g class='tick' opacity='1' transform='translate(0,24.5)'><line stroke='#000' x2='-6'></line><text fill='#000' x='-9' dy='0.32em'>9.5</text></g><text transform='rotate(-90)' y='6' dy='0.71em' text-anchor='end' font-size='12px' style='stroke: black;'></text></g><circle class='circle elements ordinary' id='0' q1='4.195158413649341' q0='7.198710763509903' cx='507' cy='520' r='0.5vh' alpha='0.5'></circle><circle class='circle elements ordinary' id='1' q1='4.105998722491816' q0='4.927043197160465' cx='273' cy='528' r='0.5vh' alpha='0.5'></circle><circle class='circle elements ordinary' id='2' q1='4.364412084049337' q0='7.37830627544404' cx='526' cy='504' r='0.5vh' alpha='0.5'></circle><circle class='circle elements ordinary' id='3' q1='5.210340307895841' q0='8.483762324294965' cx='640' cy='425' r='0.5vh' alpha='0.5'></circle><circle class='circle elements ordinary' id='4' q1='4.350192140293566' q0='6.55810174847378' cx='441' cy='505' r='0.5vh' alpha='0.5'></circle><circle class='circle elements ordinary' id='5' q1='4.529851070919655' q0='6.326317742274604' cx='418' cy='488' r='0.5vh' alpha='0.5'></circle><circle class='circle elements ordinary' id='6' q1='5.547626206456212' q0='5.7025203437971745' cx='353' cy='393' r='0.5vh' alpha='0.5'></circle><circle class='circle elements ordinary' id='7' q1='5.156149386166263' q0='4.414933104625661' cx='220' cy='430' r='0.5vh' alpha='0.5'></circle><circle class='circle elements ordinary' id='8' q1='4.768113385029239' q0='5.3893556309564215' cx='321' cy='466' r='0.5vh' alpha='0.5'></circle><circle class='circle elements ordinary' id='9' q1='4.724600003289483' q0='7.255713472489231' cx='513' cy='470' r='0.5vh' alpha='0.5'></circle><circle class='circle elements ordinary' id='10' q1='4.968379531106541' q0='7.802011701039131' cx='570' cy='447' r='0.5vh' alpha='0.5'></circle><circle class='circle elements ordinary' id='11' q1='4.256542358750759' q0='6.224460335912584' cx='407' cy='514' r='0.5vh' alpha='0.5'></circle><circle class='circle elements ordinary' id='12' q1='4.806544417768363' q0='5.77998785562214' cx='361' cy='462' r='0.5vh' alpha='0.5'></circle><circle class='circle elements ordinary' id='13' q1='5.5624667740274605' q0='5.8255861573535075' cx='366' cy='392' r='0.5vh' alpha='0.5'></circle><circle class='circle elements ordinary' id='14' q1='4.686869117921095' q0='6.6090828876121375' cx='447' cy='474' r='0.5vh' alpha='0.5'></circle><circle class='circle elements ordinary' id='15' q1='5.079626059985793' q0='5.44627499741418' cx='327' cy='437' r='0.5vh' alpha='0.5'></circle><circle class='circle elements ordinary' id='16' q1='4.918978967800686' q0='5.964580608845678' cx='380' cy='452' r='0.5vh' alpha='0.5'></circle><circle class='circle elements ordinary' id='17' q1='4.158619991271559' q0='5.9854679120721075' cx='382' cy='523' r='0.5vh' alpha='0.5'></circle><circle class='circle elements ordinary' id='18' q1='5.680169621906575' q0='5.705231706531228' cx='353' cy='381' r='0.5vh' alpha='0.5'></circle><circle class='circle elements ordinary' id='19' q1='4.67873700685887' q0='5.7703495357084496' cx='360' cy='474' r='0.5vh' alpha='0.5'></circle><circle class='circle elements ordinary' id='20' q1='4.224984856160664' q0='5.34239627869707' cx='316' cy='517' r='0.5vh' alpha='0.5'></circle><circle class='circle elements ordinary' id='21' q1='9.751683896073704' q0='2.2777864725083186' cx='0' cy='0' r='0.5vh' alpha='0.5'></circle><text class='title' text-anchor='middle' font-size='23.759999999999998' x='320' y='-31.68'>The Relation of Oil Asumption and GDP</text></g></svg>"
-    # print(svg_string)
+    # open_json_file("/Users/tsunmac/vis/projects/autocaption/AutoCaption/user_data/20180918_full_ocq_rule/ocq_super_rule_ocq_web_2018_09_18_12_29_28_1473584.json")
+    
+    # line chart
+    svg_string = '<svg id="mySvg" viewBox="0 0 581.2287479831438 400" preserveAspectRatio="xMidYMid meet" width="581.2287479831438" height="500" xmlns="http://www.w3.org/2000/svg"><g transform="translate(80,80)" class="main_canvas"><g transform="translate(0,320)" fill="none" font-size="10" font-family="sans-serif" text-anchor="middle"><path class="domain" stroke="currentColor" d="M0.5,6V0.5H465.482998386515V6"></path><g class="tick" opacity="1" transform="translate(0.5,0)"><line stroke="currentColor" y2="6"></line><text fill="currentColor" y="9" dy="0.71em">0.0</text></g><g class="tick" opacity="1" transform="translate(116.74574959662876,0)"><line stroke="currentColor" y2="6"></line><text fill="currentColor" y="9" dy="0.71em">0.5</text></g><g class="tick" opacity="1" transform="translate(232.9914991932575,0)"><line stroke="currentColor" y2="6"></line><text fill="currentColor" y="9" dy="0.71em">1.0</text></g><g class="tick" opacity="1" transform="translate(349.2372487898863,0)"><line stroke="currentColor" y2="6"></line><text fill="currentColor" y="9" dy="0.71em">1.5</text></g><g class="tick" opacity="1" transform="translate(465.482998386515,0)"><line stroke="currentColor" y2="6"></line><text fill="currentColor" y="9" dy="0.71em">2.0</text></g></g><text x="232.4914991932575" text-anchor="middle" font-size="23.249149919325752">The Price</text><g fill="none" font-size="10" font-family="sans-serif" text-anchor="end"><path class="domain" stroke="currentColor" d="M-6,320.5H0.5V0.5H-6"></path><g class="tick" opacity="1" transform="translate(0,320.5)"><line stroke="currentColor" x2="-6"></line><text fill="currentColor" x="-9" dy="0.32em">0</text></g><g class="tick" opacity="1" transform="translate(0,288.3714859437751)"><line stroke="currentColor" x2="-6"></line><text fill="currentColor" x="-9" dy="0.32em">10</text></g><g class="tick" opacity="1" transform="translate(0,256.2429718875502)"><line stroke="currentColor" x2="-6"></line><text fill="currentColor" x="-9" dy="0.32em">20</text></g><g class="tick" opacity="1" transform="translate(0,224.1144578313253)"><line stroke="currentColor" x2="-6"></line><text fill="currentColor" x="-9" dy="0.32em">30</text></g><g class="tick" opacity="1" transform="translate(0,191.9859437751004)"><line stroke="currentColor" x2="-6"></line><text fill="currentColor" x="-9" dy="0.32em">40</text></g><g class="tick" opacity="1" transform="translate(0,159.8574297188755)"><line stroke="currentColor" x2="-6"></line><text fill="currentColor" x="-9" dy="0.32em">50</text></g><g class="tick" opacity="1" transform="translate(0,127.72891566265059)"><line stroke="currentColor" x2="-6"></line><text fill="currentColor" x="-9" dy="0.32em">60</text></g><g class="tick" opacity="1" transform="translate(0,95.60040160642568)"><line stroke="currentColor" x2="-6"></line><text fill="currentColor" x="-9" dy="0.32em">70</text></g><g class="tick" opacity="1" transform="translate(0,63.471887550200805)"><line stroke="currentColor" x2="-6"></line><text fill="currentColor" x="-9" dy="0.32em">80</text></g><g class="tick" opacity="1" transform="translate(0,31.343373493975896)"><line stroke="currentColor" x2="-6"></line><text fill="currentColor" x="-9" dy="0.32em">90</text></g></g><g id="content"><path d="M0,210.76305220883535L232.4914991932575,125.61218219071765L464.982998386515,53.33333333333332" stroke="#e78ac3" transform="translate(100, 20)" style="stroke-width: 4; fill: none;"></path><path d="M0,114.33651979351421L232.4914991932575,133.96057583167877L464.982998386515,54.56002498101807" stroke="#b3b3b3" style="stroke-width: 4; fill: none;"></path><path d="M0,197.91164658634534L232.4914991932575,230.0401606425703L464.982998386515,230.0401606425703" stroke="#a6d854" style="stroke-width: 4; fill: none;"></path></g><g transform="translate(464.982998386515,0)" class="legend-wrap"><g transform="translate(0,0)"><line x1="0" x2="17.28" y1="8.64" y2="8.64" stroke="#e78ac3" id="color-0" stroke-width="4"></line><text x="20.16" y="14.399999999999999" text-anchor="start" font-size="14.399999999999999">item0</text></g><g transform="translate(0,19.2)"><line x1="0" x2="17.28" y1="8.64" y2="8.64" stroke="#b3b3b3" id="color-1" stroke-width="4"></line><text x="20.16" y="14.399999999999999" text-anchor="start" font-size="14.399999999999999">item1</text></g><g transform="translate(0,38.4)"><line x1="0" x2="17.28" y1="8.64" y2="8.64" stroke="#a6d854" id="color-2" stroke-width="4"></line><text x="20.16" y="14.399999999999999" text-anchor="start" font-size="14.399999999999999">item2</text></g></g></g></svg>'
+
+    # bar chart
+    # svg_string = '<svg id="mySvg" viewBox="0 0 609.3764369175353 400" preserveAspectRatio="xMidYMid meet" height="500" width="609.3764369175353" xmlns="http://www.w3.org/2000/svg"><g transform="translate(80,80)" class="main_canvas"><g class="brush"></g><rect class="bar elements ordinary" id="0" q0="73" o0="0" x="5" y="9" fill="#66a61e" width="20" height="231"></rect><rect class="bar elements ordinary" id="1" q0="73.34028252517285" o0="1" x="29" y="8" fill="#66a61e" width="20" height="232"></rect><rect class="bar elements ordinary" id="2" q0="72.9653315629157" o0="2" x="53" y="10" fill="#66a61e" width="20" height="230"></rect><rect class="bar elements ordinary" id="3" q0="74.31280681186632" o0="3" x="77" y="5" fill="#66a61e" width="20" height="235"></rect><rect class="bar elements ordinary" id="4" q0="74.41123672287168" o0="4" x="101" y="5" fill="#66a61e" width="20" height="235"></rect><rect class="bar elements ordinary" id="5" q0="75.17512708009241" o0="5" x="125" y="3" fill="#66a61e" width="20" height="237"></rect><rect class="bar elements ordinary" id="6" q0="75.18327200898251" o0="6" x="149" y="3" fill="#66a61e" width="20" height="237"></rect><rect class="bar elements ordinary" id="7" q0="74.55714906800908" o0="7" x="173" y="5" fill="#66a61e" width="20" height="235"></rect><rect class="bar elements ordinary" id="8" q0="75.2780276355189" o0="8" x="197" y="2" fill="#66a61e" width="20" height="238"></rect><rect class="bar elements ordinary" id="9" q0="75.32611951451123" o0="9" x="221" y="2" fill="#66a61e" width="20" height="238"></rect><rect class="bar elements ordinary" id="10" q0="75.29744749845595" o0="10" x="245" y="2" fill="#66a61e" width="20" height="238"></rect><rect class="bar elements ordinary" id="11" q0="76" o0="11" x="269" y="0" fill="#66a61e" width="20" height="240"></rect><rect class="bar elements ordinary" id="12" q0="62.40536478437488" o0="12" x="293" y="43" fill="#66a61e" width="20" height="197"></rect><rect class="bar elements ordinary" id="13" q0="55.6912383228965" o0="13" x="317" y="64" fill="#66a61e" width="20" height="176"></rect><rect class="bar elements ordinary" id="14" q0="47" o0="14" x="341" y="92" fill="#66a61e" width="20" height="148"></rect><g class="axis axis--x" transform="translate(0,240)" fill="none" font-size="10" font-family="sans-serif" text-anchor="middle"><path class="domain" stroke="currentColor" d="M0.5,6V0.5H366.1258621505212V6"></path><g class="tick" opacity="1" transform="translate(15.5,0)"><line stroke="currentColor" y2="6"></line><text fill="currentColor" y="9" dy="0.71em">ord0</text></g><g class="tick" opacity="1" transform="translate(39.5,0)"><line stroke="currentColor" y2="6"></line><text fill="currentColor" y="9" dy="0.71em">ord1</text></g><g class="tick" opacity="1" transform="translate(63.5,0)"><line stroke="currentColor" y2="6"></line><text fill="currentColor" y="9" dy="0.71em">ord2</text></g><g class="tick" opacity="1" transform="translate(87.5,0)"><line stroke="currentColor" y2="6"></line><text fill="currentColor" y="9" dy="0.71em">ord3</text></g><g class="tick" opacity="1" transform="translate(111.5,0)"><line stroke="currentColor" y2="6"></line><text fill="currentColor" y="9" dy="0.71em">ord4</text></g><g class="tick" opacity="1" transform="translate(135.5,0)"><line stroke="currentColor" y2="6"></line><text fill="currentColor" y="9" dy="0.71em">ord5</text></g><g class="tick" opacity="1" transform="translate(159.5,0)"><line stroke="currentColor" y2="6"></line><text fill="currentColor" y="9" dy="0.71em">ord6</text></g><g class="tick" opacity="1" transform="translate(183.5,0)"><line stroke="currentColor" y2="6"></line><text fill="currentColor" y="9" dy="0.71em">ord7</text></g><g class="tick" opacity="1" transform="translate(207.5,0)"><line stroke="currentColor" y2="6"></line><text fill="currentColor" y="9" dy="0.71em">ord8</text></g><g class="tick" opacity="1" transform="translate(231.5,0)"><line stroke="currentColor" y2="6"></line><text fill="currentColor" y="9" dy="0.71em">ord9</text></g><g class="tick" opacity="1" transform="translate(255.5,0)"><line stroke="currentColor" y2="6"></line><text fill="currentColor" y="9" dy="0.71em">ord10</text></g><g class="tick" opacity="1" transform="translate(279.5,0)"><line stroke="currentColor" y2="6"></line><text fill="currentColor" y="9" dy="0.71em">ord11</text></g><g class="tick" opacity="1" transform="translate(303.5,0)"><line stroke="currentColor" y2="6"></line><text fill="currentColor" y="9" dy="0.71em">ord12</text></g><g class="tick" opacity="1" transform="translate(327.5,0)"><line stroke="currentColor" y2="6"></line><text fill="currentColor" y="9" dy="0.71em">ord13</text></g><g class="tick" opacity="1" transform="translate(351.5,0)"><line stroke="currentColor" y2="6"></line><text fill="currentColor" y="9" dy="0.71em">ord14</text></g></g><g class="axis axis--y" fill="none" font-size="10" font-family="sans-serif" text-anchor="end"><path class="domain" stroke="currentColor" d="M-6,240.5H0.5V0.5H-6"></path><g class="tick" opacity="1" transform="translate(0,240.5)"><line stroke="currentColor" x2="-6"></line><text fill="currentColor" x="-9" dy="0.32em">0</text></g><g class="tick" opacity="1" transform="translate(0,208.5)"><line stroke="currentColor" x2="-6"></line><text fill="currentColor" x="-9" dy="0.32em">10</text></g><g class="tick" opacity="1" transform="translate(0,177.5)"><line stroke="currentColor" x2="-6"></line><text fill="currentColor" x="-9" dy="0.32em">20</text></g><g class="tick" opacity="1" transform="translate(0,145.5)"><line stroke="currentColor" x2="-6"></line><text fill="currentColor" x="-9" dy="0.32em">30</text></g><g class="tick" opacity="1" transform="translate(0,114.5)"><line stroke="currentColor" x2="-6"></line><text fill="currentColor" x="-9" dy="0.32em">40</text></g><g class="tick" opacity="1" transform="translate(0,82.5)"><line stroke="currentColor" x2="-6"></line><text fill="currentColor" x="-9" dy="0.32em">50</text></g><g class="tick" opacity="1" transform="translate(0,51.5)"><line stroke="currentColor" x2="-6"></line><text fill="currentColor" x="-9" dy="0.32em">60</text></g><g class="tick" opacity="1" transform="translate(0,19.5)"><line stroke="currentColor" x2="-6"></line><text fill="currentColor" x="-9" dy="0.32em">70</text></g><text transform="rotate(-90)" y="6" dy="0.71em" text-anchor="end"></text></g><text class="title" text-anchor="middle" font-size="10.799999999999999" x="182.8129310752606" y="-14.399999999999999">The Value</text></g></svg>'
+
+    svg_number = 7
+    need_text = True
+
+
+    a_numpy, id_array, soup, text, focus_array = parse_svg_string(svg_string, min_element_num=svg_number, simple = True, need_text = need_text, need_focus = True)
+    # verify_parsed_results()
+    # parse_unknown_svg_visual_elements(svg_string)
+        # print(svg_string)
     # a_numpy, id_array = parse_svg_string(svg_string)
     # print("numpy's size", a_numpy.shape)
 

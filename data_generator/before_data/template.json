@@ -12,12 +12,12 @@
 	],
 	"maximum": [
 		"{name} reaches its maximum value at {position}",
-		"the value in {position} is the the maximum of {name}",
+		"the value in {position} is the maximum of {name}",
 		"{name} have a maximum value in {position}"
 	],
 	"minimum": [
 		"{name} reaches its minimum value at {position}",
-		"the value in {position} is the the minimum of {name}",
+		"the value in {position} is the minimum of {name}",
 		"{name} have a minimum value in {position}"
 	],
 	"cluster": [

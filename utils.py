@@ -11,7 +11,7 @@ from random import seed, choice, sample
 from extract_svg import parse_svg_string
 # fr import svg_read
 
-svg_channel = 13 # 
+svg_channel = 14 # 现在有14种类型。
 # svg_number = 40
 
 

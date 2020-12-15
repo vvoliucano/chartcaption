@@ -163,7 +163,8 @@ if __name__ == '__main__':
     encoder_global, decoder_global, word_map_global, rev_word_map_global = init_model(model_path_global, word_map_path_global, max_ele_num = max_element_number)
     encoder_focus, decoder_focus, word_map_focus, rev_word_map_focus = init_model(model_path_focus, word_map_path_focus, max_ele_num = max_element_number)
 
-
+    print(encoder_global)
+    print(decoder_global)
 
     # encoder, decoder, word_map, rev_word_map = init_model(model_path, word_map_path, max_ele_num = max_element_number)
 

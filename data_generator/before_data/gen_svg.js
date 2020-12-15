@@ -21,8 +21,6 @@ global.document = document;
 // 	.attr("r",250)
 // 	.attr("fill","Red");
 
-
-
 /*
     chart drawing
 */
@@ -102,7 +100,7 @@ function deal_with_data(d) {
 
   }
   d3.select(document.body).select('svg').attr('height', 500)
-  d3.select(document.body).select('svg').select('g').attr('transform', 'translate(80,80)')
+  d3.select(document.body).select('svg').select('.main_canvas').attr('transform', 'translate(80,80)')
   // if (is_show) {
   //   let sent_data = { data_string: JSON.stringify(data_json),
   //                 svg_string: get_svg_string,
@@ -140,6 +138,9 @@ function deal_with_oq(data) {
   else if (data.vis_type === "load_bar_chart_1d_horizontal") {
     load_bar_chart_1d_horizontal(data, 'o0', '', 'q0')
   }
+  else if (data.vis_type === "load_line_chart_1d") {
+    load_line_chart_1d(data, data['color'], "o0", "q0")
+  }
   major_name = 'o0'
   second_name = ''
 }
@@ -174,9 +175,9 @@ function deal_with_ocq(data) {
     load_group_bar_chart_horizontal(data, 'o0', 'c0', 'q0')
   } else if (data.vis_type === "load_group_bar_chart") {
     load_group_bar_chart(data, 'o0', 'c0', 'q0')
-  } else if (data.vis_type === "load_scatter_line_plot") {
+  } else if (data.vis_type === "load_line_chart") {
     // data = CCQ2CQQ(data)
-    load_scatter_line_plot(data, "c0", "o0", "q0")
+    load_line_chart(data)
   }
 }
 
@@ -194,6 +195,206 @@ let extent = function(array, key) {
   yMin = yMin < 0 ? yMin : 0
   return [yMin, yMax]
 }
+
+function load_line_chart(data){
+
+  let marginRate = 0.1
+
+  let height = myheight * (1 - 2 * marginRate)
+  let width = mywidth * (1 - 2 * marginRate)
+  // let windowWidth =  document.getElementById('visualization').clientWidth * 0.95
+  // let windowHeight = document.body.clientHeight * 0.8
+  let svg = d3.select(document.body).append("svg")
+    .attr('id', 'mySvg')
+    .attr('viewBox', '0 0 ' + String(mywidth) + ' ' + String(myheight))
+    .attr('preserveAspectRatio', 'xMidYMid meet')
+    .attr('width', mywidth)
+    .attr('height', myheight)
+
+  let canvas_g = svg.append('g')
+    .attr('transform', 'translate(' + width * marginRate + ',' + (height * marginRate) + ')')
+    .classed('main_canvas', true)
+
+    // Add X axis --> it is a date format
+  let xScale = d3.scaleLinear()
+    .domain([0, data['o0'].length - 1])
+    .range([0, width]);
+
+  // console.log("其长度在于？", data['o0'].length)
+
+  canvas_g.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(xScale).ticks(data["o0"].length))
+
+  canvas_g.append('text')
+    .text(data["title"])
+    .attr("x", width/2)
+    .attr("text-anchor", "middle")
+    .attr('font-size', width / 20)
+
+
+  // Add Y axis
+  let yScale = d3.scaleLinear()
+    .domain( [0, Math.max(...data["data_array"].map(d=>d.q0)) * 1.2])
+    .range([height, 0]);
+
+  canvas_g.append("g")
+    .call(d3.axisLeft(yScale));
+
+  let group_by_result = get_data_by_cat(data)
+
+  console.log(group_by_result)
+
+  canvas_g.append('g')
+    .attr("id", "content")
+    .selectAll('path')
+    .data(group_by_result)
+    .enter()
+    .append('path')
+    .attr("d", d3.line()
+        .x(function(d) { return xScale(+d.o0) })
+        .y(function(d) { return yScale(+d.q0) })
+    )
+    .attr("stroke", (d, i) => data['color'][i])
+    .style("stroke-width", 4)
+    .style("fill", "none")
+
+
+  // canvas_g.append('g')
+  //   .attr('id', "legend")
+  //   .attr('transform', "translate(" + width + ", 0)")
+  //   .selectAll('')
+
+  let canvasHeight = height
+  let canvasWidth = width
+  let legendHeight = canvasHeight * legendHeightRatio
+  let fontSize = canvasHeight * fontRatio * 1.5
+  let rectHeight = legendHeight * .9
+  let rectWidth = canvasWidth * .03
+  if (flag) rectWidth = rectHeight
+  let cell = data["c0"].map((d, i) => ({
+    'name': d,
+    'color': data.color[i]
+  }))
+  console.log(data['c0'])
+  console.log(cell)
+  let canvas = canvas_g.append('g')
+    .attr('transform', 'translate(' + String(canvasWidth) + ',0)')
+    .attr('class', 'legend-wrap')
+
+  let legends = canvas.selectAll('.legend')
+    .data(cell)
+    .enter()
+    .append('g')
+    .attr('transform', (d, i) => 'translate(0,' + String(i * legendHeight) + ')')
+
+  // legends.append('rect')
+  //   .attr('width', rectWidth)
+  //   .attr('height', rectHeight)
+  //   .attr('fill', d => d.color)
+  //   .attr('id', (d, i) => 'color-' + String(i))
+  //   .attr('color-data', d => d.color)
+  //   .attr('custom-id', (d, i) => i)
+  //   .attr('data-toggle', 'popover')
+  //   .attr('data-container', 'body')
+  //   .attr('data-placement', 'right')
+  //   .attr('onclick', 'addColorPicker(this)')
+
+  legends.append('line')
+    .attr('x1', 0)
+    .attr('x2', rectWidth)
+    .attr('y1', rectHeight / 2)
+    .attr('y2', rectHeight / 2)
+    .attr('stroke', d => d.color)
+    .attr('id', (d, i) => 'color-' + String(i))
+    .attr('stroke-width', 4)
+
+  legends.append('text')
+    .attr('x', rectWidth + .2 * fontSize)
+    .attr('y', fontSize)
+    .attr('text-anchor', 'start')
+    .attr('font-size', fontSize)
+    .text(d => d.name)
+
+    
+  function get_data_by_cat(data){
+    let result = new Array()
+    let cat_num = data['c0'].length
+    for (let i = 0; i < cat_num; i ++ )
+    {
+      result[i] = new Array()
+    }
+    let item_num = data['data_array'].length
+    for (let i = 0; i < item_num; i ++)
+    {
+      datum = data.data_array[i]
+      result[datum['c0']].push(datum)
+    }
+    // console.log('result: ', result)
+    return result
+  }
+
+}
+
+
+function load_line_chart_1d(data, cat_color, x_axis, y_axis){
+
+  let marginRate = 0.1
+
+  let height = myheight * (1 - 2 * marginRate)
+  let width = mywidth * (1 - 2 * marginRate)
+  // let windowWidth =  document.getElementById('visualization').clientWidth * 0.95
+  // let windowHeight = document.body.clientHeight * 0.8
+  let svg = d3.select(document.body).append("svg")
+    .attr('id', 'mySvg')
+    .attr('viewBox', '0 0 ' + String(mywidth) + ' ' + String(myheight))
+    .attr('preserveAspectRatio', 'xMidYMid meet')
+    .attr('width', mywidth)
+    .attr('height', myheight)
+
+  let canvas_g = svg.append('g')
+    .attr('transform', 'translate(' + width * marginRate + ',' + (height * marginRate) + ')')
+    // .classed('main_canvas', true)
+
+    // Add X axis --> it is a date format
+  let xScale = d3.scaleLinear()
+    .domain([0, data['o0'].length - 1])
+    .range([0, width]);
+
+  // console.log("其长度在于？", data['o0'].length)
+
+  canvas_g.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(xScale).ticks(data["o0"].length))
+
+  canvas_g.append('text')
+    .text(data["title"])
+    .attr("x", width/2)
+    .attr("text-anchor", "middle")
+    .attr('font-size', width / 20)
+
+
+  // Add Y axis
+  let yScale = d3.scaleLinear()
+    .domain( [0, Math.max(...data["data_array"].map(d=>d.q0)) * 1.2])
+    .range([height, 0]);
+
+  canvas_g.append("g")
+    .call(d3.axisLeft(yScale));
+
+  canvas_g.append('path')
+    .datum(data.data_array)
+    .attr("d", d3.line()
+      .x(function(d) { return xScale(+d.o0) })
+      .y(function(d) { return yScale(+d.q0) })
+    )
+    .attr("stroke", cat_color[0])
+    .style("stroke-width", 4)
+    .style("fill", "none")
+
+}
+
+
 
 function CQQ(data, cat_color, cat_x, cat_y, position = 'vertical', tag = 'scatter') {
   this.tag = tag
@@ -257,15 +458,16 @@ function CQQ(data, cat_color, cat_x, cat_y, position = 'vertical', tag = 'scatte
 CQ.prototype.drawTitle = function(title) {
   let canvasHeight = this.height * (1 - 2 * marginRate)
   let canvasWidth = this.width * (1 - 2 * marginRate)
-  let fontSize = canvasHeight * fontRatio
+  let fontSize = canvasWidth /20
 
   this.g.append('text')
     .attr('class', 'title')
     .attr('text-anchor', 'middle')
-    .attr('font-size', fontSize * 1.5)
+    .attr('font-size', fontSize)
     .attr('x', canvasWidth / 2)
-    .attr('y', -4 * fontSize)
+    .attr('y', -3 * fontSize)
     .text(title)
+
   return this
 }
 
@@ -462,24 +664,15 @@ CQQ.prototype.drawTitle = function(title) {
   let canvasHeight = this.height * (1 - 2 * marginRate)
   let canvasWidth = this.width * (1 - 2 * marginRate)
   let fontSize = canvasHeight * fontRatio
-  if (flag) {
-    this.g.append('text')
-      .attr('class', 'title')
-      .attr('text-anchor', 'middle')
-      .attr('font-size', fontSize * 5)
-      .attr('x', canvasWidth / 2)
-      .attr('y', -2 * fontSize)
-      .text(title)
-    // .style('font-family', 'Oxygen')
-  } else {
-    this.g.append('text')
+
+  this.g.append('text')
       .attr('class', 'title')
       .attr('text-anchor', 'middle')
       .attr('font-size', fontSize * 1.5)
       .attr('x', canvasWidth / 2)
-      .attr('y', -2 * fontSize)
+      .attr('y', -1 * fontSize)
       .text(title)
-  }
+
   return this
 }
 
@@ -729,6 +922,8 @@ CQ.prototype.drawLegend = function(cat_color) {
 
 function CCQ(data, cat_position, cat_color, quantity, position = 'vertical') {
   // initial chart set up
+
+  // let marginRate = 0.1 
 
   this.height = myheight
   this.width = mywidth
@@ -1081,6 +1276,25 @@ function load_bar_chart_1d_horizontal(data, cat_position, cat_color, quantity) {
   chart.drawTitle(data.title)
 }
 
+function load_line_plot(data, cat_color, x, y) {
+  let chart = new CQQ(data, cat_color, x, y)
+  chart.drawAxis()
+  chart.drawLine()
+  if (chart.countScatter())
+    chart.drawLegend(cat_color)
+  chart.drawTitle(data.title)
+}
+
+function load_line_plot_horizontal(data, cat_color, x, y) {
+  let chart = new CQQ(data, cat_color, x, y, 'horizontal')
+  chart.drawAxis()
+  chart.drawLine()
+  if (chart.countScatter())
+    chart.drawLegend(cat_color)
+  chart.drawTitle(data.title)
+}
+
+
 function load_group_bar_chart(data, cat_position, cat_color, quantity) {
   let chart = new CCQ(data, cat_position, cat_color, quantity)
   chart.drawAxis()
@@ -1120,23 +1334,6 @@ function load_scatter_plot_horizontal(data, cat_color, x, y) {
   chart.drawTitle(data.title)
 }
 
-function load_line_plot(data, cat_color, x, y) {
-  let chart = new CQQ(data, cat_color, x, y)
-  chart.drawAxis()
-  chart.drawLine()
-  if (chart.countScatter())
-    chart.drawLegend(cat_color)
-  chart.drawTitle(data.title)
-}
-
-function load_line_plot_horizontal(data, cat_color, x, y) {
-  let chart = new CQQ(data, cat_color, x, y, 'horizontal')
-  chart.drawAxis()
-  chart.drawLine()
-  if (chart.countScatter())
-    chart.drawLegend(cat_color)
-  chart.drawTitle(data.title)
-}
 
 function load_scatter_line_plot(data, cat_color, x, y) {
   let chart = new CQQ(data, cat_color, x, y, 'vertical', 'line')
