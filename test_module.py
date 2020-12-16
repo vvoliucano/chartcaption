@@ -414,8 +414,8 @@ if __name__ == '__main__':
     args.focus = [int(i) for i in args.focus.split(",")]
 
 
-    with open(args.setting_json, "w") as f:
-        setting_json = json.load(f)
+    # with open(args.setting_json, "w") as f:
+    #     setting_json = json.load(f)
 
 
 
