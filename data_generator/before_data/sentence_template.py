@@ -17,17 +17,6 @@ if platform.system() == "Darwin":
 # 	import language_check
 
 
-# a = f'sdf{sdf}'
-
-# a
-
-# def get_ordinal_array():
-
-
-
-# def get_feature_set():
-
-
 
 def get_checked_sentence(text = "China's GDP increase from 2019 to 2020."):
 

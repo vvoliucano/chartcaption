@@ -1,14 +1,23 @@
 {
 	"trend_inc":[
 		"{name} increase from {begin} to {end}",
-		"{name} have a increase trend from {begin} to {end}"
+		"{name} have a increase trend from {begin} to {end}", 
+		"{name} grows from {begin} to {end}",
+		"{name} have an upward trend from {begin} to {end}"
 	],
 	"trend_dec":[
 		"{name} decrease from {begin} to {end}",
-		"{name} have a decrease trend from {begin} to {end}"
+		"{name} have a decrease trend from {begin} to {end}",
+		"It seems that the {name} reduce from {begin} to {end}",
+		"{name} decrease from {begin} until {end}",
+		"{name} drops from {begin} to {end}",
+		"{name} show a downward trend from {begin} to {end}"
 	],
 	"trend_stable":[
-		"{name} keep stable from {begin} to {end}"
+		"{name} keep stable from {begin} to {end}",
+		"{name} hold relatively stable from {begin} to {end}",
+		"{name} have a plateau from {begin} to {end}",
+		"{name} is steady from {begin} to {end}"
 	],
 	"maximum": [
 		"{name} reaches its maximum value at {position}",

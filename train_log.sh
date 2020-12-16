@@ -589,5 +589,30 @@ python train.py --data_folder data/20200908_50000/deal --svg_element_number 100 
 
 
 
+./run.sh 20201216_10000 10000
+
+# python create_input_files.py --dataset chart --karpathy_json_path data/20200908_50000/karparthy_dataset.json --image_folder data/20200908_50000/svg --output_folder data/20200908_50000/deal --image_type svg --need_text --max_element_number 100 --with_focus
+
+python create_input_files.py --dataset chart --karpathy_json_path data/20201216_10000/karparthy_dataset.json --image_folder data/20201216_10000/svg --output_folder data/20201216_10000/deal_no_focus --image_type svg --need_text --max_element_number 100 
+
+python train.py --data_folder data/20201216_10000/deal_no_focus --svg_element_number 100 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 4,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text 
+
+python train.py --data_folder data/20201216_10000/deal --svg_element_number 100 --data_name chart_1_cap_5_min_wf --image_type svg --input_nc 4,2,4,3,1,1 --output_nc 5,5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
