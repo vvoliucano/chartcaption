@@ -425,6 +425,8 @@ if __name__ == '__main__':
     print(output_file)
     os.system(f"mkdir -p {output_file}")
 
+    args.result_file = output_file + "result.json"
+
     max_element_number = args.max_element_number
 
     model_path = args.model
