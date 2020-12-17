@@ -32,6 +32,7 @@ parser.add_argument('--decoder_dim', type = int, default = 512)
 parser.add_argument('--encoder_dim', type = int, default = 2048)
 parser.add_argument('--encode_word', type = str, default = "no", help = "using text as input") # In fact, this is useless
 parser.add_argument('--need_text', action='store_true', help="decide whether need text")
+parser.add_argument('--need_random', action='store_true', help="decide whether need text")
 
 # [3, 2, 4, 3, 1], output_nc = [5, 5, 5, 5, 5])
 # input_nc = "3,2,4,3,1"
@@ -168,7 +169,7 @@ def main():
         my_transform = transforms.Compose([normalize])
 
     train_loader = torch.utils.data.DataLoader(
-        CaptionDataset(data_folder, data_name, 'TRAIN', transform = my_transform),
+        CaptionDataset(data_folder, data_name, 'TRAIN', transform = my_transform, need_random = args.need_random),
         batch_size=batch_size, shuffle=True, num_workers=workers, pin_memory=True)
     val_loader = torch.utils.data.DataLoader(
         CaptionDataset(data_folder, data_name, 'VAL', transform = my_transform),

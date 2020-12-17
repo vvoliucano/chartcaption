@@ -3,6 +3,7 @@ from torch.utils.data import Dataset
 import h5py
 import json
 import os
+import random
 
 
 class CaptionDataset(Dataset):
@@ -10,7 +11,7 @@ class CaptionDataset(Dataset):
     A PyTorch Dataset class to be used in a PyTorch DataLoader to create batches.
     """
 
-    def __init__(self, data_folder, data_name, split, transform=None):
+    def __init__(self, data_folder, data_name, split, transform=None, need_random = False):
         """
         :param data_folder: folder where data files are stored
         :param data_name: base name of processed datasets
@@ -26,6 +27,7 @@ class CaptionDataset(Dataset):
 
         # Captions per image
         self.cpi = self.h.attrs['captions_per_image']
+        self.need_random = need_random
 
         # Load encoded captions (completely into memory)
         with open(os.path.join(data_folder, self.split + '_CAPTIONS_' + data_name + '.json'), 'r') as j:
@@ -50,11 +52,18 @@ class CaptionDataset(Dataset):
 
         # Total number of datapoints
         self.dataset_size = len(self.captions)
+        self.order = [i for i in range(14)] 
 
     def __getitem__(self, i):
         # Remember, the Nth caption corresponds to the (N // captions_per_image)th image
         if self.image_type == "svg":
-            img = torch.FloatTensor(self.imgs[i // self.cpi])
+            img_numpy = self.imgs[i // self.cpi]
+            if self.need_random:
+                # print(img_numpy.shape)
+                random.shuffle(self.order)
+                # print(self.order)
+                img_numpy = img_numpy[self.order, :]
+            img = torch.FloatTensor(img_numpy)
         else:
             img = torch.FloatTensor(self.imgs[i // self.cpi] / 255.)
             
