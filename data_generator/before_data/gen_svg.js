@@ -366,7 +366,7 @@ function load_line_chart_1d(data, cat_color, x_axis, y_axis){
 
   canvas_g.append("g")
     .attr("transform", "translate(0," + height + ")")
-    .call(d3.axisBottom(xScale).ticks(data["o0"].length))
+    .call(d3.axisBottom(xScale).ticks(data["o0"].length).tickFormat(d=>data["o0"][d]))
 
   canvas_g.append('text')
     .text(data["title"])

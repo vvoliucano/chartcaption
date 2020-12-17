@@ -14,6 +14,7 @@ parser.add_argument('--image_type', type=str, default = 'pixel', help='image typ
 parser.add_argument('--need_text', action='store_true', help="decide whether need text")
 parser.add_argument('--max_element_number', default=40, type=int, help="decide whether need text")
 parser.add_argument('--with_focus', action='store_true', help="decide whether focus is needed or not")
+parser.add_argument('--random_time', default=1, type=int, help="decide whether need random or not")
 
 # max_element_number
 
