@@ -441,6 +441,8 @@ if __name__ == '__main__':
     print(sentences)
 
 
+    print("output_file: ", args.result_file)
+
     with open(args.result_file, "w") as f:
         json.dump(sentences, f, indent = 2)
 
