@@ -510,9 +510,15 @@ if __name__ == '__main__':
 	parser.add_argument('--number', '-n', type=int, default = 100, help='number')
 	parser.add_argument('--path', '-p', type=str, default = "try_dir", help='The path')
 	parser.add_argument('--period', '-i', type = int, default = 100, help = 'number of the iterater')
+	parser.add_argument('--node_name', type=str, default = "./", help="node name")
 	
 	args = parser.parse_args()
 	# 解析相应的数据
+
+	if args.node_name == "./":
+		node_name = "./"
+	else:
+		node_name = args.node_name + " "
 
 	print(f"The size of the dataset is {args.number}")
 

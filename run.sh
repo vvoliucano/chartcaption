@@ -1,6 +1,6 @@
 cd data_generator/before_data/
 pwd
-python feature_data_generator.py --path ../../data/$1 --number $2
+python feature_data_generator.py --path ../../data/$1 --number $2 --node_name $3
 cd ../../
 pwd
 
