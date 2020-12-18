@@ -59,9 +59,9 @@ class CaptionDataset(Dataset):
         if self.image_type == "svg":
             img_numpy = self.imgs[i // self.cpi]
             if self.need_random:
-                print(img_numpy.shape)
+                # print(img_numpy.shape)
                 random.shuffle(self.order)
-                print(self.order)
+                # print(self.order)
                 img_numpy = img_numpy[self.order, :]
             img = torch.FloatTensor(img_numpy)
         else:
