@@ -615,7 +615,8 @@ python test_module.py --img data/20201216_20000/svg/399.svg  --model checkpoint/
 python train.py --data_folder data/20201217_20/deal_no_focus --svg_element_number 100 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 4,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text 
 
 
-
+# remote require random
+python train.py --data_folder data/20201217_20000/deal_no_focus --svg_element_number 100 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 4,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text --need_random
 
 
 
