@@ -373,6 +373,7 @@ def convert_to_karparthy(original_data):
 	for pindex, item in enumerate(original_data):
 		# print(item)
 		sentences = item["feature"]
+		random.shuffle(sentences)
 		here_sentence_num = len(sentences)
 		image = {
 			"sentids": [],
@@ -578,6 +579,8 @@ if __name__ == '__main__':
 
 
 	begin_time = time.time()
+
+	# 对于并不出现的数字，需要转化成为已经在轴中出现的数字
 
 	for datum in data_array:
 		replace_number_with_token(datum, svg_path)
