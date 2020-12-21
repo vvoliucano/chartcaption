@@ -1048,6 +1048,7 @@ def generate_data_by_setting(feature_setting):
 
         for feature in feature_setting["feature"]:
             feature_type = feature["feature_type"]
+            # print("feature: ", feature)
             if feature_type == "trend":
                 cat_idx = cat_name.index(feature["name"])
                 steps = {ord_name.index(step["position"]): step["value"] for step in feature["step"]}

@@ -244,7 +244,7 @@ function load_line_chart(data){
 
   let group_by_result = get_data_by_cat(data)
 
-  console.log(group_by_result)
+  // console.log(group_by_result)
 
   canvas_g.append('g')
     .attr("id", "content")
@@ -277,8 +277,8 @@ function load_line_chart(data){
     'name': d,
     'color': data.color[i]
   }))
-  console.log(data['c0'])
-  console.log(cell)
+  // console.log(data['c0'])
+  // console.log(cell)
   let canvas = canvas_g.append('g')
     .attr('transform', 'translate(' + String(canvasWidth) + ',0)')
     .attr('class', 'legend-wrap')

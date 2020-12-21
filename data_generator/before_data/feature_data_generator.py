@@ -46,15 +46,20 @@ def generate_oq_setting(data_type, vis_type):
 
 	return setting
 
+def generate_ocq_setting(data_type, vis_type):
+	setting = random.choice([generate_single_trend_setting, generate_couple_trend_setting])(data_type, vis_type)
+	return setting
+
 def generate_single_trend_setting(data_type, vis_type):
 	setting = basic_trend_setting(data_type, vis_type)
 	
 	feature = random.choice([get_sim_trend, get_comp_trend, get_comp_trend])(random.choice(setting["category_name"]), setting["ordinal_name"])
 	setting["feature"] = [feature]
 	get_derivation_trend(setting)
-
-
 	return setting
+
+
+
 
 def generate_couple_trend_setting(data_type, vis_type):
 	setting = basic_trend_setting(data_type, vis_type)
@@ -153,6 +158,7 @@ def get_comp_trend(cat, ordinal_array):
 # setting 
 
 
+# get absolute feature for the map
 
 def get_absolute_feature(setting, data):
 	data_array = data["data_array"]
@@ -458,41 +464,52 @@ def replace_number_with_token(datum, svg_path):
 	return number
 
 
-def generate_setting(number = 1000):
+# def generate_setting(number = 1000):
 
 	
+# 	setting_array = []
+# 	for i in range(number):
+# 		if i % 100 == 0:
+# 			print(f"current is the {i}-th 100-number")
+# 		data_type = random.choice(["ocq", "oq"])
+
+# 		if data_type == "ocq":
+# 			vis_type_choice = ["load_group_bar_chart", "load_group_bar_chart_horizontal", "load_stack_bar_chart", "load_stack_bar_chart_horizontal", "load_line_chart"] # , "load_scatter_line_plot"
+# 			vis_type = random.choice(vis_type_choice)
+# 			current_setting = random.choice([generate_single_trend_setting, generate_couple_trend_setting])(data_type, vis_type)
+# 		elif data_type == "oq":
+# 			vis_type_choice = ["load_bar_chart_1d", "load_bar_chart_1d_horizontal", "load_line_chart_1d"]
+# 			vis_type = random.choice(vis_type_choice)
+# 			current_setting = random.choice([generate_oq_setting])(data_type, vis_type)
+# 		else:
+# 			print("currently, we can not handle this data type ", data_type)
+
+# 		current_setting["filename"] = str(i) + ".svg"
+# 		setting_array.append(current_setting)
+
+# 	return setting_array
+
+def generate_setting(number = 1000, vis_type_choice = ["load_line_chart_1d"], data_type = "oq", feature_choice = [generate_oq_setting]):
 	setting_array = []
 	for i in range(number):
 		if i % 100 == 0:
 			print(f"current is the {i}-th 100-number")
-		data_type = random.choice(["ocq", "oq"])
-
-		if data_type == "ocq":
-			vis_type_choice = ["load_group_bar_chart", "load_group_bar_chart_horizontal", "load_stack_bar_chart", "load_stack_bar_chart_horizontal", "load_line_chart"] # , "load_scatter_line_plot"
-			vis_type = random.choice(vis_type_choice)
-			current_setting = random.choice([generate_single_trend_setting, generate_couple_trend_setting])(data_type, vis_type)
-		elif data_type == "oq":
-			vis_type_choice = ["load_bar_chart_1d", "load_bar_chart_1d_horizontal", "load_line_chart_1d"]
-			vis_type = random.choice(vis_type_choice)
-			current_setting = random.choice([generate_oq_setting])(data_type, vis_type)
-		else:
-			print("currently, we can not handle this data type ", data_type)
-
+		# vis_type_choice =  ["load_bar_chart_1d", "load_bar_chart_1d_horizontal", "load_line_chart_1d"]
+		vis_type = random.choice(vis_type_choice)
+		current_setting = random.choice(feature_choice)(data_type, vis_type)
 		current_setting["filename"] = str(i) + ".svg"
 		setting_array.append(current_setting)
 
 	return setting_array
 
 
-def generate_simple_line_chart_setting(number = 1000):
-
-	
+def generate_simple_line_chart_setting(number = 1000, begin_number = 0):
 	setting_array = []
-	for i in range(number):
+	for i in range(begin_number, begin_number + number):
 		if i % 100 == 0:
 			print(f"current is the {i}-th 100-number")
 		data_type = "oq"
-		vis_type_choice =  ["load_bar_chart_1d", "load_bar_chart_1d_horizontal", "load_line_chart_1d"]
+		# vis_type_choice =  ["load_bar_chart_1d", "load_bar_chart_1d_horizontal", "load_line_chart_1d"]
 		vis_type = "load_line_chart_1d" #random.choice(vis_type_choice)
 		current_setting = random.choice([generate_oq_setting])(data_type, vis_type)
 		current_setting["filename"] = str(i) + ".svg"
@@ -500,8 +517,49 @@ def generate_simple_line_chart_setting(number = 1000):
 
 	return setting_array
 
+def generate_simple_bar_chart_setting(number = 1000, begin_number = 0):
+	setting_array = []
+	for i in range(begin_number, begin_number + number):
+		if i % 100 == 0:
+			print(f"current is the {i}-th 100-number")
+		data_type = "oq"
+		vis_type_choice =  ["load_bar_chart_1d", "load_bar_chart_1d_horizontal"]
+		vis_type = random.choice(vis_type_choice)
+		current_setting = random.choice([generate_oq_setting])(data_type, vis_type)
+		current_setting["filename"] = str(i) + ".svg"
+		setting_array.append(current_setting)
+
+	return setting_array
 
 
+def generate_multi_line_chart_setting(number = 1000, begin_number = 0):
+	setting_array = []
+	for i in range(begin_number, begin_number + number):
+		if i % 100 == 0:
+			print(f"current is the {i}-th 100-number")
+		data_type = "ocq"
+		vis_type_choice =  ["load_group_bar_chart", "load_group_bar_chart_horizontal", "load_stack_bar_chart", "load_stack_bar_chart_horizontal"]
+		vis_type = random.choice(vis_type_choice)
+		current_setting = random.choice([generate_ocq_setting])(data_type, vis_type)
+		current_setting["filename"] = str(i) + ".svg"
+		setting_array.append(current_setting)
+
+	return setting_array
+
+
+def generate_multi_bar_chart_setting(number = 1000, begin_number = 0):
+	setting_array = []
+	for i in range(begin_number, begin_number + number):
+		if i % 100 == 0:
+			print(f"current is the {i}-th 100-number")
+		data_type = "ocq"
+		vis_type_choice =  ["load_line_chart"]
+		vis_type = random.choice(vis_type_choice)
+		current_setting = random.choice([generate_ocq_setting])(data_type, vis_type)
+		current_setting["filename"] = str(i) + ".svg"
+		setting_array.append(current_setting)
+
+	return setting_array
 
 
 
@@ -543,7 +601,10 @@ if __name__ == '__main__':
 
 	
 	# setting_array = generate_setting(number = args.number)
-	setting_array = generate_simple_line_chart_setting(number = args.number)
+	setting_array = generate_simple_line_chart_setting(number = args.number, begin_number = 0)
+	setting_array.extend(generate_multi_line_chart_setting(number = args.number, begin_number = args.number))
+	setting_array.extend(generate_simple_bar_chart_setting(number = args.number, begin_number = args.number * 2))
+	setting_array.extend(generate_multi_bar_chart_setting(number = args.number, begin_number = args.number * 3))
 
 	# Get a basic setting
 
