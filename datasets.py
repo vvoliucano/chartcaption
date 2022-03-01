@@ -6,6 +6,7 @@ import os
 import random
 
 
+
 class CaptionDataset(Dataset):
     """
     A PyTorch Dataset class to be used in a PyTorch DataLoader to create batches.
