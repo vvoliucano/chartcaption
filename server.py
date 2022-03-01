@@ -146,6 +146,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     args.need_text = True
 
+    print("setting json", args.setting_json)
+
     with open(args.setting_json) as f:
         setting_json = json.load(f)
 

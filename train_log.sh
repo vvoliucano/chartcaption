@@ -644,15 +644,20 @@ python train.py --data_folder data/20201219_100000/deal_no_focus --svg_element_n
 
 # fix the problem that can not save the checkpoints.
 python train.py --data_folder data/20201219_20/deal_no_focus --svg_element_number 100 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 4,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text --need_random
+# chart_5_cap_5_min_wf-2020-12-20-01-20
 
 
+#remote new dataset with line chart/bar chart
+# 创建数据集
+python create_input_files.py --dataset chart --karpathy_json_path data/20201221_50000/karparthy_dataset.json --image_folder data/20201221_50000/svg --output_folder data/20201221_50000/deal_no_focus --image_type svg --need_text --max_element_number 150 
 
+python train.py --data_folder data/20201221_50000/deal_no_focus --svg_element_number 150 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 4,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text --need_random
+chart_5_cap_5_min_wf-2020-12-21-05-32
 
+# 20220301 
+python create_input_files.py --dataset chart --karpathy_json_path data/20201221_50000/karparthy_dataset.json --image_folder data/20201221_50000/svg --output_folder data/20201221_50000/deal_no_focus --image_type svg --need_text --max_element_number 150 
 
-
-
-
-
+python train.py --data_folder data/20201221_50000/deal_no_focus --svg_element_number 150 --data_name chart_5_cap_5_min_wf --image_type svg --input_nc 4,2,4,3,1 --output_nc 5,5,5,5,5 --emb_dim 512 --attention_dim 512 --decoder_dim 512 --need_text --need_random
 
 
 
